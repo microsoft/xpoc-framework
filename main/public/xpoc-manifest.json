@@ -1,0 +1,22 @@
+{
+    "name": "John Smith",
+    "url": "johnsmith.com",
+    "content": [
+        {
+            "idx": "abc123",
+            "title": "hello world video",
+            "url": "https://youtube.com/abcdef",
+            "platform": "youtube",
+            "puid": "abcdef",
+            "account": "@johnsmith"
+        },
+        {
+            "idx": "xyz789",
+            "title": "my first tweet",
+            "url": "https://twitter.com/abcdef",
+            "platform": "twitter",
+            "puid": "123456",
+            "account": "@johnsmith"
+        }
+    ]
+}

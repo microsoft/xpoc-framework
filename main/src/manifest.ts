@@ -1,15 +1,14 @@
-export interface XPOCContent {
-    idx: string, // index of content
-    title: string, // name of content
-    url: string, // link of content
-    platform: string, // e.g. youtube
-    puid: string, // uid of content on platform
-    account: string, // e.g., youtube account
-    auth?: string // authentication string 
-}
-
-export interface XPOCManifest {
-    name: string,
-    url: string,
-    content: XPOCContent[]
-}
+export type ContentItem = {
+    idx: number; // changed this from string to number
+    title: string;
+    url: string;
+    platform: string;
+    puid: string;
+    account: string;
+  };
+  
+  export type XPOCManifest = {
+    name: string;
+    url: string;
+    content: ContentItem[];
+  };

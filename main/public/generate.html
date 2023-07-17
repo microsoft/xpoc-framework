@@ -65,9 +65,33 @@
             gap: 10px;
         }
     </style>
+<script>
+    async function submitUrls() {
+        const urlInput = document.getElementById('urlsInput');
+        const urls = urlInput.value.split('\n');
+        const platform = document.getElementById('platform').value;
+
+        for (const url of urls) {
+            const response = await fetch('/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url, platform })
+            });
+
+            const data = await response.json();
+
+            if (response.status === 200) {
+                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+            } else {
+                document.getElementById('output').innerText = `Error: ${data.error}`;
+            }
+        }
+    }
+</script>
 </head>
 <body>
-
     <style>
         .container {
             margin: 0 auto; /* Centers the container horizontally */
@@ -82,28 +106,17 @@
         <button onclick="window.location.href='index.html'">FAQs</button>
     </div>
     <div class="container">
-        <h1>Welcome to XPOC Validator</h1>
-        <p>As AI advances, policymakers are growing increasingly concerned about its potential 
-            to disrupt the integrity of the 2024 US Presidential Election. Artificially generated content,
-            replicating individual or group personas, or manipulating the perception of consensus could pose 
-            serious threats if employed on a large scale. In addition to traditional media outlets that are regulated, 
-            unverified content could also be rapidly propagated online, potentially causing harm before it can be identified 
-            and removed. </p>
-        
-        <p>
-        <br> To counter this, political campaigns could make use of electronic verification for their media content, making 
-                it easier to authenticate the source of information. While this doesn't fully address the problem, as more 
-                campaigns adopt this approach, the opportunity for manipulation could reduce, similar to how the adoption 
-                of HTTPS has improved trust in web content. However, it's important that these verification techniques are 
-                effectively communicated to avoid undermining their purpose and potentially overlooking the perspective 
-                of end users.
-        </p>
-        <p>
-            <br> The proposed solution to this issue is the Cross-Platform Origin of Content (XPOC) system, which requires 
-                campaigns to host a verified list of their media content. The system should be easy to self-host, without 
-                the need for a supervising organization, and allows anyone to verify the media's origin. It doesn't validate 
-                the integrity of the media or the campaign's website, but rather links the content across various platforms
-                back to a single website identity.</p>
+        <h1>Generate a Manifest</h1>
+        <p>Take the manifest below and embed it within your website code. Here is an example of doing so: https://github.com/shreyjain13/void/blob/main/xpoc/xpoc-manifest.json</p>
+        <form id="manifestForm" onsubmit="event.preventDefault(); submitUrls();">
+            <textarea id="urlsInput" name="urls" placeholder="Enter URLs, each on a new line" rows="10"></textarea><br>
+            <select id="platform">
+                <option value="youtube">YouTube</option>
+                <option value="twitter">Twitter</option>
+            </select><br>
+            <button type="submit">Generate Manifest</button>
+        </form>
+        <div id="output" class="section"></div>
     </div>
 </body>
 </html>

@@ -59,6 +59,19 @@
         h1, h2 {
             color: #333;
         }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 200px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            box-shadow: 2px 0px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
     </style>
     <script>
     /* JavaScript code for processing the URL and verifying its authenticity */
@@ -104,8 +117,13 @@
 </head>
 <body>
     <h1>Validate Context</h1>
-    <input type="text" id="mediaUrl" placeholder="Enter media URL">
+    <input type="text" id="mediaUrl" placeholder="Enter URL">
     <button onclick="verifyMedia()">Verify</button>
     <div id="output"></div>
+    <div class="sidebar">
+        <button onclick="window.location.href='fetch.html'">XPOC Validator</button>
+        <button onclick="window.location.href='generate.html'">Generate Manifest</button>
+        <button onclick="window.location.href='index.html'">FAQs</button>
+    </div>
 </body>
 </html>

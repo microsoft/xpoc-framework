@@ -1,56 +1,91 @@
-import fs from 'fs';
-import { Option, Command } from 'commander';
-import { XPOCManifest } from './manifest'
+import axios from 'axios';
+import cheerio from 'cheerio';
+import dotenv from 'dotenv';
+import { XPOCManifest } from './manifest';
 
-interface Options {
-    path: string,
-    url: string,
-    idx: string,
-    puid: string
+dotenv.config();
+
+interface PlatformData {
+  title: string;
+  platform: string;
+  account: string;
+  puid: string;
 }
 
-const program = new Command();
-program.requiredOption('-p, --path <path>', 'path to the manifest to update or create');
-program.option('-u, --url <url>', 'search for url in manifest');
-program.option('-i, --idx <idx>', 'search for idx in manifest');
-program.option('-p, --puid <puid>', 'search for puid in manifest');
-program.parse(process.argv)
-const options: Options = program.opts()
+type DataFetcher = {
+  [platform in 'youtube' | 'twitter']: (url: string) => Promise<PlatformData>;
+};
 
-const compare = (a: string, b: string) => a.toLowerCase() === b.toLowerCase(); 
+async function getYoutubeData(url: string): Promise<PlatformData> {
+  const videoId = url.split('v=')[1].substring(0, 11);
+  const response = await axios.get(url);
+  const $ = cheerio.load(response.data);
+  const title = $('title').text();
+  const account = $('a[href^="/channel/"]').first().text();
 
-// return a base URL without http(s) scheme, query params and anchors
-const getBaseUrl = (url: string) => {
-    try {
-        const urlObj = new URL(url);
-        const baseUrl = (urlObj.origin + urlObj.pathname).replace(/https:\/\//, '').replace(/http:\/\//, '').replace(/\/$/, '').toLowerCase();
-        return baseUrl;
-    } catch (error) {
-        throw new Error(`Can't parse URL: ${url}`);
+  return {
+    title,
+    platform: 'youtube',
+    account,
+    puid: videoId,
+  };
+}
+
+// This function gets the tweet data for a given ID
+export async function getTwitterData(tweetId: string): Promise<PlatformData> {
+    if (!process.env.TWITTER_BEARER_TOKEN) {
+        throw new Error('Missing Twitter bearer token in environment');
     }
-}
 
-void (async () => {
     try {
-        // make sure one search option is set
-        if (!options.idx && !options.puid && !options.url) {
-            throw "Need to specify a search option";
-        }
-        // parse the manifest
-        const manifest = JSON.parse(fs.readFileSync(options.path, 'utf8')) as XPOCManifest;
-        // search the manifest
-        const content = manifest.content.filter(c => {
-            if (options.idx) {
-                return compare(c.idx, options.idx);
-            } else if (options.puid) {
-                return compare(c.puid, options.puid);
-            } else if (options.url) {
-                return compare(getBaseUrl(c.url), getBaseUrl(options.url));
-            }
-        })
-        // print search matches
-        content.forEach(content => console.log(content));
+        const response = await axios.get(`https://api.twitter.com/2/tweets/${tweetId}`, {
+            headers: {
+                Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+            },
+        });
+        
+        console.log(response.data); // For debugging
+
+        const tweetData = response.data.data;
+        return {
+            title: tweetData.text,
+            platform: 'twitter',
+            account: tweetData.author_id, // Note: This will be the user's ID, not their screen name
+            puid: tweetData.id,
+        };
     } catch (err) {
-        console.log(err)
+        console.error(err); // For debugging
+        throw new Error(`Error fetching Twitter data: ${(err as Error).message}`);
     }
-})()
+}
+
+const platformDataFetchers: DataFetcher = {
+  youtube: getYoutubeData,
+  twitter: getTwitterData,
+};
+
+export async function createManifest(
+  url: string,
+  platform: 'youtube' | 'twitter',
+  existingManifest: XPOCManifest,
+  idx: number
+): Promise<XPOCManifest> {
+  const platformDataFetcher = platformDataFetchers[platform];
+
+  if (!platformDataFetcher) {
+    throw new Error(`Unsupported platform: ${platform}`);
+  }
+
+  const platformData = await platformDataFetcher(url);
+
+  existingManifest.content.push({
+    idx,
+    title: platformData.title,
+    url,
+    platform: platformData.platform,
+    puid: platformData.puid,
+    account: platformData.account,
+  });
+
+  return existingManifest;
+}

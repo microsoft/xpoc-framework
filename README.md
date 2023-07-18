@@ -53,6 +53,23 @@ To process a request, the user needs to make a POST request to `/process` endpoi
     ```
     This will return the XPOC manifest of the content piece if it exists, along with the matching content piece from the manifest.
 
+### HTML File Usage
+This project includes two HTML files that serve specific purposes:
+
+- fetch.html
+- generate.html
+
+### fetch.html
+fetch.html is the interface for the Cross-Platform Origin of Content (XPOC) validator. It allows users to enter the URL of the content they want to verify. The page will send a POST request to the server, process the URL, and display the related manifest information along with the corresponding media information, if available.
+
+To use this page, enter a URL into the input field and click the "Verify" button. The related information, if found, will be displayed on the same page.
+
+### generate.html
+generate.html provides a form that allows users to generate a new XPOC manifest. Users can input multiple URLs (each on a new line) and select the platform (YouTube or Twitter, for example) from which the content originates.
+
+On submission, the form sends a POST request to the server for each URL. The server processes these requests and adds the new content pieces to the XPOC manifest. The output of this operation is displayed on the same page.
+
+To use this page, enter your URLs into the textarea, select a platform from the dropdown menu, and click the "Generate Manifest" button. The updated manifest will be displayed on the page.
 
 ## Contributing
 

@@ -8,6 +8,8 @@ For more specific technical details, please refer to the source code documentati
 
 The repository contains the Express [server](./server.ts) and the main XPOC logic [file](./xpoc.ts).
 
+Here is a [demo video](https://github.com/microsoft/xpoc-framework/invitations) of how this works and our whitepaper will be released shortly. 
+
 ## System Overview
 
 The XPOC system fetches data from various platforms and creates a manifest for each content piece. The manifest includes data like the title of the content, the platform, the unique identifier (PUID) of the content, and the account that published the content. 

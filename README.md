@@ -1,14 +1,58 @@
-# Project
+# XPOC - Cross-Platform Content Verification
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+*This project implements a proof-of-concept prototype for cross-platform content verification (XPOC). Please note that this is a sample project and should not be used as-is in a production environment.*
 
-As the maintainer of this project, please make a few updates:
+The aim of the XPOC project is to provide a solution for verifying the authenticity of content shared across various platforms such as YouTube, Twitter, and potentially more. It does this by parsing the content metadata, packaging it into an XPOC manifest and cross-referencing it with the manifest on the content's original platform.
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+For more specific technical details, please refer to the source code documentation available in the repository.
+
+The repository contains the Express [server](./server.ts) and the main XPOC logic [file](./xpoc.ts).
+
+## System Overview
+
+The XPOC system fetches data from various platforms and creates a manifest for each content piece. The manifest includes data like the title of the content, the platform, the unique identifier (PUID) of the content, and the account that published the content. 
+
+The XPOC lifecycle is as follows:
+
+- The user sends a POST request to the /process endpoint with the URL of the content to be verified.
+- The server analyzes the URL to determine the platform (either Youtube or Twitter). Using the specific platform's data fetcher, it extracts necessary data for verification.
+- A POST request to /add endpoint is made to add new XPOC verifications, providing the URL and platform in the request body.
+- A new manifest is created containing the verification details.
+
+## Deployment example
+
+This section describes an example of how a user could use the system to verify the original content of a Youtube video or a Twitter post.
+
+### Server setup
+The server can be started by running `npm run start`, which starts the express server listening on port 3000.
+
+### Processing a request
+
+To process a request, the user needs to make a POST request to `/process` endpoint. The body of the request should be a JSON object containing the url field, which is the URL of the content to be verified.
+
+## Setup and Usage
+
+1. **Environment Variables**: Create a `.env` file in the root directory of your project. Add the environment-specific variables on new lines in the form `NAME=VALUE`. For example, `TWITTER_BEARER_TOKEN=YOUR_BEARER_TOKEN`. 
+
+2. **Running the Server**: You can run the server by executing `node server.ts` in the root directory of the project.
+
+3. **Adding a New Content Piece**: You can add a new content piece by sending a POST request to the `/add` endpoint of the server with the following JSON body:
+    ```json
+    {
+        "url": "URL_OF_THE_CONTENT",
+        "platform": "PLATFORM_OF_THE_CONTENT"
+    }
+    ```
+    This will return a new XPOC manifest including the new content piece.
+
+4. **Processing a Content Piece**: You can process a content piece by sending a POST request to the `/process` endpoint of the server with the following JSON body:
+    ```json
+    {
+        "url": "URL_OF_THE_CONTENT"
+    }
+    ```
+    This will return the XPOC manifest of the content piece if it exists, along with the matching content piece from the manifest.
+
 
 ## Contributing
 

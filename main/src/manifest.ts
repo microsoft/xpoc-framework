@@ -1,5 +1,5 @@
 export type ContentItem = {
-    idx: number; // changed this from string to number
+    idx: number; 
     title: string;
     url: string;
     platform: string;

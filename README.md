@@ -1,12 +1,14 @@
-# XPOC - Cross-Platform Content Verification
+# Cross-Platform Origin of Content (XPOC) Framework
 
-*This project implements a proof-of-concept prototype for cross-platform content verification (XPOC). Please note that this is a sample project and should not be used as-is in a production environment.*
+This project implements a proof-of-concept prototype for a Cross-Platform Origin of Content (XPOC) framework. Please note that this is a sample project and should not be used as-is in a production environment.
 
-The aim of the XPOC project is to provide a solution for verifying the authenticity of content shared across various platforms such as YouTube, Twitter, and potentially more. It does this by parsing the content metadata, packaging it into an XPOC manifest and cross-referencing it with the manifest on the content's original platform.
+The aim of the XPOC framework is to provide a solution for verifying the authenticity of content shared across various platforms such as YouTube, Twitter, Facebook, etc. It does this by parsing the content metadata, packaging it into an XPOC manifest and cross-referencing it with the manifest on the content's original platform.
 
-For more specific technical details, please refer to the source code documentation available in the repository.
+The framework's specification can be found [here](./doc//xpoc-specification.md).
 
 The repository contains the Express [server](./server.ts) and the main XPOC logic [file](./xpoc.ts).
+
+Here is a [demo video](https://github.com/microsoft/xpoc-framework/invitations) of how this works and our whitepaper will be released shortly. 
 
 ## System Overview
 

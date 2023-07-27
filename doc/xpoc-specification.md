@@ -6,7 +6,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMEND
 
 ## System Overview
 
-A content Owner can attest to the origin of media items hosted on various platforms by listing them in a manifest on its own website `[ORIGIN_URL]`, and by attaching a XPOC URI `xpoc://[ORIGINI_URL]` to the content items (in a platform-specific way) pointing back to the manifest. Verifiers can validate the origin of an item by using the XPOC URI to discover the Owner's manifest and by verifying that the item is indeed listed therein.
+A content Owner can attest to the origin of media items hosted on various platforms by listing them in a manifest on its own website `[ORIGIN_URL]`, and by attaching a XPOC URI `xpoc://[ORIGIN_URL]` to the content items (in a media platform specific way) pointing back to the manifest. Verifiers can validate the origin of an item by using the XPOC URI to discover the Owner's manifest and by verifying that the item is indeed listed therein. 
 
 ## Terminology
 
@@ -54,11 +54,11 @@ where:
   * `title` is the label for the content item,
   * `desc` is a description of the content item,
   * `url` is the URL of the content item on a hosting platform,
-  * `platform` is the name of the hosting platform.
+  * `platform` is the name of the hosting platform,
   * `puid` is a platform-specific unique identifier of the hosted content, and
   * `account` is the platform-specific account name which owns the content item.
 
-### Location
+### Manifest Location 
 
 The manifest MUST be hosted at the Origin website's well-known TLS-protected location: `https://[ORIGIN_URL]/.well-known/xpoc-manifest.json`.
 
@@ -84,7 +84,7 @@ Alex creates a manifest and makes it available at `https://alexexample.com/.well
 
 ### Content creation
 
-Alex posts a video on youtube at `https://www.youtube.com/watch?v=abcdef12345` under the account `@AlexExample` and adds the XPOC URI `xpoc://alexexample.com` in the video's description.
+Alex posts a video on Youtube at `https://www.youtube.com/watch?v=abcdef12345` under the account `@AlexExample` and adds the XPOC URI `xpoc://alexexample.com` in the video's description.
 
 Alex then adds the following JSON object to the manifest's `content` array:
 ```json
@@ -99,7 +99,7 @@ Alex then adds the following JSON object to the manifest's `content` array:
 
 ### Content validation
 
-A verifier can check that the youtube video posted by `@AlexExample` is indeed from `alexexample.com` by:
+A verifier can check that the Youtube video posted by `@AlexExample` is indeed from `alexexample.com` by:
 1. Parsing the XPOC URI to get the `alexexample.com` hostname,
 2. Retrieving the XPOC manifest from `https://alexexample.com/.well-known/xpoc-manifest.json`, and
 3. Verifying that the video URL is listed in the manifest.

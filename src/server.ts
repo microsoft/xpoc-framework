@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import express, { Request, Response } from 'express';
 import cheerio from 'cheerio';
 import { XPOCManifest } from './manifest';

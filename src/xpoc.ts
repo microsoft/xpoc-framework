@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import axios from 'axios';
 import cheerio from 'cheerio';
 import dotenv from 'dotenv';

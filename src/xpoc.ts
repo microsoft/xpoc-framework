@@ -18,7 +18,8 @@ type DataFetcher = {
 
 async function getYoutubeData(url: string): Promise<PlatformData> {
   const videoId = url.split('v=')[1].substring(0, 11);
-  const response = await axios.get(url);
+  const fetchUrl = 'https://www.youtube.com/watch?v=' + videoId;
+  const response = await axios.get(fetchUrl);
   const $ = cheerio.load(response.data);
   const title = $('title').text();
   const account = $('a[href^="/channel/"]').first().text();

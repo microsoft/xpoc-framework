@@ -35,7 +35,8 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
     // TODO: move platform-specific processing to their own file (youtube.ts, twitter.ts, etc.)
     if (hostname === 'youtube.com' || hostname === 'youtu.be') { // TODO: should we add more hostnames? e.g., country specific ones?
         const videoId = url.split('v=')[1].substring(0, 11);
-        const response = await axios.get(url);
+        const fetchUrl = 'https://www.youtube.com/watch?v=' + videoId;
+        const response = await axios.get(fetchUrl);
         const $ = cheerio.load(response.data);
         const description = $('meta[name="description"]').attr('content');
         if (!description) {

@@ -98,7 +98,7 @@ app.post('/add', async (req: Request<{}, {}, AddRequestBody>, res: Response) => 
   
     const existingManifest: XPOCManifest = {
       name: "Default Name",
-      url: "Default URL",
+      hostname: "Default URL",
       content: []
     };
   

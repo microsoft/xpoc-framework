@@ -1,6 +1,7 @@
 export type ContentItem = {
     idx: number; 
     title: string;
+    desc?: string;
     url: string;
     platform: string;
     puid: string;
@@ -9,6 +10,6 @@ export type ContentItem = {
   
   export type XPOCManifest = {
     name: string;
-    url: string;
+    hostname: string;
     content: ContentItem[];
   };

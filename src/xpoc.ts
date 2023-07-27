@@ -81,6 +81,7 @@ export async function createManifest(
   existingManifest.content.push({
     idx,
     title: platformData.title,
+    desc: '', // TODO: what could be the description?
     url,
     platform: platformData.platform,
     puid: platformData.puid,

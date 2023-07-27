@@ -1,14 +1,10 @@
 # Cross-Platform Origin of Content (XPOC) Framework
 
-This project implements a proof-of-concept prototype for a Cross-Platform Origin of Content (XPOC) framework. Please note that this is a sample project and should not be used as-is in a production environment.
+This project introduces the proof-of-concept Cross-Platform Origin of Content (XPOC) framework, along with a prototype implementation.
 
-The aim of the XPOC framework is to provide a solution for verifying the authenticity of content shared across various platforms such as YouTube, Twitter, Facebook, etc. It does this by parsing the content metadata, packaging it into an XPOC manifest and cross-referencing it with the manifest on the content's original platform.
-
-The framework's specification can be found [here](./doc//xpoc-specification.md).
+The aim of the XPOC framework is to help verifying the authenticity of content shared across various web platforms such as YouTube, Twitter, Facebook, etc. A content owner creates a XPOC manifest that contains references to the content items they created across various platforms, and hosts it on its well-known website. The owner then adds a XPOC URI referencing its own manifest to the content items. Verifiers can validate the origin of a content item with a XPOC URI by dereferencing it to retrieve the owner's manifest, and by verifying that the content item is listed within it. For details, see the framework's [specification](./doc//xpoc-specification.md).
 
 The repository contains the Express [server](./server.ts) and the main XPOC logic [file](./xpoc.ts).
-
-Here is a [demo video](https://github.com/microsoft/xpoc-framework/invitations) of how this works and our whitepaper will be released shortly. 
 
 ## System Overview
 
@@ -20,6 +16,8 @@ The XPOC lifecycle is as follows:
 - The server analyzes the URL to determine the platform (either Youtube or Twitter). Using the specific platform's data fetcher, it extracts necessary data for verification.
 - A POST request to /add endpoint is made to add new XPOC verifications, providing the URL and platform in the request body.
 - A new manifest is created containing the verification details.
+
+![XPOC architecture](./doc/XPOC_arch.svg)
 
 ## Deployment example
 

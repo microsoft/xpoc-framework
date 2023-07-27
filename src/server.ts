@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import cheerio from 'cheerio';
-import fs from 'fs';
 import { XPOCManifest } from './manifest';
 import { createManifest, getTwitterData } from './xpoc';
 import dotenv from 'dotenv';
@@ -26,9 +25,15 @@ interface AddRequestBody {
 app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Response) => {
     const { url } = req.body;
     let puid: string;
+    console.log("process url: " + url);
 
-    // for now I am only supporting youtube and twitter
-    if (url.includes('youtube.com')) {
+    // parse the url to get the host name
+    const hostname = new URL(url).hostname.split('.').slice(-2).join('.').toLowerCase();
+    console.log("hostname: " + hostname);
+
+    // for now we only support youtube and twitter
+    // TODO: move platform-specific processing to their own file (youtube.ts, twitter.ts, etc.)
+    if (hostname === 'youtube.com' || hostname === 'youtu.be') { // TODO: should we add more hostnames? e.g., country specific ones?
         const videoId = url.split('v=')[1].substring(0, 11);
         const response = await axios.get(url);
         const $ = cheerio.load(response.data);
@@ -55,7 +60,7 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
                 res.status(404).send({ error: 'Content does not contain a xpoc link' });
             }
         }
-    } else if (url.includes('twitter.com')) {
+    } else if (hostname === 'twitter.com' || hostname === 'x.com') {
         const splitUrl = url.split('/');
         const tweetId = splitUrl[splitUrl.length - 1];
 
@@ -89,7 +94,7 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
             res.status(500).send({ error: 'Failed to fetch Twitter data' });
         }
     } else {
-        res.status(400).send({ error: 'Invalid platform' });
+        res.status(400).send({ error: 'Unsupported platform' });
     }
 });
 

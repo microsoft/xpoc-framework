@@ -1,71 +1,34 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import axios from 'axios';
-import cheerio from 'cheerio';
 import dotenv from 'dotenv';
-import { XPOCManifest } from './manifest';
+import { Twitter, Youtube, PlatformContentData } from './platform';
 
 dotenv.config();
 
-interface PlatformData {
+export type ContentItem = {
+  idx: number; 
   title: string;
+  desc?: string;
+  url: string;
   platform: string;
-  account: string;
   puid: string;
-}
-
-type DataFetcher = {
-  [platform in 'youtube' | 'twitter']: (url: string) => Promise<PlatformData>;
+  account: string;
 };
 
-async function getYoutubeData(url: string): Promise<PlatformData> {
-  const videoId = url.split('v=')[1].substring(0, 11);
-  const fetchUrl = 'https://www.youtube.com/watch?v=' + videoId;
-  const response = await axios.get(fetchUrl);
-  const $ = cheerio.load(response.data);
-  const title = $('title').text();
-  const account = $('a[href^="/channel/"]').first().text();
+export type XPOCManifest = {
+  name: string;
+  hostname: string;
+  content: ContentItem[];
+};
 
-  return {
-    title,
-    platform: 'youtube',
-    account,
-    puid: videoId,
-  };
-}
-
-// This function gets the tweet data for a given ID
-export async function getTwitterData(tweetId: string): Promise<PlatformData> {
-    if (!process.env.TWITTER_BEARER_TOKEN) {
-        throw new Error('Missing Twitter bearer token in environment');
-    }
-
-    try {
-        const response = await axios.get(`https://api.twitter.com/2/tweets/${tweetId}`, {
-            headers: {
-                Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
-            },
-        });
-        
-        console.log(response.data); // For debugging
-
-        const tweetData = response.data.data;
-        return {
-            title: tweetData.text,
-            platform: 'twitter',
-            account: tweetData.author_id, // Note: This will be the user's ID, not their screen name
-            puid: tweetData.id,
-        };
-    } catch (err) {
-        console.error(err); // For debugging
-        throw new Error(`Error fetching Twitter data: ${(err as Error).message}`);
-    }
-}
+type DataFetcher = {
+  [platform in 'youtube' | 'twitter']: (url: string) => Promise<PlatformContentData>;
+};
 
 const platformDataFetchers: DataFetcher = {
-  youtube: getYoutubeData,
-  twitter: getTwitterData,
+  youtube: Youtube.getData,
+  twitter: Twitter.getData,
 };
 
 export async function createManifest(
@@ -85,7 +48,7 @@ export async function createManifest(
   existingManifest.content.push({
     idx,
     title: platformData.title,
-    desc: '', // TODO: what could be the description?
+    desc: '', // TODO: what could be the description? Add a field in web UI?
     url,
     platform: platformData.platform,
     puid: platformData.puid,

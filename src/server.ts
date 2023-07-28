@@ -2,11 +2,10 @@
 // Licensed under the MIT license.
 
 import express, { Request, Response } from 'express';
-import cheerio from 'cheerio';
-import { XPOCManifest } from './manifest';
-import { createManifest, getTwitterData } from './xpoc';
+import { createManifest, XPOCManifest } from './xpoc';
 import dotenv from 'dotenv';
 import axios from 'axios';
+import { Twitter, Youtube } from './platform';
 
 dotenv.config();
 
@@ -25,80 +24,52 @@ interface AddRequestBody {
   platform: 'youtube' | 'twitter';
 }
 
+// returns the base, sanitized URL given a complete one; i.e. a lowercase scheme + path URL without
+// query-parameters or anchors, and without a trailing '/'
+export function getBaseURL (url:string) {
+        const urlObj = new URL(url);
+        const baseURL = (urlObj.origin + urlObj.pathname).replace(/\/$/, '').toLowerCase();
+        return baseURL;
+}
+
+// returns the XPOC manifest item for a given content URL
 app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Response) => {
     const { url } = req.body;
-    let puid: string;
     console.log("process url: " + url);
+    // parse the URL to get the host name (e.g. example.com)
+    let sanitizedUrl = "";
+    let hostname = "";
+    try {
+        sanitizedUrl = getBaseURL(url);
+        hostname = new URL(sanitizedUrl).hostname.split('.').slice(-2).join('.');
+        console.log("hostname: " + hostname);
+    } catch (err) {
+        res.status(500).send({ error: 'Error parsing the URL' });
+    }
 
-    // parse the url to get the host name
-    const hostname = new URL(url).hostname.split('.').slice(-2).join('.').toLowerCase();
-    console.log("hostname: " + hostname);
-
-    // for now we only support youtube and twitter
-    // TODO: move platform-specific processing to their own file (youtube.ts, twitter.ts, etc.)
-    if (hostname === 'youtube.com' || hostname === 'youtu.be') { // TODO: should we add more hostnames? e.g., country specific ones?
-        const videoId = url.split('v=')[1].substring(0, 11);
-        const fetchUrl = 'https://www.youtube.com/watch?v=' + videoId;
-        const response = await axios.get(fetchUrl);
-        const $ = cheerio.load(response.data);
-        const description = $('meta[name="description"]').attr('content');
-        if (!description) {
-            res.status(500).send({ error: 'Failed to fetch video description' });
-            return;
+    // get the XPOC URI from the content hosted on a supported platform
+    let xpocUri = "";
+    try {
+        if (Youtube.Hostnames.includes(hostname)) {
+            xpocUri = await Youtube.getXpocUri(url);
+        } else if (Twitter.Hostnames.includes(hostname)) {
+            xpocUri = await Twitter.getXpocUri(url);
         } else {
-            const xpocRegex = /xpoc:\/\/(.*?)(\s|$)/;
-            const match = xpocRegex.exec(description);
-
-            if (match) {
-                const xpocUrl = 'https://' + match[1] + '/xpoc-manifest.json';
-                try {
-                    const xpocResponse = await axios.get(xpocUrl);
-                    const manifest: XPOCManifest = xpocResponse.data;
-
-                    const matchingContent = manifest.content.find(content => content.puid === videoId);
-                    res.send({ manifest, matchingContent });
-                } catch (err) {
-                    res.status(500).send({ error: 'Failed to fetch the xpoc manifest: ' + xpocUrl });
-                }
-            } else {
-                res.status(404).send({ error: 'Content does not contain a xpoc link' });
-            }
+            res.status(400).send({ error: 'Unsupported platform' });
         }
-    } else if (hostname === 'twitter.com' || hostname === 'x.com') {
-        const splitUrl = url.split('/');
-        const tweetId = splitUrl[splitUrl.length - 1];
+    } catch (err) {
+        res.status(500).send({ error: err });
+    }
 
-        try {
-            const tweetData = await getTwitterData(tweetId);
-
-            const xpocRegex = /xpoc:\/\/(.*?)(\s|$)/;
-            const match = xpocRegex.exec(tweetData.title);
-
-            if (match) {
-                const xpocUrl = 'https://' + match[1] + '/xpoc-manifest.json';
-
-                try {
-                    const xpocResponse = await axios.get(xpocUrl);
-                    const manifest: XPOCManifest = xpocResponse.data;
-
-                    const matchingContent = manifest.content.find(content => content.puid === tweetId);
-
-                    if (matchingContent) {
-                        res.send({ manifest, matchingContent });
-                    } else {
-                        res.status(404).send({ error: 'No matching content found in the XPOC manifest' });
-                    }
-                } catch (err) {
-                    res.status(500).send({ error: 'Failed to fetch the XPOC manifest: ' + xpocUrl });
-                }
-            } else {
-                res.status(404).send({ error: 'Content does not contain an XPOC link' });
-            }
-        } catch (err) {
-            res.status(500).send({ error: 'Failed to fetch Twitter data' });
-        }
-    } else {
-        res.status(400).send({ error: 'Unsupported platform' });
+    // fetch the XPOC manifest using the parsed XPOC URI
+    const xpocUrl = 'https://' + xpocUri + '/.well-known/xpoc-manifest.json'; // TODO: improve robustness, check if '/' is already present before concat
+    try {
+        const xpocResponse = await axios.get(xpocUrl);
+        const manifest: XPOCManifest = xpocResponse.data;
+        const matchingContent = manifest.content.find(content => getBaseURL(content.url) === sanitizedUrl);
+        res.send({ manifest, matchingContent });
+    } catch (err) {
+        res.status(500).send({ error: 'Failed to fetch the XPOC manifest: ' + xpocUrl });
     }
 });
 

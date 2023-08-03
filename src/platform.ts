@@ -40,8 +40,9 @@ export const Youtube: Platform = {
     Hostnames: ['youtube.com', 'youtu.be'],
 
     getData: async (url: string): Promise<PlatformContentData> => {
-        const videoId = url.split('v=')[1].substring(0, 11);
-        if (!videoId) {
+        let videoId = url.split('v=')[1].substring(0, 11);
+        // Validate the videoId
+        if (!videoId || !/^[\w-]{11}$/.test(videoId)) {
             throw new Error('Malformed YouTube URL');
         }
         const fetchUrl = 'https://www.youtube.com/watch?v=' + videoId;
@@ -80,8 +81,14 @@ export const Twitter: Platform = {
 
     getData: async (url: string): Promise<PlatformContentData> => {
         const splitUrl = url.split('/');
-        const tweetId = splitUrl[splitUrl.length - 1]; // TODO: is that robust? Twitter can have other items appended to the path
+        const tweetId = splitUrl[splitUrl.length - 1]; 
         
+        // Validate the tweetId
+        if (!tweetId || !/^[0-9]+$/.test(tweetId)) {
+            throw new Error('Malformed Twitter URL');
+        }
+        // TODO: is that robust? Twitter can have other items appended to the path
+
         if (!process.env.TWITTER_BEARER_TOKEN) {
             throw new Error('Missing Twitter API bearer token in environment');
         }

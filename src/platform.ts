@@ -87,8 +87,9 @@ export const Twitter: Platform = {
         if (!tweetId || !/^[0-9]+$/.test(tweetId)) {
             throw new Error('Malformed Twitter URL');
         }
-        // TODO: is that robust? Twitter can have other items appended to the path
 
+        // TODO: is that robust? Twitter can have other items appended to the path
+        
         if (!process.env.TWITTER_BEARER_TOKEN) {
             throw new Error('Missing Twitter API bearer token in environment');
         }

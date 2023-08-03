@@ -62,7 +62,7 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
     }
 
     // fetch the XPOC manifest using the parsed XPOC URI
-    const xpocUrl = 'https://' + xpocUri + '/.well-known/xpoc-manifest.json'; // TODO: improve robustness, check if '/' is already present before concat
+    const xpocUrl = 'https://' + xpocUri + '/xpoc-manifest.json'; // TODO: improve robustness, check if '/' is already present before concat
     try {
         const xpocResponse = await axios.get(xpocUrl);
         const manifest: XPOCManifest = xpocResponse.data;

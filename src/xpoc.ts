@@ -37,13 +37,16 @@ export async function createManifest(
   existingManifest: XPOCManifest,
   idx: number
 ): Promise<XPOCManifest> {
-  const platformDataFetcher = platformDataFetchers[platform];
-
-  if (!platformDataFetcher) {
+  
+  let platformData;
+  
+  if (platform === 'youtube') {
+    platformData = await Youtube.getData(url);
+  } else if (platform === 'twitter') {
+    platformData = await Twitter.getData(url);
+  } else {
     throw new Error(`Unsupported platform: ${platform}`);
   }
-
-  const platformData = await platformDataFetcher(url);
 
   existingManifest.content.push({
     idx,

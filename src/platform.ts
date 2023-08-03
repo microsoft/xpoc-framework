@@ -80,9 +80,9 @@ export const Twitter: Platform = {
     Hostnames: ['twitter.com', 'x.com'],
 
     getData: async (url: string): Promise<PlatformContentData> => {
-        const splitUrl = url.split('/');
-        const tweetId = splitUrl[splitUrl.length - 1]; 
-        
+        const statusIndex = url.split('/').indexOf('status');
+        const tweetId = url.split('/')[statusIndex + 1]; // get the next element after 'status' and avoids the issue if someone puts in /photo/1 in the URL
+    
         // Validate the tweetId
         if (!tweetId || !/^[0-9]+$/.test(tweetId)) {
             throw new Error('Malformed Twitter URL');
@@ -127,4 +127,44 @@ export const Twitter: Platform = {
     }
 }
 
-  
+export const Facebook: Platform = {
+    Hostnames: ['facebook.com'],
+
+    getData: async (url: string): Promise<PlatformContentData> => {
+        const splitUrl = url.split("/");
+        const nodeId = splitUrl[splitUrl.length - 1];  // Assuming the last element is the node id
+
+        // TODO: This would need to be replaced with how you get your access token.
+        const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
+
+        if (!accessToken) {
+            throw new Error('Missing Facebook API Access token in environment');
+        }
+
+        try {
+            const response = await axios.get(`https://graph.facebook.com/${nodeId}?access_token=${accessToken}`);
+            const fbData = response.data;
+            const xpocUri = findXpocUri(fbData.description);  // This assumes xpocUri is in the description field.
+            return {
+                title: fbData.name,
+                platform: 'facebook',
+                account: fbData.id,
+                puid: fbData.id,
+                xpocUri: xpocUri
+            };
+        } catch (err) {
+            console.error(err);
+            throw new Error(`Error fetching Facebook data: ${(err as Error).message}`);
+        }
+    },
+
+    getXpocUri: async (url: string): Promise<string> => {
+        try {
+            const fbData = await Facebook.getData(url);
+            return fbData.xpocUri;
+        } catch (err) {
+            throw new Error('Failed to fetch Facebook data');
+        }
+    }
+}
+ 

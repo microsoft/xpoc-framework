@@ -32,7 +32,7 @@ To process a request, the user needs to make a POST request to `/process` endpoi
 
 ## Setup and Usage
 
-1. **Environment Variables**: Create a `.env` file in the root directory of your project. Add the environment-specific variables on new lines in the form `NAME=VALUE`. For example, `TWITTER_BEARER_TOKEN=YOUR_BEARER_TOKEN`. Read more at the end regarding platform specific explorations we have done with YouTube, Twitter, and Meta social media platforms. 
+1. **Environment Variables**: Create a `.env` file in the root directory of your project. Add the environment-specific variables on new lines in the form `NAME=VALUE`. For example, `TWITTER_BEARER_TOKEN=YOUR_BEARER_TOKEN`. Read more at the end regarding platform specific explorations [here](./PLATFORM.md). 
 
 2. **Running the Server**: You can run the server by executing `node server.ts` in the root directory of the project.
 
@@ -70,10 +70,6 @@ generate.html provides a form that allows users to generate a new XPOC manifest.
 On submission, the form sends a POST request to the server for each URL. The server processes these requests and adds the new content pieces to the XPOC manifest. The output of this operation is displayed on the same page.
 
 To use this page, enter your URLs into the textarea, select a platform from the dropdown menu, and click the "Generate Manifest" button. The updated manifest will be displayed on the page.
-
-### Platform Explorations
-
-
 
 ## Contributing
 

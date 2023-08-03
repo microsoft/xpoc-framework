@@ -102,8 +102,8 @@
                 html += "<div class='section'><h2>Media Information</h2>" +
                 'Title: ' + matchingContent.title + '<br>' +
                 'URL: ' + matchingContent.url + '<br>' +
-                // TODO: don't hardcode platform logo. Can we get it from the platform instead of wikipedia?
-                'Platform: <img class="platform-logo" src="https://upload.wikimedia.org/wikipedia/commons/7/75/YouTube_social_white_squircle_%282017%29.svg"> ' + matchingContent.platform + '<br>' +
+                // TODO: consider adding logo here
+                'Platform:' + matchingContent.platform + '<br>' +
                 'UID: ' + matchingContent.puid + '<br>' +
                 'Account: ' + matchingContent.account + '</div>';
             } else {

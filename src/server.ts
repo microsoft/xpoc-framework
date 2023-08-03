@@ -24,18 +24,30 @@ interface AddRequestBody {
   platform: 'youtube' | 'twitter';
 }
 
-// returns the base, sanitized URL given a complete one; i.e. a lowercase scheme + path URL without
-// query-parameters or anchors, and without a trailing '/'
-export function getBaseURL (url:string) {
-        const urlObj = new URL(url);
-        const baseURL = (urlObj.origin + urlObj.pathname).replace(/\/$/, '').toLowerCase();
-        return baseURL;
+// Returns the base, sanitized URL given a complete one; i.e. a lowercase scheme + path URL
+// Retains crucial query parameters for platforms such as YouTube and removes
+// unnecessary query parameters or anchors, and trailing '/'
+
+export function getBaseURL(url: string) {
+  const urlObj = new URL(url);
+  let searchParams = urlObj.searchParams;
+  let queryParams = [];
+  if(urlObj.hostname.includes('youtube') && searchParams.has('v')) {
+      queryParams.push('v=' + searchParams.get('v'));
+  }
+  const baseURL = (urlObj.origin + urlObj.pathname + '?' + queryParams.join('&')).replace(/\/$/, '').toLowerCase();
+  return baseURL;
 }
 
 // returns the XPOC manifest item for a given content URL
 app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Response) => {
     const { url } = req.body;
     console.log("process url: " + url);
+
+    if (!url || typeof url !== 'string') {
+      return res.status(400).send({ error: 'Invalid or empty URL' });
+    }
+
     // parse the URL to get the host name (e.g. example.com)
     let sanitizedUrl = "";
     let hostname = "";
@@ -43,6 +55,7 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
         sanitizedUrl = getBaseURL(url);
         hostname = new URL(sanitizedUrl).hostname.split('.').slice(-2).join('.');
         console.log("hostname: " + hostname);
+        console.log('sanitizedUrl:', sanitizedUrl);
     } catch (err) {
         res.status(500).send({ error: 'Error parsing the URL' });
     }
@@ -66,7 +79,16 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
     try {
         const xpocResponse = await axios.get(xpocUrl);
         const manifest: XPOCManifest = xpocResponse.data;
-        const matchingContent = manifest.content.find(content => getBaseURL(content.url) === sanitizedUrl);
+
+        /* Add logs to debug content matching
+        
+         manifest.content.forEach((content, i) => {
+          console.log(`content[${i}] url:`, content.url);
+          console.log(`content[${i}] baseURL:`, getBaseURL(content.url));
+        });*/
+
+        const matchingContent = manifest.content.find(content => getBaseURL(content.url).toLowerCase() === sanitizedUrl);
+
         res.send({ manifest, matchingContent });
     } catch (err) {
         res.status(500).send({ error: 'Failed to fetch the XPOC manifest: ' + xpocUrl });

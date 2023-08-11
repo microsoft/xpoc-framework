@@ -28,9 +28,23 @@ The server can be started by running `npm run start`, which starts the express s
 
 ### Processing a request
 
-To process a request, the user needs to make a POST request to `/process` endpoint. The body of the request should be a JSON object containing the url field, which is the URL of the content to be verified.
+To process a request, the user needs to make a POST request to `/process` endpoint. The body of the request should be a JSON object containing `xpocUri` and `url` fields. The `xpocUri` represents the XPOC URI, while the `url` is the URL of the content to be verified.
 
 ## Setup and Usage
+
+### Verification Enhancements
+
+#### Version 1 Verification
+In the initial version of the XPOC Framework, verification was based on two inputs: the XPOC URI and the content URL. The system would fetch the manifest corresponding to the given XPOC URI and verify if the content URL is listed within that manifest.
+
+#### Towards a Simplified Verification Experience
+We're evolving our framework to streamline the verification process. The new approach aims for users to only provide the content URL. The framework will then interact directly with supported platforms like YouTube or X (formerly Twitter) to fetch the associated XPOC URI, thereby reducing the steps needed for verification
+
+For a more detailed look into this evolution and platform-specific integrations, refer to [PLATFORM.md](./PLATFORM.md) and [servert.ts](/src/server.ts). 
+
+## Setup and Usage
+
+If you are not using platform specific API, skip step 1. 
 
 1. **Environment Variables**: Create a `.env` file in the root directory of your project. Add the environment-specific variables on new lines in the form `NAME=VALUE`. For example, `TWITTER_BEARER_TOKEN=YOUR_BEARER_TOKEN`. Read more at the end regarding platform specific explorations [here](./PLATFORM.md). 
 

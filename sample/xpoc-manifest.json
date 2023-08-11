@@ -1,1 +1,54 @@
-// insert sample manifest here with XPOC content
+{
+    "name": "Christian Paquin",
+    "url": "https://raw.githubusercontent.com/christianpaquin/void/main/xpoc",
+    "content": [
+	{
+	    "idx": 1,
+	    "title": "Post-quantum Crypto: Today’s defense against tomorrow’s quantum hacker - Christian Paquin", 
+	    "url": "https://www.youtube.com/watch?v=eelVRePPmE0",
+	    "platform": "youtube",
+	    "puid": "eelVRePPmE0",
+	    "account": "@0xdade"
+	},
+	{
+	    "idx": 2,
+	    "title": "Quantum-safe cryptography: Securing today’s data against tomorrow’s computers", 
+	    "url": "https://www.youtube.com/watch?v=IiEdJ5IjH_U",
+	    "platform": "youtube",
+	    "puid": "IiEdJ5IjH_U",
+	    "account": "@MicrosoftResearch"
+	},
+	{
+	    "idx": 3,
+	    "title": "Where's Waldo Been?", 
+	    "url": "https://twitter.com/chpaquin/status/1669745439753613318",
+	    "platform": "twitter",
+	    "puid": "1669745439753613318",
+	    "account": "@chpaquin"
+	},
+	{
+	    "idx": 5,
+	    "title": "Where's Waldo Been?", 
+	    "url": "https://infosec.exchange/@chpaquin/110554864915845247",
+	    "platform": "mastodon",
+	    "puid": "110554864915845247",
+	    "account": "@chpaquin"
+	},
+	{
+	    "idx": 7,
+	    "title": "XPOC test", 
+	    "url": "https://www.youtube.com/watch?v=hDd3t7y1asU",
+	    "platform": "youtube",
+	    "puid": "hDd3t7y1asU",
+	    "account": "@christianpaquinmsr"
+	},
+	{
+	    "idx": 8,
+	    "title": "SOS TSR", 
+	    "url": "https://www.facebook.com/officialtanyajsmith/videos/951530354892756",
+	    "platform": "facebook",
+	    "puid": "951530354892756",
+	    "account": "officialtanyajsmith"
+	}	
+    ]
+}

@@ -37,8 +37,6 @@ To add support for Twitter in your deployment, you need to:
 2. Once you have access to the API, generate a bearer token.
 3. Add the bearer token to your environment variables. The variable key should be `TWITTER_BEARER_TOKEN`, and the value should be your actual token.
 
-In the future, we plan to add more platforms and improve upon the data retrieval mechanisms while making sure the process is smooth and easily replicable.
-
 ### Meta
 
 For Meta, we utilize the Meta Graph API to fetch data from posts. This requires an access token to authenticate API requests.

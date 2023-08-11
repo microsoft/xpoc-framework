@@ -14,12 +14,15 @@
             margin: 0;
             background-color: #f4f4f4;
         }
-        #mediaUrl {
+        #mediaUrl, #xpocUri {
             width: 60%;
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
             border: 1px solid #ddd;
+        }
+        #xpocUri {
+            margin-right: 10px;
         }
         button {
             padding: 10px 20px;
@@ -29,6 +32,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            display: block; 
         }
         button:hover {
             background-color: #007B9A;
@@ -76,15 +80,15 @@
     <script>
     /* JavaScript code for processing the URL and verifying its authenticity */
     async function verifyMedia() {
+        const xpocUri = document.getElementById('xpocUri').value;
         const url = document.getElementById('mediaUrl').value;
+
         /* Sending a POST request to the server */
         const response = await fetch('/process', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ url })
-        });
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ xpocUri, url })  // Send both URI and URL to the server
+    });
         /* Handling the response */
         const data = await response.json();
 
@@ -117,10 +121,13 @@
     </script>
 </head>
 <body>
+    <div id="output">
     <h1>Validate XPOC Content URL</h1>
+    <input type="text" id="xpocUri" placeholder="Enter XPOC URI">
     <input type="text" id="mediaUrl" placeholder="Enter URL">
-    <button onclick="verifyMedia()">Verify</button>
-    <div id="output"></div>
+    <br> 
+    <button onclick="verifyMedia()">Verify Origin</button>
+    </div>
     <div class="sidebar">
         <button onclick="window.location.href='fetch.html'">XPOC Validator</button>
         <button onclick="window.location.href='generate.html'">Generate Manifest</button>

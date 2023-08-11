@@ -16,7 +16,8 @@ app.use(express.json());
 app.use(express.static('public'));
 
 interface ProcessRequestBody {
-    url: string;
+  xpocUri: string;   
+  url: string;
 }
 
 interface AddRequestBody {
@@ -41,24 +42,38 @@ export function getBaseURL(url: string) {
 
 // returns the XPOC manifest item for a given content URL
 app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Response) => {
-    const { url } = req.body;
-    console.log("process url: " + url);
+  const { xpocUri, url } = req.body;
 
-    if (!url || typeof url !== 'string') {
-      return res.status(400).send({ error: 'Invalid or empty URL' });
-    }
+  // Validate inputs
+  if (!url || typeof url !== 'string' || !xpocUri || typeof xpocUri !== 'string') {
+      return res.status(400).send({ error: 'Invalid or empty URL or XPOC URI' });
+  }
 
-    // parse the URL to get the host name (e.g. example.com)
-    let sanitizedUrl = "";
-    let hostname = "";
-    try {
-        sanitizedUrl = getBaseURL(url);
-        hostname = new URL(sanitizedUrl).hostname.split('.').slice(-2).join('.');
-        console.log("hostname: " + hostname);
-        console.log('sanitizedUrl:', sanitizedUrl);
-    } catch (err) {
-        res.status(500).send({ error: 'Error parsing the URL' });
-    }
+  // Fetch the manifest
+  const manifestUrl = xpocUri.replace('xpoc://', 'https://') + '/xpoc-manifest.json';
+
+  try {
+      const xpocResponse = await axios.get(manifestUrl);
+      const manifest: XPOCManifest = xpocResponse.data;
+
+      // Check if content URL exists in the manifest
+      const matchingContent = manifest.content.find(content => getBaseURL(content.url).toLowerCase() === getBaseURL(url).toLowerCase());
+
+      if (matchingContent) {
+          res.send({ manifest, matchingContent });
+      } else {
+          res.status(400).send({ error: 'Content URL not found in the XPOC manifest.' });
+      }
+
+  } catch (err) {
+      res.status(500).send({ error: 'Failed to fetch the XPOC manifest: ' + manifestUrl });
+  }
+});
+
+// If you have platform support APIs that are not yet implemented, you can add them here with the code implemented in platform.ts. 
+
+
+/* 
 
     // get the XPOC URI from the content hosted on a supported platform
     let xpocUri = "";
@@ -74,26 +89,7 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
         res.status(500).send({ error: err });
     }
 
-    // fetch the XPOC manifest using the parsed XPOC URI
-    const xpocUrl = 'https://' + xpocUri + '/xpoc-manifest.json'; // TODO: improve robustness, check if '/' is already present before concat
-    try {
-        const xpocResponse = await axios.get(xpocUrl);
-        const manifest: XPOCManifest = xpocResponse.data;
-
-        /* Add logs to debug content matching
-        
-         manifest.content.forEach((content, i) => {
-          console.log(`content[${i}] url:`, content.url);
-          console.log(`content[${i}] baseURL:`, getBaseURL(content.url));
-        });*/
-
-        const matchingContent = manifest.content.find(content => getBaseURL(content.url).toLowerCase() === sanitizedUrl);
-
-        res.send({ manifest, matchingContent });
-    } catch (err) {
-        res.status(500).send({ error: 'Failed to fetch the XPOC manifest: ' + xpocUrl });
-    }
-});
+*/ 
 
 app.post('/add', async (req: Request<{}, {}, AddRequestBody>, res: Response) => {
     const { url, platform } = req.body;

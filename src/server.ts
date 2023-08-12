@@ -50,7 +50,7 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
   }
 
   // Fetch the manifest
-  const manifestUrl = xpocUri.replace('xpoc://', 'https://') + '/xpoc-manifest.json';
+  const manifestUrl = xpocUri.replace('xpoc://', 'https://') + '/.well-known/xpoc-manifest.json';
 
   try {
       const xpocResponse = await axios.get(manifestUrl);
@@ -73,7 +73,7 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
 // If you have platform support APIs that are not yet implemented, you can add them here with the code implemented in platform.ts. 
 
 
-/* 
+/* TODO: remove dead code
 
     // get the XPOC URI from the content hosted on a supported platform
     let xpocUri = "";

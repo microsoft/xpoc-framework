@@ -1,0 +1,14 @@
+{
+    "name": "Christian Paquin",
+    "url": "https://raw.githubusercontent.com/microsoft/xpoc-framework/main/sample",
+    "content": [
+	{
+	    "idx": 1,
+	    "title": "XPOC test", 
+	    "url": "https://www.youtube.com/watch?v=hDd3t7y1asU",
+	    "platform": "youtube",
+	    "puid": "hDd3t7y1asU",
+	    "account": "@christianpaquinmsr"
+	}
+    ]
+}

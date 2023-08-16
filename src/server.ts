@@ -28,15 +28,15 @@ interface AddRequestBody {
 // Returns the base, sanitized URL given a complete one; i.e. a lowercase scheme + path URL
 // Retains crucial query parameters for platforms such as YouTube and removes
 // unnecessary query parameters or anchors, and trailing '/'
-
 export function getBaseURL(url: string) {
   const urlObj = new URL(url);
   let searchParams = urlObj.searchParams;
   let queryParams = [];
-  if(urlObj.hostname.includes('youtube') && searchParams.has('v')) {
+  if(urlObj.hostname.toLocaleLowerCase().includes('youtube') && searchParams.has('v')) {
       queryParams.push('v=' + searchParams.get('v'));
   }
-  const baseURL = (urlObj.origin + urlObj.pathname + '?' + queryParams.join('&')).replace(/\/$/, '').toLowerCase();
+  const queryParamsString = queryParams.length > 0 ? '?' + queryParams.join('&') : '';
+  const baseURL = (urlObj.origin + urlObj.pathname + queryParamsString).replace(/\/$/, '').toLowerCase();
   return baseURL;
 }
 

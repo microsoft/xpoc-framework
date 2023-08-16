@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cross-Platform Origin of Content (XPOC) validator</title>
+    <title>XPOC Validator</title>
     <style>
+        /* TODO: move to styles.css (when I simply cut-paste, the layout doesn't work; fix that) */ 
         /* Styling the page layout and elements for a clean and user-friendly interface */
         body {
             font-family: Arial, sans-serif;
@@ -14,7 +15,7 @@
             margin: 0;
             background-color: #f4f4f4;
         }
-        #mediaUrl, #xpocUri {
+        #itemUrl, #xpocUri {
             width: 60%;
             padding: 10px;
             margin-bottom: 10px;
@@ -78,17 +79,47 @@
         }
     </style>
     <script>
+
+    const publicAccessPlatforms = ["youtube.com", "youtu.be"]; // TODO: don't duplicate this list from src/platform.ts
+
+    // Checks if the hostname is correct, and returns true if a XPOC URI is needed (private platform) or false otherwise (public platform)
+    function checkHostname() {
+        const urlInput = document.getElementById("itemUrl").value;
+        console.log("checkHostname: " + urlInput);
+        let hostname;
+        let privatePlatform = true;
+        try {
+            hostname = new URL(urlInput).hostname.toLowerCase().split('.').slice(-2).join('.');
+        } catch (e) {
+            alert("Misformed URL: " + urlInput);
+        }
+        console.log("hostname: " + hostname);
+        if (publicAccessPlatforms.includes(hostname)) {
+            document.getElementById("xpocDiv").style.display = "none";
+            privatePlatform = false;
+        } else {
+            document.getElementById("xpocDiv").style.display = "block";
+        }
+        return privatePlatform;
+    }
+
     /* JavaScript code for processing the URL and verifying its authenticity */
-    async function verifyMedia() {
+    async function verifyXpocItem() {
+        const xpocUriNeeded = checkHostname();
+
         const xpocUri = document.getElementById('xpocUri').value;
-        const url = document.getElementById('mediaUrl').value;
+        if (xpocUriNeeded && !xpocUri) {
+            // abort now; XPOC URI was displayed by checkHostname()
+            return;
+        }
+        const url = document.getElementById('itemUrl').value;
 
         /* Sending a POST request to the server */
         const response = await fetch('/process', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ xpocUri, url })  // Send both URI and URL to the server
-    });
+        });
         /* Handling the response */
         const data = await response.json();
 
@@ -122,16 +153,24 @@
 </head>
 <body>
     <div id="output">
-    <h1>Validate XPOC Content URL</h1>
-    <input type="text" id="xpocUri" placeholder="Enter XPOC URI">
-    <input type="text" id="mediaUrl" placeholder="Enter URL">
+    <h1>XPOC Validator</h1>
+    <p>
+        This page allows to verify the origin of content item protected using the Cross-Platform Origin of Content framework.
+    </p>
+    <div>
+        <p>Enter the URL of the content to verify.</p>
+        <input type="text" id="itemUrl" placeholder="Content URL">
+    </div>
+    <div id="xpocDiv" style="display:none;">
+        <p>This platform doesn't allow public access to content. Please locate the XPOC URI associated with the content (for example: "xpoc://example.com"), and copy it here.</p>
+        <input type="text" id="xpocUri" placeholder="XPOC URI">
+    </div>
     <br> 
-    <button onclick="verifyMedia()">Verify Origin</button>
+    <button onclick="verifyXpocItem()">Verify Origin</button>
     </div>
     <div class="sidebar">
-        <button onclick="window.location.href='fetch.html'">XPOC Validator</button>
-        <button onclick="window.location.href='generate.html'">Generate Manifest</button>
-        <button onclick="window.location.href='index.html'">FAQs</button>
+        <button onclick="window.location.href='editor.html'">Manifest Editor</button>
+        <button onclick="window.location.href='validator.html'">Item Validator</button>
     </div>
 </body>
 </html>

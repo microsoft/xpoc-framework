@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XPOC Manifest Editor</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+<script>
+  async function submitForm() {
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+    const urlInput = document.getElementById('urlsInput');
+    const url = urlInput.value;
+    const platformSelect = document.getElementById('platform');
+    const platform = platformSelect.value;
+
+    if (!file) {
+        alert('Please upload a JSON file.');
+        return;
+    }
+
+    if (!url) {
+        alert('Please enter a URL.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('url', url); // corrected from urls[0] to url
+    formData.append('platform', platform); // appended the platform to formData
+
+    const response = await fetch('/add', {
+        method: 'POST',
+        body: formData
+    });
+
+    const data = await response.json();
+
+    if (response.status === 200) {
+        document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+    } else {
+        document.getElementById('output').innerText = `Error: ${data.error}`;
+    }
+}
+</script>
+
+</head>
+
+<body>
+<div class="sidebar">
+    <button onclick="window.location.href='editor.html'">Manifest Editor</button>
+    <button onclick="window.location.href='validator.html'">Item Validator</button>
+</div>
+<div class="container">
+    <h1>XPOC Manifest Editor</h1>
+    <form id="manifestForm" onsubmit="event.preventDefault(); submitForm();">
+        <input type="file" id="fileInput" name="file" accept=".json" required>
+        <input type="text" id="urlsInput" name="url" placeholder="Enter URL" required>
+        <select id="platform" name="platform">
+            <option value="youtube">YouTube</option>
+            <option value="twitter">Twitter</option>
+            <!-- Add more platforms as required -->
+        </select>
+        <button type="submit">Generate Manifest</button>
+    </form>
+    <div id="output" class="section"></div>
+</div>
+
+</body>
+
+</html>

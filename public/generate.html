@@ -65,59 +65,70 @@
             gap: 10px;
         }
     </style>
+
+
 <script>
-    async function submitUrls() {
-        const urlInput = document.getElementById('urlsInput');
-        const urls = urlInput.value.split('\n');
-        const platform = document.getElementById('platform').value;
+  async function submitForm() {
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+    const urlInput = document.getElementById('urlsInput');
+    const url = urlInput.value;
+    const platformSelect = document.getElementById('platform');
+    const platform = platformSelect.value;
 
-        for (const url of urls) {
-            const response = await fetch('/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ url, platform })
-            });
-
-            const data = await response.json();
-
-            if (response.status === 200) {
-                document.getElementById('output').innerText = JSON.stringify(data, null, 2);
-            } else {
-                document.getElementById('output').innerText = `Error: ${data.error}`;
-            }
-        }
+    if (!file) {
+        alert('Please upload a JSON file.');
+        return;
     }
+
+    if (!url) {
+        alert('Please enter a URL.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('url', url); // corrected from urls[0] to url
+    formData.append('platform', platform); // appended the platform to formData
+
+    const response = await fetch('/add', {
+        method: 'POST',
+        body: formData
+    });
+
+    const data = await response.json();
+
+    if (response.status === 200) {
+        document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+    } else {
+        document.getElementById('output').innerText = `Error: ${data.error}`;
+    }
+}
 </script>
+
 </head>
+
 <body>
-    <style>
-        .container {
-            margin: 0 auto; /* Centers the container horizontally */
-            width: 60%; /* Adjust to your liking, this sets the width of the content area */
-            text-align: left; /* Aligns the text to the left within the container */
-        }
-    </style>
+<div class="sidebar">
+    <button onclick="window.location.href='fetch.html'">XPOC Validator</button>
+    <button onclick="window.location.href='generate.html'">Generate Manifest</button>
+    <button onclick="window.location.href='index.html'">FAQs</button>
+</div>
+<div class="container">
+    <h1>Edit Manifest</h1>
+    <form id="manifestForm" onsubmit="event.preventDefault(); submitForm();">
+        <input type="file" id="fileInput" name="file" accept=".json" required>
+        <input type="text" id="urlsInput" name="url" placeholder="Enter URL" required>
+        <select id="platform" name="platform">
+            <option value="youtube">YouTube</option>
+            <option value="twitter">Twitter</option>
+            <!-- Add more platforms as required -->
+        </select>
+        <button type="submit">Generate Manifest</button>
+    </form>
+    <div id="output" class="section"></div>
+</div>
 
-    <div class="sidebar">
-        <button onclick="window.location.href='fetch.html'">XPOC Validator</button>
-        <button onclick="window.location.href='generate.html'">Generate Manifest</button>
-        <button onclick="window.location.href='index.html'">FAQs</button>
-    </div>
-    <div class="container">
-        <h1>Generate a Manifest</h1>
-        <p>Take the manifest below and embed it within your website code. Here is an example of doing so: https://github.com/shreyjain13/void/blob/main/xpoc/xpoc-manifest.json</p>
-        <form id="manifestForm" onsubmit="event.preventDefault(); submitUrls();">
-            <textarea id="urlsInput" name="urls" placeholder="Enter URLs, each on a new line" rows="10"></textarea><br>
-            <select id="platform">
-                <option value="youtube">YouTube</option>
-                <option value="twitter">Twitter</option>
-            </select><br>
-            <button type="submit">Generate Manifest</button>
-        </form>
-        <div id="output" class="section"></div>
-    </div>
 </body>
-</html>
 
+</html>

@@ -84,11 +84,13 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
     }
   }
 
-  // Fetch the manifest
-  const manifestUrl = xpocUri.replace('xpoc://', 'https://') + '/.well-known/xpoc-manifest.json';
-
   try {
-      const xpocResponse = await axios.get(manifestUrl);
+    // Fetch the manifest
+    const xpocUrl = new URL(xpocUri.replace('xpoc://', 'https://'));
+    const manifestUrl = `${xpocUrl.origin}${xpocUrl.pathname}/.well-known/xpoc-manifest.json`;
+    console.log(manifestUrl);
+
+    const xpocResponse = await axios.get(manifestUrl);
       const manifest: XPOCManifest = xpocResponse.data;
 
       // Check if content URL exists in the manifest
@@ -101,7 +103,7 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
       }
 
   } catch (err) {
-      res.status(500).send({ error: 'Failed to fetch the XPOC manifest: ' + manifestUrl });
+      res.status(500).send({ error: 'Failed to fetch the XPOC manifest.' });
   }
 });
 

@@ -11,7 +11,6 @@ import { Twitter, Youtube } from './platform';
 
 dotenv.config();
 
-
 const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
@@ -27,9 +26,11 @@ interface AddRequestBody {
 }
 
 interface ProcessRequestBody {
-  xpocUri: string;
+  xpocUri?: string;
   url: string;
 }
+
+const XpocScheme = "xpoc://";
 
 export function getBaseURL(url: string) {
   const urlObj = new URL(url);
@@ -45,18 +46,51 @@ export function getBaseURL(url: string) {
 
 // returns the XPOC manifest item for a given content URL
 app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Response) => {
-  const { xpocUri, url } = req.body;
+  let { xpocUri, url } = req.body;
 
   // Validate inputs
-  if (!url || typeof url !== 'string' || !xpocUri || typeof xpocUri !== 'string') {
-      return res.status(400).send({ error: 'Invalid or empty URL or XPOC URI' });
+  if (!url || typeof url !== 'string' ) {
+      return res.status(400).send({ error: 'Invalid or empty URL' });
+  }
+  if (xpocUri && (typeof xpocUri !== 'string' || xpocUri.substring(0, XpocScheme.length) !== XpocScheme)) {
+      return res.status(400).send({ error: 'Invalid XPOC URI' });
   }
 
-  // Fetch the manifest
-  const manifestUrl = xpocUri.replace('xpoc://', 'https://') + '/.well-known/xpoc-manifest.json';
+  // get the XPOC URI if not provided
+  if (!xpocUri) {
+    xpocUri = "";
+    // get the XPOC URI from the content hosted on a supported platform
+    try {
+      // parse the URL to get the host name (e.g. example.com)
+        let sanitizedUrl = "";
+        let hostname = "";
+        try {
+            sanitizedUrl = getBaseURL(url);
+            hostname = new URL(sanitizedUrl).hostname.split('.').slice(-2).join('.');
+            console.log("hostname: " + hostname);
+            console.log('sanitizedUrl:', sanitizedUrl);
+        } catch (err) {
+            res.status(500).send({ error: 'Error parsing the URL' });
+        }
+        if (Youtube.Hostnames.includes(hostname)) {
+            xpocUri = await Youtube.getXpocUri(url);
+        } else if (Twitter.Hostnames.includes(hostname)) {
+            xpocUri = await Twitter.getXpocUri(url);
+        } else {
+            res.status(400).send({ error: 'Unsupported platform' });
+        }
+    } catch (err) {
+        res.status(500).send({ error: err });
+    }
+  }
 
   try {
-      const xpocResponse = await axios.get(manifestUrl);
+    // Fetch the manifest
+    const xpocUrl = new URL(xpocUri.replace('xpoc://', 'https://'));
+    const manifestUrl = `${xpocUrl.origin}${xpocUrl.pathname}/.well-known/xpoc-manifest.json`;
+    console.log(manifestUrl);
+
+    const xpocResponse = await axios.get(manifestUrl);
       const manifest: XPOCManifest = xpocResponse.data;
 
       // Check if content URL exists in the manifest
@@ -69,30 +103,9 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
       }
 
   } catch (err) {
-      res.status(500).send({ error: 'Failed to fetch the XPOC manifest: ' + manifestUrl });
+      res.status(500).send({ error: 'Failed to fetch the XPOC manifest.' });
   }
 });
-
-// If you have platform support APIs that are not yet implemented, you can add them here with the code implemented in platform.ts. 
-
-
-/* TODO: remove dead code
-
-    // get the XPOC URI from the content hosted on a supported platform
-    let xpocUri = "";
-    try {
-        if (Youtube.Hostnames.includes(hostname)) {
-            xpocUri = await Youtube.getXpocUri(url);
-        } else if (Twitter.Hostnames.includes(hostname)) {
-            xpocUri = await Twitter.getXpocUri(url);
-        } else {
-            res.status(400).send({ error: 'Unsupported platform' });
-        }
-    } catch (err) {
-        res.status(500).send({ error: err });
-    }
-
-*/ 
 
 
 app.post('/add', async (req, res) => {

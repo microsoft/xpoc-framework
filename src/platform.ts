@@ -30,7 +30,7 @@ const findXpocUri = (text:string | undefined) => {
     const xpocRegex = /xpoc:\/\/(.*?)(\s|$)/;
     const match = xpocRegex.exec(text);
     if (match) {
-        return match[1]; // return the captured group
+        return match[0]; // return the captured group
     } else {
         throw new Error('Content does not contain a XPOC URI');
     }

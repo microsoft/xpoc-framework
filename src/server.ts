@@ -5,35 +5,38 @@ import express, { Request, Response } from 'express';
 import { createManifest, XPOCManifest } from './xpoc';
 import dotenv from 'dotenv';
 import axios from 'axios';
+import fileUpload from 'express-fileupload';
 import { Twitter, Youtube } from './platform';
+
 
 dotenv.config();
 
+
+const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 app.use(express.static('public'));
-
-interface ProcessRequestBody {
-  xpocUri: string;   
-  url: string;
-}
+app.use(fileUpload());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 interface AddRequestBody {
   url: string;
   platform: 'youtube' | 'twitter';
 }
 
-// Returns the base, sanitized URL given a complete one; i.e. a lowercase scheme + path URL
-// Retains crucial query parameters for platforms such as YouTube and removes
-// unnecessary query parameters or anchors, and trailing '/'
+interface ProcessRequestBody {
+  xpocUri: string;
+  url: string;
+}
+
 export function getBaseURL(url: string) {
   const urlObj = new URL(url);
   let searchParams = urlObj.searchParams;
   let queryParams = [];
-  if(urlObj.hostname.toLocaleLowerCase().includes('youtube') && searchParams.has('v')) {
-      queryParams.push('v=' + searchParams.get('v'));
+  if (urlObj.hostname.toLocaleLowerCase().includes('youtube') && searchParams.has('v')) {
+    queryParams.push('v=' + searchParams.get('v'));
   }
   const queryParamsString = queryParams.length > 0 ? '?' + queryParams.join('&') : '';
   const baseURL = (urlObj.origin + urlObj.pathname + queryParamsString).replace(/\/$/, '').toLowerCase();
@@ -91,26 +94,53 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
 
 */ 
 
-app.post('/add', async (req: Request<{}, {}, AddRequestBody>, res: Response) => {
-    const { url, platform } = req.body;
-  
-    const existingManifest: XPOCManifest = {
-      name: "Default Name",
-      hostname: "Default URL",
-      content: []
-    };
-  
-    const idx = existingManifest.content.length + 1;
-  
-    try {
-      const newManifest = await createManifest(url, platform, existingManifest, idx);
-  
-      res.send(newManifest);
-    } catch (err) {
-      res.status(500).send({ error: (err as Error).message });
-    }
-  });
-  
+
+app.post('/add', async (req, res) => {
+
+  console.log('Request body:', req.body);
+  console.log('Files:', req.files);
+
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send({ error: 'No files were uploaded.' });
+  }
+
+  let uploadedFile: any = req.files.file;
+  if (uploadedFile && uploadedFile.name) {
+    console.log("A file was loaded:", uploadedFile.name);
+  } else {
+    console.log("File object structure:", uploadedFile);
+  }
+
+  let existingManifest;
+  try {
+    existingManifest = JSON.parse(uploadedFile.data.toString('utf8'));
+    console.log("Uploaded file content:", uploadedFile.data.toString('utf8'));
+  } catch (err) {
+    return res.status(400).send({ error: 'Uploaded file is not valid JSON.' });
+  }
+
+  const url = req.body.url;
+  const platform = req.body.platform;
+
+  if (!url || !platform) {
+    return res.status(400).send({ error: 'URL or platform missing in the request.' });
+  }
+
+  console.log(`Additional URL provided: ${url}`);  // Logging the additional URL provided in the form.
+
+  const idx = existingManifest.content.length + 1;
+  try {
+    const newManifest = await createManifest(url, platform, existingManifest, idx);
+    console.log(`A link was added to the manifest: ${url}`);
+    res.send(newManifest); 
+  } catch (err: any) {
+      if (err && typeof err.message === 'string') {
+          res.status(500).send({ error: err.message });
+      } else {
+          res.status(500).send({ error: 'An unknown error occurred' });
+      }
+  }  
+});
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);

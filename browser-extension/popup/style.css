@@ -1,0 +1,26 @@
+/* Tab button styles */
+.tab {
+    display: inline-block;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    cursor: pointer;
+    background-color: #f1f1f1;
+}
+
+.active {
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Tab content styles */
+.tab-content {
+    display: none;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.active-content {
+    display: block;
+}
+

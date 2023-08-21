@@ -34,7 +34,6 @@ A XPOC manifest is a JSON file with the following schema:
     hostname: string,
     content: [
         {
-            idx: number,
             title: string,
             desc: string,
             url: string,
@@ -50,7 +49,6 @@ where:
 * `name` is the human-readable name of the Owner,
 * `hostname` is the hostname of the Owner's website, i.e., the top-level URL without the protocol header (e.g., `example.com`),
 * `content` is an array of XPOC content items, JSON objects with the following properties:
-  * `idx` is a numerical index, which MUST be unique within the manifest,
   * `title` is the label for the content item,
   * `desc` is a description of the content item,
   * `url` is the URL of the content item on a hosting platform,
@@ -88,7 +86,6 @@ Alex posts a video on Youtube at `https://www.youtube.com/watch?v=abcdef12345` u
 
 Alex then adds the following JSON object to the manifest's `content` array:
 ```json
-    "idx": 1,
     "title": "My first video",
     "desc": "Quick video to say Hello World!",
     "url": "https://www.youtube.com/watch?v=abcdef12345",

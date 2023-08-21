@@ -7,7 +7,6 @@ import { Twitter, Youtube, PlatformContentData } from './platform';
 dotenv.config();
 
 export type ContentItem = {
-  idx: number; 
   title: string;
   desc?: string;
   url: string;
@@ -34,8 +33,7 @@ const platformDataFetchers: DataFetcher = {
 export async function createManifest(
   url: string,
   platform: 'youtube' | 'twitter',
-  existingManifest: XPOCManifest,
-  idx: number
+  existingManifest: XPOCManifest
 ): Promise<XPOCManifest> {
   
   let platformData;
@@ -49,7 +47,6 @@ export async function createManifest(
   }
 
   existingManifest.content.push({
-    idx,
     title: platformData.title,
     desc: '', // TODO: what could be the description? Add a field in web UI?
     url,

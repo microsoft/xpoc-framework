@@ -141,9 +141,8 @@ app.post('/add', async (req, res) => {
 
   console.log(`Additional URL provided: ${url}`);  // Logging the additional URL provided in the form.
 
-  const idx = existingManifest.content.length + 1;
   try {
-    const newManifest = await createManifest(url, platform, existingManifest, idx);
+    const newManifest = await createManifest(url, platform, existingManifest);
     console.log(`A link was added to the manifest: ${url}`);
     res.send(newManifest); 
   } catch (err: any) {

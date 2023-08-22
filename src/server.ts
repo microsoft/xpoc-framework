@@ -87,7 +87,7 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
   try {
     // Fetch the manifest
     const xpocUrl = new URL(xpocUri.replace('xpoc://', 'https://'));
-    const manifestUrl = `${xpocUrl.origin}${xpocUrl.pathname}/.well-known/xpoc-manifest.json`;
+    const manifestUrl = `${xpocUrl.origin}${xpocUrl.pathname}/xpoc-manifest.json`;
     console.log(manifestUrl);
 
     const xpocResponse = await axios.get(manifestUrl);

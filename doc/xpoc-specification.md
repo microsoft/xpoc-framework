@@ -58,7 +58,7 @@ where:
 
 ### Manifest Location 
 
-The manifest MUST be hosted at the Origin website's well-known TLS-protected location: `https://[ORIGIN_URL]/.well-known/xpoc-manifest.json`.
+The manifest MUST be hosted at the Origin website's TLS-protected location: `https://[ORIGIN_URL]/xpoc-manifest.json`.
 
 ### XPOC URI
 
@@ -70,7 +70,7 @@ The following section gives an example of a content owner Alex Example, who owns
 
 ### Setup
 
-Alex creates a manifest and makes it available at `https://alexexample.com/.well-known/xpoc-manifest.json`:
+Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-manifest.json`:
 
 ```json
 {
@@ -98,5 +98,5 @@ Alex then adds the following JSON object to the manifest's `content` array:
 
 A verifier can check that the Youtube video posted by `@AlexExample` is indeed from `alexexample.com` by:
 1. Parsing the XPOC URI to get the `alexexample.com` hostname,
-2. Retrieving the XPOC manifest from `https://alexexample.com/.well-known/xpoc-manifest.json`, and
+2. Retrieving the XPOC manifest from `https://alexexample.com/xpoc-manifest.json`, and
 3. Verifying that the video URL is listed in the manifest.

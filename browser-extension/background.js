@@ -50,7 +50,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             // remove trailing slash
             .replace(/\/$/, "")
             // append the XPOC manifest path
-            + '/.well-known/xpoc-manifest.json';
+            + '/xpoc-manifest.json';
         console.log(`Fetching "${targetURL}"`);
         fetch(targetURL)
           .then(response => response.json())

@@ -71,7 +71,7 @@ where:
 
 ### Manifest Location 
 
-The manifest MUST be hosted at the Origin website's well-known TLS-protected location: `https://[ORIGIN_URL]/.well-known/xpoc-manifest.json`.
+The manifest MUST be hosted at the Origin website's TLS-protected location: `https://[ORIGIN_URL]/xpoc-manifest.json`.
 
 ### XPOC URI
 
@@ -83,7 +83,7 @@ The following section gives an example of a content owner Alex Example, who owns
 
 ### Setup
 
-Alex creates a manifest and makes it available at `https://alexexample.com/.well-known/xpoc-manifest.json`:
+Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-manifest.json`:
 
 ```json
 {

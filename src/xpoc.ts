@@ -6,6 +6,12 @@ import { Twitter, Youtube, PlatformContentData } from './platform';
 
 dotenv.config();
 
+export type Account = {
+  platform: string,
+  url: string,
+  account: string;
+}
+
 export type ContentItem = {
   title: string;
   desc?: string;
@@ -18,6 +24,7 @@ export type ContentItem = {
 export type XPOCManifest = {
   name: string;
   hostname: string;
+  accounts: Account[];
   content: ContentItem[];
 };
 

@@ -14,7 +14,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         chrome.contextMenus.removeAll(function() {
             chrome.contextMenus.create({
                 id: "verifyXpocUri",
-                title: "Verify XPOC content",
+                title: "Verify XPOC link",
                 contexts: ["all"],
                 documentUrlPatterns: ["<all_urls>"] // this ensures it will show on all pages
             });
@@ -58,19 +58,33 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             console.log(manifest);
             const url = getBaseURL(tab.url);
             console.log('url', url);
-            const matchingContent = manifest.content.find(content => getBaseURL(content.url).toLowerCase() === url);
-            if (matchingContent) {
-                console.log('Content found in manifest', matchingContent);
+            // check if the current tab's URL is listed in the manifest's account
+            const matchingAccount = manifest.accounts.find(account => getBaseURL(account.url).toLowerCase() === url);
+            if (matchingAccount) {
+                console.log('Content found in manifest', matchingAccount);
                 const result = {
                     name: manifest.name,
                     url: manifest.url,
-                    content: matchingContent
+                    account: matchingAccount
                 };
                 console.log('Result', result);
-                chrome.tabs.sendMessage(tab.id, { action: 'displayXpocContent', result: result });
+                chrome.tabs.sendMessage(tab.id, { action: 'displayXpocAccount', result: result });                
             } else {
-                console.log('Content not found in manifest');
-                chrome.tabs.sendMessage(tab.id, { action: 'xpocNotFound'});
+                // if not, check if the current tab's URL is listed in the manifest's content
+                const matchingContent = manifest.content.find(content => getBaseURL(content.url).toLowerCase() === url);
+                if (matchingContent) {
+                    console.log('Content found in manifest', matchingContent);
+                    const result = {
+                        name: manifest.name,
+                        url: manifest.url,
+                        content: matchingContent
+                    };
+                    console.log('Result', result);
+                    chrome.tabs.sendMessage(tab.id, { action: 'displayXpocContent', result: result });
+                } else {
+                    console.log('Content not found in manifest');
+                    chrome.tabs.sendMessage(tab.id, { action: 'xpocNotFound'});
+                }
             }
           })
           .catch(error => {

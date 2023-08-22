@@ -27,6 +27,21 @@ document.addEventListener('contextmenu', function(event) {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // TODO: don't use a alert popup
+    if (request.action === 'displayXpocAccount') {
+        if (request.result) {
+            const result = 
+                "XPOC Information\n" +
+                "\n" +
+                "Origin information\n" +
+                "Name: " + request.result.name + "\n" +
+                "Website: " + request.result.url + "\n" +
+                "\n" +
+                "Account information\n" +
+                "URL: " + request.result.account.url + "\n" +
+                "Account: " + request.result.account.account + "\n";
+            alert(result);
+        }
+    }
     if (request.action === 'displayXpocContent') {
         if (request.result) {
             const result = 

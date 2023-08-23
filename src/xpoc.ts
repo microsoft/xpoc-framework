@@ -33,26 +33,27 @@ const platformDataFetchers: DataFetcher = {
 export async function createManifest(
   url: string,
   platform: 'youtube' | 'twitter',
-  existingManifest: XPOCManifest
+  existingManifest: XPOCManifest,
+  title: string,
+  desc: string,
+  account: string
 ): Promise<XPOCManifest> {
   
-  let platformData;
-  
-  if (platform === 'youtube') {
-    platformData = await Youtube.getData(url);
-  } else if (platform === 'twitter') {
-    platformData = await Twitter.getData(url);
-  } else {
+  const dataFetcher = platformDataFetchers[platform];
+
+  if (!dataFetcher) {
     throw new Error(`Unsupported platform: ${platform}`);
   }
 
+  const platformData = await dataFetcher(url);
+
   existingManifest.content.push({
-    title: platformData.title,
-    desc: '', // TODO: what could be the description? Add a field in web UI?
+    title,
+    desc,
     url,
     platform: platformData.platform,
     puid: platformData.puid,
-    account: platformData.account,
+    account,
   });
 
   return existingManifest;

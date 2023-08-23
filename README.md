@@ -2,13 +2,19 @@
 
 This project introduces the Cross-Platform Origin of Content (XPOC) framework, along with a sample implementation.
 
-The aim of the XPOC framework is to help verifying the authenticity of content (videos, posts, etc.) shared across various web platforms such as YouTube, X (formerly Twitter), Facebook, etc. A content owner creates a XPOC manifest that contains references to the content items they created across various platforms, and hosts it on its well-known website. The owner then adds a XPOC URI referencing its own manifest to the content items. Verifiers can validate the origin of a content item with a XPOC URI by dereferencing it to retrieve the owner's manifest, and by verifying that the content item is listed within it. For details, see the framework's [specification](./doc//xpoc-specification.md) and the [FAQ](./doc/FAQ.md).
+The aim of the XPOC framework is to allow a person or organization (content owner) to create a authoritative list of
+1. the various accounts they control over hosting web platforms (such as YouTube, X (formerly Twitter), Facebook, etc.), and
+2. the various pieces of content (videos, posts, etc.) they created or approved on these platforms.
+
+Using this framework, content creators protect themselves against falsely attributed accounts or content, providing signals that can be used by automated validation tools.
+
+A content owner creates a XPOC manifest that contains references to the accounts they control and the content items they created across various platforms, and hosts it on its well-known website. The owner then adds a XPOC URI referencing its own manifest to their platform account pages (bio or profile) and content items. Verifiers can validate the origin of an account or content item using a XPOC URI by dereferencing it to retrieve the owner's manifest, and by verifying that the account or content item is listed within it. For details, see the framework's [specification](./doc//xpoc-specification.md) and the [FAQ](./doc/FAQ.md).
 
 The repository contains a sample implementation to create XPOC manifests and to verify XPOC content.
 
 ## System overview
 
-This section describes the life cycle for the Cross-Platform Origin of Content framework. The following diagram illustrates the [example](./doc/xpoc-specification.md#example) from the specification.
+This section describes the life cycle for data protected using the Cross-Platform Origin of Content framework. The following diagram illustrates the [example](./doc/xpoc-specification.md#example) from the specification. (TODO: update diagram for account linking)
 
 1. A content owner (Alex Example) creates a XPOC manifest on their website (`alexexample.com`) listing the content they've created across different platforms (e.g., a video on YouTube, a post on Facebook).
 1. The content owner adds a XPOC URI (`xpoc://alexexample.com`) to each referenced content item (e.g., in the YouTube video description, in the Facebook post).
@@ -44,13 +50,14 @@ The sample portal offers two pages: one to edit XPOC manifest, and one to verify
 * Manifest Editor: TODO: add more details after code refactoring
 * XPOC validator: TODO: add more details after code refactoring
 
-The XPOC validator supports different platforms, and its experienced can be improved if the deployer enable API access to these platform; see [PLATFORM.md](./PLATFORM.md) for details. 
+The XPOC validator supports different platforms, and its experience can be improved if the deployer enable API access to these platform; see [PLATFORM.md](./PLATFORM.md) for details. 
 
 ## Open questions
 
 We are seeking feedback on the following open questions:
 
 * Should the XPOC manifest live in the Origin's website root directory (as currently specified) or in a `/.well-known` directory (as specified in [RFC 5785](https://datatracker.ietf.org/doc/html/rfc5785)). The current approaches is simpler, but using a well-known folder follows a pattern used by many web discovery protocols and might provide organizational benefits.
+* Should the linked accounts and content items be listed in the same manifest (as currently specified), or listed in two different ones? Presumably, the linked account list will not change very often while the content item list would grow frequently. Should a different URI prefixes be used for these two different data types? This would facilitate the validation tools implementation, at the expense of a slightly more complicated specification.
 
 ## Contributing
 

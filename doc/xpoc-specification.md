@@ -6,7 +6,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMEND
 
 ## System Overview
 
-A content Owner can attest to the origin of media items hosted on various platforms by listing them in a manifest on its own website `[ORIGIN_URL]`, and by attaching a XPOC URI `xpoc://[ORIGIN_URL]` to the content items (in a media platform specific way) pointing back to the manifest. Verifiers can validate the origin of an item by using the XPOC URI to discover the Owner's manifest and by verifying that the item is indeed listed therein. 
+A content Owner can attest 1) to the ownership of various accounts on hosting platforms, and 2) to the origin of content items hosted on these platforms by listing both the accounts and content items in a manifest on its own website `[ORIGIN_URL]`. A content Owner can attach a XPOC URI `xpoc://[ORIGIN_URL]` to their platform account page and content items (in a platform-specific way) pointing back to the manifest. Verifiers can validate the origin of an account or content item by using the XPOC URI to discover the Owner's manifest and by verifying that the account or content item is indeed listed therein. 
 
 ## Terminology
 
@@ -20,6 +20,8 @@ A content Owner can attest to the origin of media items hosted on various platfo
 
 *Content item*: a piece of content (e.g., post, image, video) hosted on a platform.
 
+*Account*: a platform-specific account (e.g., social handle).
+
 *Hosting platform*: site where the content item is located.
 
 ## Manifest
@@ -32,6 +34,13 @@ A XPOC manifest is a JSON file with the following schema:
 {
     name: string,
     hostname: string,
+    accounts: [
+        {
+            platform: string,
+            url: string,
+            account: string
+        }
+    ]
     content: [
         {
             title: string,
@@ -48,6 +57,10 @@ A XPOC manifest is a JSON file with the following schema:
 where:
 * `name` is the human-readable name of the Owner,
 * `hostname` is the hostname of the Owner's website, i.e., the top-level URL without the protocol header (e.g., `example.com`),
+* `accounts` is an array of the Owner's platform accounts, JSON objects with the following properties:
+  * `platform` is the name of the hosting platform,
+  * `url` is the URL of the account page, and
+  * `account` is the platform-specific account name.
 * `content` is an array of XPOC content items, JSON objects with the following properties:
   * `title` is the label for the content item,
   * `desc` is a description of the content item,
@@ -62,7 +75,7 @@ The manifest MUST be hosted at the Origin website's TLS-protected location: `htt
 
 ### XPOC URI
 
-The manifest XPOC URI is the following string: `xpoc://[ORIGIN_URL]`. The Owner attaches the XPOC URI to the content item it creates, for example, by including it in an item's metadata, label, or description.
+The manifest XPOC URI is the following string: `xpoc://[ORIGIN_URL]`. The Owner attaches the XPOC URI to a platform account page (for example, in its bio or profile page) or a content item it creates (for example, by including it in an item's metadata, label, or description).
 
 ## Example
 
@@ -76,8 +89,18 @@ Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-
 {
     "name": "Alex Example",
     "hostname": "alexexample.com",
+    "accounts": [],
     "content": []
 }
+```
+
+### Account linking
+
+Alex adds its X (formerly Twitter) account name `@ExAlex` to its known accounts by adding the XPOC URI `xpoc://alexexample.com` in its X bio and by adding the following JSON object to the manifest's `accounts` array:
+```json
+    "platform": "X",
+    "url": "https://twitter.com/ExAlex",
+    "account": "ExAlex"
 ```
 
 ### Content creation
@@ -94,9 +117,16 @@ Alex then adds the following JSON object to the manifest's `content` array:
     "account": "@AlexExample"
 ```
 
+### Account validation
+
+A verifier can check that a X (formerly Twitter) account is indeed owned by `alexexample.com` by:
+1. Parsing the XPOC URI on the account page to get the `alexexample.com` hostname,
+2. Retrieving the XPOC manifest from `https://alexexample.com/xpoc-manifest.json`, and
+3. Verifying that the account page is listed in the manifest's `accounts` property.
+
 ### Content validation
 
 A verifier can check that the Youtube video posted by `@AlexExample` is indeed from `alexexample.com` by:
 1. Parsing the XPOC URI to get the `alexexample.com` hostname,
 2. Retrieving the XPOC manifest from `https://alexexample.com/xpoc-manifest.json`, and
-3. Verifying that the video URL is listed in the manifest.
+3. Verifying that the video URL is listed in the manifest's `content` property.

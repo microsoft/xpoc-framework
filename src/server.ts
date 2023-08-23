@@ -181,18 +181,17 @@ app.post('/add', async (req: Request, res: Response) => {
 
 });
 
-app.post('/validate', async (req: Request<{}, {}, { domain: string }>, res: Response) => {
-  const { domain } = req.body;
+app.post('/validate', async (req: Request<{}, {}, { url: string }>, res: Response) => {
+  const { url } = req.body;
 
-  if (!domain || typeof domain !== 'string') {
-      return res.status(400).send({ error: 'Invalid or empty domain' });
+  if (!url || typeof url !== 'string') {
+      return res.status(400).send({ error: 'Invalid or empty url' });
   }
   try {
-    console.log("Attempting to fetch manifest for domain:", domain);
-    const manifestData = await validateManifest(domain);
+    console.log("Attempting to fetch manifest for url:", url);
+    const manifestData = await validateManifest(url);
     console.log("Fetched manifest:", manifestData);
     res.send(manifestData);  // Return the manifest data if found.
-// server.ts
   } catch (error) {
   console.error("Error in validateManifest:", error);
   res.status(500).send({ error: 'No XPOC manifest found or error occurred fetching it.' });

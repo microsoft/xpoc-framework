@@ -1,20 +1,27 @@
 function fetchManifest() {
-    const url = document.getElementById('urlInput').value;
+    let url = document.getElementById('urlInput').value;
     if (!url) {
         console.error("URL is empty");
         return;
     }
+    // add https:// if not present (to create a valid URL object)
+    if (!url.startsWith('http')) {
+        url = 'https://' + url;
+    }
+    // extract the base URL (hostname + pathname)
+    const urlObj = new URL(url);
+    const baseUrl = `${urlObj.hostname}${urlObj.pathname}`;
 
     fetch(`/validate`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ domain: new URL(url).hostname })
+        body: JSON.stringify({ url: baseUrl })
     })
     .then(response => {
         if (!response.ok) {
-            return response.json().then(err => { throw err; });  // This handles JSON error responses
+            return response.json().then(err => { throw err; });
         }
         return response.json();
     })
@@ -23,7 +30,7 @@ function fetchManifest() {
     })
     .catch(error => {
         console.error("Error fetching manifest:", error);
-        if (error.error) { // Check if the error is a JSON error response from your server
+        if (error.error) { // TODO: Check if the error is a JSON error response from your server
             alert(error.error);
         }
     });
@@ -32,6 +39,11 @@ function fetchManifest() {
 function displayManifest(manifestData) {
     const outputDiv = document.getElementById('output');
     
+    let manifestHtml = `<div class="main-content"><h3>Manifest</h3><ul>`;
+    manifestHtml += `<li><strong>Name:</strong> ${manifestData.name}</li>`;
+    manifestHtml += `<li><strong>Hostname:</strong> ${manifestData.url}</li>`;
+    manifestHtml += "</ul></div>";
+
     let accountsHtml = `<div class="main-content"><h3>Accounts</h3><ul>`;
     manifestData.accounts.forEach(account => {
         accountsHtml += `<li>
@@ -53,5 +65,5 @@ function displayManifest(manifestData) {
     });
     contentHtml += "</ul></div>";
 
-    outputDiv.innerHTML = accountsHtml + contentHtml;
+    outputDiv.innerHTML = manifestHtml + accountsHtml + contentHtml;
 }

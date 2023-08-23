@@ -15,8 +15,12 @@
         </div>
         <div class="main">
             <h1>XPOC Manifest Viewer</h1>
-            <div class="scrollable-content"> 
-                <input type="text" id="urlInput" placeholder="Enter Platform URL" required class="styled-input">
+            <p>
+                This page is a viewer for Cross-Platform Origin of Content (XPOC) manifests.
+            </p>
+            <div class="scrollable-content">
+                <p>Enter the hostname of the site to lookup.</p> 
+                <input type="text" id="urlInput" placeholder="Enter hostname" required class="styled-input">
                 <button onclick="fetchManifest()">View</button>
                 <div id="output" class="section"></div>
             </div>

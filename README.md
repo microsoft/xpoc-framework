@@ -6,7 +6,7 @@ The aim of the XPOC framework is to help verifying the authenticity of content (
 
 The repository contains a sample implementation to create XPOC manifests and to verify XPOC content.
 
-## System Overview
+## System overview
 
 This section describes the life cycle for the Cross-Platform Origin of Content framework. The following diagram illustrates the [example](./doc/xpoc-specification.md#example) from the specification.
 
@@ -37,7 +37,6 @@ Start the server:
 
 By default, the server listens on port 3000; edit [server.ts](./src/server.ts) to modify this.
 
-
 ### Usage
 
 The sample portal offers two pages: one to edit XPOC manifest, and one to verify XPOC-protected content.
@@ -46,6 +45,12 @@ The sample portal offers two pages: one to edit XPOC manifest, and one to verify
 * XPOC validator: TODO: add more details after code refactoring
 
 The XPOC validator supports different platforms, and its experienced can be improved if the deployer enable API access to these platform; see [PLATFORM.md](./PLATFORM.md) for details. 
+
+## Open questions
+
+We are seeking feedback on the following open questions:
+
+* Should the XPOC manifest live in the Origin's website root directory (as currently specified) or in a `/.well-known` directory (as specified in [RFC 5785](https://datatracker.ietf.org/doc/html/rfc5785)). The current approaches is simpler, but using a well-known folder follows a pattern used by many web discovery protocols and might provide organizational benefits.
 
 ## Contributing
 

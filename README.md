@@ -2,7 +2,7 @@
 
 This project introduces the Cross-Platform Origin of Content (XPOC) framework, along with a sample implementation.
 
-The aim of the XPOC framework is to help verifying the authenticity of content (videos, posts, etc.) shared across various web platforms such as YouTube, X (formerly Twitter), Facebook, etc. A content owner creates a XPOC manifest that contains references to the content items they created across various platforms, and hosts it on its well-known website. The owner then adds a XPOC URI referencing its own manifest to the content items. Verifiers can validate the origin of a content item with a XPOC URI by dereferencing it to retrieve the owner's manifest, and by verifying that the content item is listed within it. For details, see the framework's [specification](./doc//xpoc-specification.md).
+The aim of the XPOC framework is to help verifying the authenticity of content (videos, posts, etc.) shared across various web platforms such as YouTube, X (formerly Twitter), Facebook, etc. A content owner creates a XPOC manifest that contains references to the content items they created across various platforms, and hosts it on its well-known website. The owner then adds a XPOC URI referencing its own manifest to the content items. Verifiers can validate the origin of a content item with a XPOC URI by dereferencing it to retrieve the owner's manifest, and by verifying that the content item is listed within it. For details, see the framework's [specification](./doc//xpoc-specification.md) and the [FAQ](./doc/FAQ.md).
 
 The repository contains a sample implementation to create XPOC manifests and to verify XPOC content.
 

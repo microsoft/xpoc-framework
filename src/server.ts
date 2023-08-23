@@ -146,7 +146,22 @@ app.post('/add', async (req: Request, res: Response) => {
           console.error(`Failed to extract puid from provided YouTube URL: ${url}`);
           return res.status(400).send({ error: 'YouTube URL does not have a valid video ID.' });
       }
-  }  
+    } else if (platform === "twitter") {
+
+      const twitterStatusPattern = /twitter\.com\/\w+\/status\/(\d+)/;
+      const match = url.match(twitterStatusPattern);
+  
+      if (match && match[1]) {
+          puid = match[1];
+          console.log(`Extracted Twitter puid (tweet ID): ${puid}`);
+      } else {
+          console.error(`Failed to extract puid from provided Twitter URL: ${url}`);
+          return res.status(400).send({ error: 'Twitter URL does not have a valid tweet ID.' });
+      }
+     // here you would add any other specific regex to capture the puid for other platforms 
+     // with appropriate platform API access, other fields could also be captured from the API 
+
+  }
 
     const newContentEntry = {
       title: title,
@@ -161,6 +176,7 @@ app.post('/add', async (req: Request, res: Response) => {
   }
 
   res.send(manifest);  // send back the updated manifest
+
 });
 
 app.listen(port, () => {

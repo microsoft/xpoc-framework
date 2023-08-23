@@ -1,0 +1,27 @@
+<!-- xpoc-validator.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XPOC Validator</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="xpoc-validator.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <button onclick="window.location.href='editor.html'">Manifest Editor</button>
+            <button onclick="window.location.href='validator.html'">Item Validator</button>
+            <button onclick="window.location.href='viewer.html'">Manifest Viewer</button>
+        </div>
+        <div class="main">
+            <h1>XPOC Manifest Viewer</h1>
+            <div class="scrollable-content"> 
+                <input type="text" id="urlInput" placeholder="Enter Platform URL" required class="styled-input">
+                <button onclick="fetchManifest()">View</button>
+                <div id="output" class="section"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

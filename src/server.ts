@@ -7,7 +7,8 @@ import dotenv from 'dotenv';
 import axios from 'axios';
 import fileUpload from 'express-fileupload';
 import { Twitter, Youtube } from './platform';
-
+import cors from 'cors';
+import { validateManifest } from './validator'; 
 
 dotenv.config();
 
@@ -16,9 +17,10 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 app.use(express.static('public'));
 app.use(fileUpload());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 interface AddRequestBody {
   url: string;
@@ -107,52 +109,97 @@ app.post('/process', async (req: Request<{}, {}, ProcessRequestBody>, res: Respo
   }
 });
 
-
-app.post('/add', async (req, res) => {
-
-  console.log('Request body:', req.body);
-  console.log('Files:', req.files);
-
-  if (!req.files || Object.keys(req.files).length === 0) {
+app.post('/add', async (req: Request, res: Response) => {
+  
+  console.log(req.body);
+  if (!req.files || !req.files.file) {
     return res.status(400).send({ error: 'No files were uploaded.' });
   }
 
-  let uploadedFile: any = req.files.file;
-  if (uploadedFile && uploadedFile.name) {
-    console.log("A file was loaded:", uploadedFile.name);
-  } else {
-    console.log("File object structure:", uploadedFile);
+  if (Array.isArray(req.files.file)) {
+    return res.status(400).send({ error: 'Only one file is allowed.' });
   }
+  const uploadedFile = req.files.file;
 
-  let existingManifest;
+
+  let manifest: XPOCManifest;
   try {
-    existingManifest = JSON.parse(uploadedFile.data.toString('utf8'));
-    console.log("Uploaded file content:", uploadedFile.data.toString('utf8'));
+    manifest = JSON.parse(uploadedFile.data.toString());
   } catch (err) {
-    return res.status(400).send({ error: 'Uploaded file is not valid JSON.' });
+    return res.status(400).send({ error: 'Error parsing uploaded JSON.' });
   }
 
-  const url = req.body.url;
-  const platform = req.body.platform;
+  const { title, platform, desc, account, finalSubmission } = req.body;
 
-  if (!url || !platform) {
-    return res.status(400).send({ error: 'URL or platform missing in the request.' });
-  }
-
-  console.log(`Additional URL provided: ${url}`);  // Logging the additional URL provided in the form.
-
-  try {
-    const newManifest = await createManifest(url, platform, existingManifest);
-    console.log(`A link was added to the manifest: ${url}`);
-    res.send(newManifest); 
-  } catch (err: any) {
-      if (err && typeof err.message === 'string') {
-          res.status(500).send({ error: err.message });
+  if (finalSubmission === 'true') {
+    // If this is the final submission, process it further.
+    const url = typeof req.body.url === 'string' ? req.body.url : '';
+    if (!url) {
+        return res.status(400).send({ error: 'URL not provided or is not a valid string.' });
+    }
+    let puid: any;
+    if (platform === "youtube") {
+      if (url.includes('v=')) {
+          puid = url.split('v=')[1].split('&')[0];
+          console.log(`Extracted YouTube puid (video ID): ${puid}`);
       } else {
-          res.status(500).send({ error: 'An unknown error occurred' });
+          console.error(`Failed to extract puid from provided YouTube URL: ${url}`);
+          return res.status(400).send({ error: 'YouTube URL does not have a valid video ID.' });
       }
-  }  
+    } else if (platform === "twitter") {
+
+      const twitterStatusPattern = /twitter\.com\/\w+\/status\/(\d+)/;
+      const match = url.match(twitterStatusPattern);
+  
+      if (match && match[1]) {
+          puid = match[1];
+          console.log(`Extracted Twitter puid (tweet ID): ${puid}`);
+      } else {
+          console.error(`Failed to extract puid from provided Twitter URL: ${url}`);
+          return res.status(400).send({ error: 'Twitter URL does not have a valid tweet ID.' });
+      }
+     // here you would add any other specific regex to capture the puid for other platforms 
+     // with appropriate platform API access, other fields could also be captured from the API 
+  }
+
+    const newContentEntry = {
+      title: title,
+      platform: platform,
+      desc: desc,
+      account: account,
+      puid: puid,
+      url: url  
+  };
+
+  manifest.content.push(newContentEntry);
+  }
+  const fileName = `manifest_${new Date().toISOString()}.json`;
+  res.send(manifest);  // send back the updated manifest
+  res.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(manifest, null, 4)); 
+
 });
+
+app.post('/validate', async (req: Request<{}, {}, { domain: string }>, res: Response) => {
+  const { domain } = req.body;
+
+  if (!domain || typeof domain !== 'string') {
+      return res.status(400).send({ error: 'Invalid or empty domain' });
+  }
+  try {
+    console.log("Attempting to fetch manifest for domain:", domain);
+    const manifestData = await validateManifest(domain);
+    console.log("Fetched manifest:", manifestData);
+    res.send(manifestData);  // Return the manifest data if found.
+// server.ts
+  } catch (error) {
+  console.error("Error in validateManifest:", error);
+  res.status(500).send({ error: 'No XPOC manifest found or error occurred fetching it.' });
+}
+
+});
+
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);

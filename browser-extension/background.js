@@ -47,7 +47,9 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         const targetURL = clickedText
             // replace the xpoc:// prefix with https://
             .replace(/^xpoc:\/\//, 'https://')
-            // remove trailing slash
+            // remove trailing !
+            .replace(/!$/, "")
+            // remove trailing slash, if present
             .replace(/\/$/, "")
             // append the XPOC manifest path
             + '/xpoc-manifest.json';
@@ -64,7 +66,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 console.log('Content found in manifest', matchingAccount);
                 const result = {
                     name: manifest.name,
-                    url: manifest.url,
+                    hostname: manifest.hostname,
+                    version: manifest.version,
                     account: matchingAccount
                 };
                 console.log('Result', result);
@@ -76,7 +79,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                     console.log('Content found in manifest', matchingContent);
                     const result = {
                         name: manifest.name,
-                        url: manifest.url,
+                        hostname: manifest.hostname,
+                        version: manifest.version,
                         content: matchingContent
                     };
                     console.log('Result', result);

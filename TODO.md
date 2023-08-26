@@ -7,6 +7,7 @@ Pre-release TODO:
 * Be more permissive in regex ()
 * Move platform code (requiring API access) to `dev-api-access` branch
 * grep code TODO and FIXME
+* Move browser extension and server sample to sample/ (should rename to samples/)
 * Review platform reference (spelling) uniformity (YouTube, X (formerly Twitter), Facebook)
 * Lint everything
 * Delete this file

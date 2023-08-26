@@ -106,19 +106,22 @@
 <div class="container">
     <h1>XPOC Manifest Editor</h1>
     <form id="manifestForm" onsubmit="event.preventDefault(); submitForm();">
+        <h2>Upload the manifest to be updated here.</h2>
         <label id="fileInputLabel" for="fileInput">Choose File</label>
-        <span id="chosenFileName"></span> <!-- display the name of the selected file -->
+        <span id="chosenFileName"></span> 
         <input type="file" id="fileInput" name="file" accept=".json" required onchange="document.getElementById('chosenFileName').textContent = this.files[0].name;">
+        <br> Enter the URL of the content to be added to the manifest: <br> 
         <input type="text" id="urlInput" name="url" placeholder="Enter URL" required>
+        <br> Enter the platform of the content to be added to the manifest:
         <input type="text" id="platform" name="platform" placeholder="Enter Platform" required>
-        <button type="submit">Generate Manifest</button>
+        <button type="submit"> Update and Download manifest</button>
     </form>
     <div id="extraDetailsSection" style="display:none;">
         <h2>Extra Details</h2>
         <input type="text" id="titleInput" placeholder="Enter Title">
         <input type="text" id="descInput" placeholder="Enter Description">
         <input type="text" id="accountInput" placeholder="Enter Account">
-        <button onclick="submitFinalForm()">Submit Final</button>
+        <button onclick="submitFinalForm()"> Update and Download Manifest</button>
     </div>
     <div id="output" class="section"></div>
 </div>

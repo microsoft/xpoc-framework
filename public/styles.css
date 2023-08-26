@@ -2,11 +2,18 @@ body {
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start; /* Change from center */
     justify-content: center;
     height: 100vh;
     margin: 0;
     background-color: #f4f4f4;
+    padding-left: 220px; /* Space for the sidebar */
+}
+
+.container {
+    width: 80%; /* Set a width for the container */
+    max-width: 800px; /* This is optional, just prevents it from getting too wide on large screens */
+    margin: 0 auto; /* centers the container */
 }
 
 #fileInput {
@@ -15,19 +22,20 @@ body {
 
 #fileInputLabel {
     display: inline-block;
-    padding: 10px 20px;
-    background-color: #008CBA;
+    padding: 6px 12px;  
+    background-color: #000000;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
-    width: 110%; /* match the width of the text inputs */
+    font-size: 16px;  
+    width: 40%; 
     text-align: center;
 }
 
+
 input[type="text"] {
-    width: 110%;
+    width: 100%; /* Adjust the width back to 100% */
     padding: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -36,7 +44,7 @@ input[type="text"] {
 }
 
 #titleInput, #descInput, #accountInput {
-    width: 80%; /* make them smaller in width */
+    width: 80%; /* Keep them a bit smaller if you wish */
 }
 
 button {

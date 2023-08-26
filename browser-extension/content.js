@@ -6,7 +6,7 @@ document.addEventListener('contextmenu', function(event) {
     console.log(`contextmenu event fired. lastContextMenuTarget`, lastContextMenuTarget);
 
     // XPOC URI regex
-    const regex = /(xpoc:\/\/[a-zA-Z0-9\-\.]+(?:\/[a-zA-Z0-9\-\.]+)*)/;
+    const regex = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/g;
 
     // extract URI from innerHTML
     console.log(`lastContextMenuTarget.innerHTML: "${lastContextMenuTarget.innerHTML}"`);
@@ -15,7 +15,7 @@ document.addEventListener('contextmenu', function(event) {
 
     const match = regex.exec(targetString);
     if (match) {
-        const xpocUri = match[1];
+        const xpocUri = match[0];
         console.log("Found a valid xpoc link:", xpocUri);
         chrome.runtime.sendMessage({action: "showContextMenu", href: xpocUri});
     } else {
@@ -23,7 +23,6 @@ document.addEventListener('contextmenu', function(event) {
         chrome.runtime.sendMessage({action: "hideContextMenu"});
     }
 });
-
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // TODO: don't use a alert popup
@@ -33,12 +32,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 "XPOC Information\n" +
                 "\n" +
                 "Origin information\n" +
-                "Name: " + request.result.name + "\n" +
-                "Website: " + request.result.url + "\n" +
+                "  Name: " + request.result.name + "\n" +
+                "  Website: " + request.result.hostname + "\n" +
                 "\n" +
                 "Account information\n" +
-                "URL: " + request.result.account.url + "\n" +
-                "Account: " + request.result.account.account + "\n";
+                "  URL: " + request.result.account.url + "\n" +
+                "  Account: " + request.result.account.account + "\n";
             alert(result);
         }
     }
@@ -48,14 +47,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 "XPOC Information\n" +
                 "\n" +
                 "Origin information\n" +
-                "Name: " + request.result.name + "\n" +
-                "Website: " + request.result.url + "\n" +
+                "  Name: " + request.result.name + "\n" +
+                "  Website: " + request.result.hostname + "\n" +
                 "\n" +
                 "Content information\n" +
-                "Title: " + request.result.content.title + "\n" +
-                "URL: " + request.result.content.url + "\n" +
-                "PUID: " + request.result.content.puid + "\n" +
-                "Account: " + request.result.content.account + "\n";
+                "  Title: " + request.result.content.title + "\n" +
+                "  URL: " + request.result.content.url + "\n" +
+                "  PUID: " + request.result.content.puid + "\n" +
+                "  Account: " + request.result.content.account + "\n" +
+                "  Timestamp: " + request.result.content.timestamp + "\n";
             alert(result);
         }
     }

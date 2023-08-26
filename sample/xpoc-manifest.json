@@ -1,12 +1,7 @@
 {
-    "name": "Christian Paquin",
+    "name": "XPOC framework sample",
     "url": "https://raw.githubusercontent.com/microsoft/xpoc-framework/main/sample",
 	"accounts": [
-	{
-		"platform": "youtube",
-		"url": "https://www.youtube.com/@christianpaquinmsr/about",
-		"account": "christianpaquinmsr"
-	},
 	{
 		"platform": "x",
 		"url": "https://twitter.com/xpocvalidator",
@@ -14,6 +9,7 @@
 	}],
     "content": [
 	{
+		"timestamp": "2023-07-10T00:00:00Z",
 	    "title": "XPOC test", 
 	    "url": "https://www.youtube.com/watch?v=hDd3t7y1asU",
 	    "platform": "youtube",

@@ -1,6 +1,6 @@
 # Cross-Platform Origin of Content (XPOC) Framework Specification
 
-This document specifies the Cross-Platform Origin of Content (XPOC) framework, to enable interoperable implementation.
+This document specifies the Cross-Platform Origin of Content (XPOC) framework, to enable interoperable implementation. The current version of the specification is 0.1.1.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC2119](https://www.rfc-editor.org/rfc/rfc2119).
 
@@ -16,13 +16,13 @@ A content Owner can attest 1) to the ownership of various accounts on hosting pl
 
 *Origin website*: website of the Owner hosting the XPOC manifest, represented by `[ORIGIN_URL]` in this document.
 
-*Manifest*: a file listing of content items owner or authorized by the Owner.
+*Manifest*: a file listing of content items owned or authorized by the Owner.
 
 *Content item*: a piece of content (e.g., post, image, video) hosted on a platform.
 
-*Account*: a platform-specific account (e.g., social handle).
+*Account*: a platform-specific account (e.g., social handle, user name).
 
-*Hosting platform*: site where the content item is located.
+*Hosting platform*: site where an account or a content item is located.
 
 ## Manifest
 
@@ -34,6 +34,7 @@ A XPOC manifest is a JSON file with the following schema:
 {
     name: string,
     hostname: string,
+    version: string,
     accounts: [
         {
             platform: string,
@@ -43,11 +44,12 @@ A XPOC manifest is a JSON file with the following schema:
     ]
     content: [
         {
+            timestamp: string (optional),
             title: string,
-            desc: string,
+            desc: string (optional),
             url: string,
             platform: string,
-            puid: string,
+            puid: string (optional),
             account: string
         }, ...
     ]
@@ -57,11 +59,13 @@ A XPOC manifest is a JSON file with the following schema:
 where:
 * `name` is the human-readable name of the Owner,
 * `hostname` is the hostname of the Owner's website, i.e., the top-level URL without the protocol header (e.g., `example.com`),
+* `version` is the version number of the specification used to generate the manifest; currently `0.1.1`.
 * `accounts` is an array of the Owner's platform accounts, JSON objects with the following properties:
   * `platform` is the name of the hosting platform,
   * `url` is the URL of the account page, and
   * `account` is the platform-specific account name.
 * `content` is an array of XPOC content items, JSON objects with the following properties:
+  * `timestamp` is the creation time of the item, represented in the ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC. For example, Sept 1st, 2023, 10:30 UTC is represented as "2023-09-01T10:30:00Z".  
   * `title` is the label for the content item,
   * `desc` is a description of the content item,
   * `url` is the URL of the content item on a hosting platform,
@@ -75,7 +79,7 @@ The manifest MUST be hosted at the Origin website's TLS-protected location: `htt
 
 ### XPOC URI
 
-The manifest XPOC URI is the following string: `xpoc://[ORIGIN_URL]`. The Owner attaches the XPOC URI to a platform account page (for example, in its bio or profile page) or a content item it creates (for example, by including it in an item's metadata, label, or description).
+The manifest XPOC URI is the following string: `xpoc://[ORIGIN_URL]!`. The `xpoc://` prefix and terminating `!` character simplifies parser implementations. The Owner attaches the XPOC URI to a platform account page (for example, in its bio or profile page) or a content item it creates (for example, by including it in an item's metadata, label, or description).
 
 ## Example
 
@@ -89,6 +93,7 @@ Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-
 {
     "name": "Alex Example",
     "hostname": "alexexample.com",
+    "version": "0.1.1",
     "accounts": [],
     "content": []
 }
@@ -96,7 +101,7 @@ Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-
 
 ### Account linking
 
-Alex adds its X (formerly Twitter) account name `@ExAlex` to its known accounts by adding the XPOC URI `xpoc://alexexample.com` in its X bio and by adding the following JSON object to the manifest's `accounts` array:
+Alex adds its X (formerly Twitter) account name `@ExAlex` to its known accounts by adding the XPOC URI `xpoc://alexexample.com!` in its X bio and by adding the following JSON object to the manifest's `accounts` array:
 ```json
     "platform": "X",
     "url": "https://twitter.com/ExAlex",
@@ -105,10 +110,11 @@ Alex adds its X (formerly Twitter) account name `@ExAlex` to its known accounts 
 
 ### Content creation
 
-Alex posts a video on Youtube at `https://www.youtube.com/watch?v=abcdef12345` under the account `@AlexExample` and adds the XPOC URI `xpoc://alexexample.com` in the video's description.
+Alex posts a video on Youtube at `https://www.youtube.com/watch?v=abcdef12345` under the account `@AlexExample` and adds the XPOC URI `xpoc://alexexample.com!` in the video's description.
 
 Alex then adds the following JSON object to the manifest's `content` array:
 ```json
+    "timestamp": "2023-08-24T08:45:00Z"
     "title": "My first video",
     "desc": "Quick video to say Hello World!",
     "url": "https://www.youtube.com/watch?v=abcdef12345",

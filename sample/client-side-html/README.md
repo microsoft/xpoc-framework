@@ -2,7 +2,7 @@
 
 This is a sample implementation of client-side HTML/JavaScript pages to view and edit XPOC manifests and to validate XPOC URIs, demonstrating how to interact with XPOC artifacts. For details about XPOC, consult the [specification](../../doc/xpoc-specification.md).
 
-The sample contains three pages:
+The sample contains three pages (accessible from `public/index.html`):
 * `public/xpoc-editor.html`: use to create and edit XPOC manifests
 * `public/xpoc-viewer.html`: to view a XPOC manifest hosted on a website
 * `public/xpoc-validator.html`: to validate a XPOC resource associated with a XPOC URI 

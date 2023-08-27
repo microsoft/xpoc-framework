@@ -5,10 +5,11 @@ import axios from 'axios';
 import cheerio from 'cheerio';
 
 export interface PlatformContentData {
+    timestamp?: string; // TODO: have platform implementations populate that
     title: string;
     platform: string;
     account: string;
-    puid: string;
+    puid?: string;
     xpocUri: string;
   }
   
@@ -27,7 +28,7 @@ export interface Platform {
 const findXpocUri = (text:string | undefined) => {
     if (!text) { throw new Error("Invalid content; can't search for XPOC URI"); }
     // XPOC URI regex, to capture the manifest URL
-    const xpocRegex = /xpoc:\/\/(.*?)(\s|$)/;
+    const xpocRegex = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/g;
     const match = xpocRegex.exec(text);
     if (match) {
         return match[0]; // return the captured group

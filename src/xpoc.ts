@@ -6,18 +6,27 @@ import { Twitter, Youtube, PlatformContentData } from './platform';
 
 dotenv.config();
 
+export type Account = {
+  platform: string,
+  url: string,
+  account: string;
+}
+
 export type ContentItem = {
+  timestamp?: string;
   title: string;
   desc?: string;
   url: string;
   platform: string;
-  puid: string;
+  puid?: string;
   account: string;
 };
 
 export type XPOCManifest = {
   name: string;
   hostname: string;
+  version: string;
+  accounts: Account[];
   content: ContentItem[];
 };
 
@@ -48,8 +57,9 @@ export async function createManifest(
   const platformData = await dataFetcher(url);
 
   existingManifest.content.push({
-    title,
-    desc,
+    timestamp: new Date().toISOString(), // TODO: get that from the platform data
+    title: platformData.title,
+    desc: '', // TODO: what could be the description? Add a field in web UI?
     url,
     platform: platformData.platform,
     puid: platformData.puid,

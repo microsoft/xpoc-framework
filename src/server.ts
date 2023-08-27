@@ -8,7 +8,7 @@ import axios from 'axios';
 import fileUpload from 'express-fileupload';
 import { Twitter, Youtube } from './platform';
 import cors from 'cors';
-
+import { validateManifest } from './validator'; 
 
 dotenv.config();
 
@@ -176,8 +176,25 @@ app.post('/add', async (req: Request, res: Response) => {
   }
 
   res.send(manifest);  // send back the updated manifest
-
 });
+
+app.post('/validate', async (req: Request<{}, {}, { url: string }>, res: Response) => {
+  const { url } = req.body;
+
+  if (!url || typeof url !== 'string') {
+      return res.status(400).send({ error: 'Invalid or empty url' });
+  }
+  try {
+    console.log("Attempting to fetch manifest for url:", url);
+    const manifestData = await validateManifest(url);
+    console.log("Fetched manifest:", manifestData);
+    res.send(manifestData);  // Return the manifest data if found.
+  } catch (error) {
+  console.error("Error in validateManifest:", error);
+  res.status(500).send({ error: 'No XPOC manifest found or error occurred fetching it.' });
+}
+});
+
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);

@@ -2,4 +2,4 @@
 node_modules/
 
 # compiled js files
-js/*
+js/

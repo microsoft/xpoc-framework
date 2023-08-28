@@ -47,8 +47,8 @@
                     <td><input type="text" id="manifestName" onchange="manifest.name = this.value"></td>
                 </tr>
                 <tr>
-                    <td><label for="manifestHostname">Hostname:</label><span class="info-tooltip">i<span class="tooltip-text">Hostname of the XPOC manifest location (e.g., "https://example.com")</span></span></td>
-                    <td><input type="text" id="manifestHostname" onchange="manifest.hostname = this.value"></td>
+                    <td><label for="manifestBaseUrl">Base URL:</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
+                    <td><input type="text" id="manifestBaseUrl" onchange="manifest.baseurl = this.value"></td>
                 </tr>
                 <tr>
                     <td><label for="manifestVersion">Version:</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.1.1</span></span></td>
@@ -79,7 +79,7 @@
     <script>
         let manifest = {
             name: "",
-            hostname: "",
+            baseurl: "",
             version: "0.1.1",
             accounts: [],
             content: []
@@ -88,14 +88,14 @@
         function initializeManifestInfo() {
             clearError();
             document.getElementById('manifestName').value = manifest.name || '';
-            document.getElementById('manifestHostname').value = manifest.hostname || '';
+            document.getElementById('manifestBaseUrl').value = manifest.baseurl || '';
             document.getElementById('manifestVersion').value = manifest.version || '0.1.1';
         }
 
         function createNewManifest() {
             manifest = {
                 name: "",
-                hostname: "",
+                baseurl: "",
                 version: "0.1.1",
                 accounts: [],
                 content: []

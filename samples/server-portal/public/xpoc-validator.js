@@ -41,7 +41,7 @@ function displayManifest(manifestData) {
     
     let manifestHtml = `<div class="main-content"><h3>Manifest</h3><ul>`;
     manifestHtml += `<li><strong>Name:</strong> ${manifestData.name}</li>`;
-    manifestHtml += `<li><strong>Hostname:</strong> ${manifestData.url}</li>`;
+    manifestHtml += `<li><strong>Base URL:</strong> ${manifestData.baseurl}</li>`;
     manifestHtml += "</ul></div>";
 
     let accountsHtml = `<div class="main-content"><h3>Accounts</h3><ul>`;

@@ -15,7 +15,7 @@ Using our [sample implementation](../README.md#using-the-sample-implementation),
 ## How can I verify XPOC-protected content?
 
 There are two mechanisms to verify XPOC-protected content:
-1. By inspecting a content owner's XPOC manifest (located on their website at `https://<hostname>/xpoc-manifest.json`) to discover their associated accounts on various platforms (e.g., YouTube, X/Twitter, Facebook, etc.) and specific content items (e.g., posts, videos, etc.), or
+1. By inspecting a content owner's XPOC manifest (located on their website at `https://<baseurl>/xpoc-manifest.json`) to discover their associated accounts on various platforms (e.g., YouTube, X/Twitter, Facebook, etc.) and specific content items (e.g., posts, videos, etc.), or
 2. By dereferencing a XPOC URI on a platform account or content page to locate the owner's XPOC manifest and verify if the XPOC resource is indeed listed in the manifest.
 
 Using our [sample implementation](../README.md#using-the-sample-implementation), you can do the former by using the XPOC validator portal (by entering the owner's website), and the later by using the portal (by entering a resource URI) or the web browser extension (by right-clicking on a XPOC URI).
@@ -26,7 +26,7 @@ XPOC confirms that an account is linked with a known website, and that a piece o
 
 ## What is a XPOC URI?
 
-A XPOC URI is a string starting with `xpoc://` prefix followed by a web resolvable hostname. The prefix helps validators to recognize XPOC resources on a HTML page. A XPOC validator fetches the XPOC manifest by replacing the `xpoc://` prefix with `https://` and appending `/xpoc-manifest.json` to the URI.
+A XPOC URI is a string starting with `xpoc://` prefix followed by a base url (a hostname (domain) followed by an optional path). The prefix helps validators to recognize XPOC resources on a HTML page. A XPOC validator fetches the XPOC manifest by replacing the `xpoc://` prefix with `https://` and appending `/xpoc-manifest.json` to the URI.
 
 ## Can a piece of content be associated with more than one XPOC URI?
 

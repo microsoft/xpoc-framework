@@ -1,3 +1,18 @@
+<!--
+    This is a proof-of-concept XPOC manifest editor.
+
+    It is intended to be used as a starting point for developers to build their own XPOC manifest editors.
+
+    The editor is written in HTML and JavaScript, and can be run locally in a browser. It can also be hosted on a web server.
+
+    The editor performs minimal input validation. Here is a list of usability and validation improvements that can be made:
+    - Validate the manifest against the XPOC manifest schema
+    - Validate URLs more robustly (using regex)
+    - Implement better error handling and reporting (highlight erroneous fields, tooltips, etc.)
+    - Provide input pickers for common fields (e.g., platform, timestamp)
+    - Add auto-fill based on URL (by fetching the target page and deducing content fields); would require CORS support
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 

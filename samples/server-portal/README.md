@@ -17,3 +17,13 @@ Start the server:
 ```
 
 By default, the server listens on port 3000; edit [server.ts](../../src/server.ts) to modify this.
+
+### Usage
+
+This sample portal offers three pages: one to edit XPOC manifest, one to view them, and one to verify XPOC-protected content.
+
+* Manifest Editor: TODO: add more details
+* Manifest Viewer: TODO: add more details
+* XPOC Validator: TODO: add more details
+
+The XPOC validator supports different platforms, and its experience can be improved if the deployer enable API access to these platform; see [PLATFORM.md](../../PLATFORM.md) for details. 

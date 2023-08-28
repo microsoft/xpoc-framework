@@ -44,7 +44,10 @@ jobs:
           cd samples/server-portal
           npm run build
 
-      - name: Run Sample
+      - name: Start Server and Check
         run: |
           cd samples/${{ matrix.sample }}
-          npm run start
+          npm run start &
+          sleep 10 # wait for 10 seconds to ensure server starts
+          # Now, kill the server (running on port 3000 in our samples):
+          kill -9 $(lsof -t -i:3000)

@@ -25,5 +25,3 @@ This sample portal offers three pages: one to edit XPOC manifest, one to view th
 * Manifest Editor: TODO: add more details
 * Manifest Viewer: TODO: add more details
 * XPOC Validator: TODO: add more details
-
-The XPOC validator supports different platforms, and its experience can be improved if the deployer enable API access to these platform; see [PLATFORM.md](../../PLATFORM.md) for details. 

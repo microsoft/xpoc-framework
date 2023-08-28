@@ -2,20 +2,51 @@ body {
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Change from center */
     justify-content: center;
     height: 100vh;
     margin: 0;
     background-color: #f4f4f4;
+    padding-left: 220px; /* Space for the sidebar */
 }
 
-#urlsInput, #platform {
-    width: 110%;
+.container {
+    width: 80%; /* Set a width for the container */
+    max-width: 800px; /* This is optional, just prevents it from getting too wide on large screens */
+    margin: 0 auto; /* centers the container */
+}
+
+#fileInput {
+    display: none;
+}
+
+#fileInputLabel {
+    display: inline-block;
+    padding: 6px 12px;  
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;  
+    width: 40%; 
+    text-align: center;
+}
+
+
+input[type="text"] {
+    width: 100%;
     padding: 10px;
+    margin-top: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
     border: 1px solid #ddd;
 }
+
+#titleInput, #descInput, #accountInput {
+    width: 80%; /* Keep them a bit smaller if you wish */
+}
+
 button {
     padding: 10px 20px;
     background-color: #008CBA;
@@ -24,11 +55,13 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    display: block; 
+    display: block;
 }
+
 button:hover {
     background-color: #007B9A;
 }
+
 #output {
     margin-top: 20px;
     width: 65%;
@@ -39,6 +72,7 @@ button:hover {
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
     word-wrap: break-word;
 }
+
 .section {
     padding: 10px;
     border: 1px solid #ddd;
@@ -67,6 +101,7 @@ h1 {
 h2 {
     color: #333;
 }
+
 .sidebar {
     position: fixed;
     top: 0;
@@ -109,7 +144,7 @@ h2 {
 
 .container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column; /* was row */
     align-items: center;  /* vertically aligns content */
     justify-content: center;  /* horizontally aligns content */
     padding: 0;

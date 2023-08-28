@@ -160,6 +160,7 @@ app.post('/add', async (req: Request, res: Response) => {
       }
      // here you would add any other specific regex to capture the puid for other platforms 
      // with appropriate platform API access, other fields could also be captured from the API 
+
   }
 
     const newContentEntry = {
@@ -171,14 +172,10 @@ app.post('/add', async (req: Request, res: Response) => {
       url: url  
   };
 
-  manifest.content.push(newContentEntry);
+    manifest.content.push(newContentEntry);
   }
-  const fileName = `manifest_${new Date().toISOString()}.json`;
-  res.send(manifest);  // send back the updated manifest
-  res.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(manifest, null, 4)); 
 
+  res.send(manifest);  // send back the updated manifest
 });
 
 app.post('/validate', async (req: Request<{}, {}, { url: string }>, res: Response) => {
@@ -196,7 +193,6 @@ app.post('/validate', async (req: Request<{}, {}, { url: string }>, res: Respons
   console.error("Error in validateManifest:", error);
   res.status(500).send({ error: 'No XPOC manifest found or error occurred fetching it.' });
 }
-
 });
 
 

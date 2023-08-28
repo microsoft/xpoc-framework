@@ -4,44 +4,97 @@
     <title>XPOC Manifest Editor</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
 
-<script>
-  async function submitForm() {
-    const fileInput = document.getElementById('fileInput');
-    const file = fileInput.files[0];
-    const urlInput = document.getElementById('urlsInput');
-    const url = urlInput.value;
-    const platformSelect = document.getElementById('platform');
-    const platform = platformSelect.value;
+    <script>
+        async function submitForm() {
+          const fileInput = document.getElementById('fileInput');
+          const file = fileInput.files[0];
+          const urlInput = document.getElementById('urlInput');
+          const url = urlInput.value;
+          const platformInput = document.getElementById('platform');
+          const platform = platformInput.value;
+      
+          if (!file) {
+              alert('Please upload a JSON file.');
+              return;
+          }
+      
+          if (!url) {
+              alert('Please enter a URL.');
+              return;
+          }
+      
+          if (!platform) {
+              alert('Please enter a platform.');
+              return;
+          }
+      
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('url', url); 
+          formData.append('platform', platform); 
+      
+          const response = await fetch('/add', {
+              method: 'POST',
+              body: formData
+          });
+      
+          const data = await response.json();
+          if (response.status === 200) {
+              // After extracting the platform and puid, display the secondary form
+              document.getElementById('extraDetailsSection').style.display = 'block';
+          } else {
+              document.getElementById('output').innerText = `Error: ${data.error}`;
+          }
+        }
+          
+        async function submitFinalForm() {
+          const fileInput = document.getElementById('fileInput'); 
+          const file = fileInput.files[0]; 
+      
+          if (!file) {
+              alert('Please upload a JSON file.');
+              return;
+          }
+      
+          const title = document.getElementById('titleInput').value;
+          const platform = document.getElementById('platform').value;
+          const desc = document.getElementById('descInput').value;
+          const account = document.getElementById('accountInput').value;
+          const url = document.getElementById('urlInput').value; // You will need the URL again in the final submission
+      
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('title', title);
+          formData.append('platform', platform);
+          formData.append('desc', desc);
+          formData.append('account', account);
+          formData.append('url', url); // Append the URL in the final submission
+          formData.append('finalSubmission', 'true'); 
+      
+          const response = await fetch('/add', {
+              method: 'POST',
+              body: formData
+          });
+          if (response.status === 200) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'updated_manifest.json';
 
-    if (!file) {
-        alert('Please upload a JSON file.');
-        return;
+            document.body.appendChild(a);
+            a.click();
+
+            window.URL.revokeObjectURL(url);
+            document.getElementById('output').innerText = 'Download started...';
+        } else {
+            const data = await response.json();
+            document.getElementById('output').innerText = `Error: ${data.error || 'Unknown error occurred'}`;
+        }
     }
-
-    if (!url) {
-        alert('Please enter a URL.');
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('url', url); // corrected from urls[0] to url
-    formData.append('platform', platform); // appended the platform to formData
-
-    const response = await fetch('/add', {
-        method: 'POST',
-        body: formData
-    });
-
-    const data = await response.json();
-
-    if (response.status === 200) {
-        document.getElementById('output').innerText = JSON.stringify(data, null, 2);
-    } else {
-        document.getElementById('output').innerText = `Error: ${data.error}`;
-    }
-}
-</script>
+      
+      </script>
 
 </head>
 
@@ -54,15 +107,23 @@
 <div class="container">
     <h1>XPOC Manifest Editor</h1>
     <form id="manifestForm" onsubmit="event.preventDefault(); submitForm();">
-        <input type="file" id="fileInput" name="file" accept=".json" required>
-        <input type="text" id="urlsInput" name="url" placeholder="Enter URL" required>
-        <select id="platform" name="platform">
-            <option value="youtube">YouTube</option>
-            <option value="twitter">Twitter</option>
-            <!-- Add more platforms as required -->
-        </select>
-        <button type="submit">Generate Manifest</button>
+        <h2>Upload the manifest to be updated here.</h2>
+        <label id="fileInputLabel" for="fileInput">Choose File</label>
+        <span id="chosenFileName"></span> 
+        <input type="file" id="fileInput" name="file" accept=".json" required onchange="document.getElementById('chosenFileName').textContent = this.files[0].name;">
+        <br> Enter the URL of the content to be added to the manifest: <br> 
+        <input type="text" id="urlInput" name="url" placeholder="Enter URL" required>
+        <br> Enter the platform of the content to be added to the manifest:
+        <input type="text" id="platform" name="platform" placeholder="Enter Platform" required>
+        <button type="submit"> Update and Download manifest</button>
     </form>
+    <div id="extraDetailsSection" style="display:none;">
+        <h2>Extra Details</h2>
+        <input type="text" id="titleInput" placeholder="Enter Title">
+        <input type="text" id="descInput" placeholder="Enter Description">
+        <input type="text" id="accountInput" placeholder="Enter Account">
+        <button onclick="submitFinalForm()"> Update and Download Manifest</button>
+    </div>
     <div id="output" class="section"></div>
 </div>
 

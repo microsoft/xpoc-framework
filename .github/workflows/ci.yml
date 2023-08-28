@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        sample: [client-side-html, server-portal]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '19'
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: samples/${{ matrix.sample }}/node_modules
+          key: ${{ runner.os }}-build-${{ matrix.sample }}-${{ hashFiles('samples/${{ matrix.sample }}/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ matrix.sample }}-
+
+      - name: Install Dependencies
+        run: |
+          cd samples/${{ matrix.sample }}
+          npm install
+
+      - name: Build (only for server-portal)
+        if: matrix.sample == 'server-portal'
+        run: |
+          cd samples/server-portal
+          npm run build
+
+      - name: Start Server and Check
+        run: |
+          cd samples/${{ matrix.sample }}
+          npm run start &
+          sleep 10 # wait for 10 seconds to ensure server starts
+          # Now, kill the server (running on port 3000 in our samples):
+          kill -9 $(lsof -t -i:3000)

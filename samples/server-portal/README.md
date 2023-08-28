@@ -13,7 +13,7 @@ npm run build
 
 Start the server:
 ```
-`npm run start-server`
+`npm run start`
 ```
 
 By default, the server listens on port 3000; edit [server.ts](../../src/server.ts) to modify this.

@@ -11,28 +11,17 @@ Note that client-side functionality could be limited by a browser security polic
 
 ## Self hosting
 
-These pages can be self-hosted by creating an express server, for example, following these steps: 
+These pages can be self-hosted by following these steps:
 
-1. Create a `server.js` file:
-```javascript
-const express = require('express');
-const path = require('path');
-const app = express();
-app.use(express.static(path.join(__dirname, 'public')));
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
-});
+1. Setup the express server:
+
 ```
-2. Create and build a npm project
-```
-npm init -y
-npm install express
+npm install
 ```
 
-3. Start the server
+2. Start the server
 ```
-node server.js
+npm run start
 ```
 
 The sample pages can be accessed at `http://localhost:3000/index.html`.

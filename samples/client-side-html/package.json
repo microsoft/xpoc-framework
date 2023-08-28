@@ -1,0 +1,13 @@
+{
+  "name": "client-side-html",
+  "version": "1.0.0",
+  "description": "Client-side HTML XPOC Sample ",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}

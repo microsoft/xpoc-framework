@@ -77,6 +77,7 @@ export const Youtube: Platform = {
     }
 }
 
+// TODO: test or remove
 export const Twitter: Platform = {
     Hostnames: ['twitter.com', 'x.com'],
 
@@ -128,6 +129,7 @@ export const Twitter: Platform = {
     }
 }
 
+// TODO: test or remove
 export const Facebook: Platform = {
     Hostnames: ['facebook.com'],
 

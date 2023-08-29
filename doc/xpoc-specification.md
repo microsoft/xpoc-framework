@@ -101,38 +101,45 @@ Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-
 
 ### Account linking
 
-Alex adds its X (formerly Twitter) account name `@ExAlex` to its known accounts by adding the XPOC URI `xpoc://alexexample.com!` in its X bio and by adding the following JSON object to the manifest's `accounts` array:
+Alex adds their Facebook account name `alex.example` and their X (formerly Twitter) account name `@ExAlex` to its known accounts by adding the XPOC URI `xpoc://alexexample.com!` in their Facebook and X bio fields and by adding the following JSON objects to their manifest's `accounts` array:
 ```json
+{
+    "platform": "Facebook",
+    "url": "https://facebook.com/alex.example",
+    "account": "alex.example"
+},
+{
     "platform": "X",
     "url": "https://twitter.com/ExAlex",
     "account": "ExAlex"
+}
 ```
 
 ### Content creation
 
-Alex posts a video on Youtube at `https://www.youtube.com/watch?v=abcdef12345` under the account `@AlexExample` and adds the XPOC URI `xpoc://alexexample.com!` in the video's description.
+Alex's conference video is posted on Youtube at `https://www.youtube.com/watch?v=abcdef12345` under the account `@CoolConf` and have them add the XPOC URI `xpoc://alexexample.com!` in the video's description.
 
-Alex then adds the following JSON object to the manifest's `content` array:
+Alex then adds the following JSON object to their manifest's `content` array:
 ```json
-    "timestamp": "2023-08-24T08:45:00Z"
-    "title": "My first video",
-    "desc": "Quick video to say Hello World!",
+    "title": "Cool conference panel",
+    "desc": "My panel at the Cool conference",
     "url": "https://www.youtube.com/watch?v=abcdef12345",
-    "platform": "youtube.com",
+    "platform": "youtube",
     "puid": "abcde12345",
-    "account": "@AlexExample"
+    "account": "@CoolConf",
+    "timestamp": "2023-08-24T08:45:00Z"
 ```
 
 ### Account validation
 
-A verifier can check that a X (formerly Twitter) account is indeed owned by `alexexample.com` by:
+A verifier can check that a Facebook or X (formerly Twitter) account is indeed owned by `alexexample.com` by:
 1. Parsing the XPOC URI on the account page to get the `alexexample.com` base URL,
 2. Retrieving the XPOC manifest from `https://alexexample.com/xpoc-manifest.json`, and
 3. Verifying that the account page is listed in the manifest's `accounts` property.
 
 ### Content validation
 
-A verifier can check that the Youtube video posted by `@AlexExample` is indeed from `alexexample.com` by:
+A verifier can check that the Youtube video posted by `@CoolConf` is indeed approved by the owner of `alexexample.com` by:
 1. Parsing the XPOC URI to get the `alexexample.com` base URL,
 2. Retrieving the XPOC manifest from `https://alexexample.com/xpoc-manifest.json`, and
 3. Verifying that the video URL is listed in the manifest's `content` property.

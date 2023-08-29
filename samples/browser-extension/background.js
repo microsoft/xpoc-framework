@@ -66,7 +66,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 console.log('Content found in manifest', matchingAccount);
                 const result = {
                     name: manifest.name,
-                    hostname: manifest.hostname,
+                    baseurl: manifest.baseurl,
                     version: manifest.version,
                     account: matchingAccount
                 };
@@ -79,7 +79,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                     console.log('Content found in manifest', matchingContent);
                     const result = {
                         name: manifest.name,
-                        hostname: manifest.hostname,
+                        baseurl: manifest.baseurl,
                         version: manifest.version,
                         content: matchingContent
                     };

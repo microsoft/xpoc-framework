@@ -24,7 +24,7 @@ export type ContentItem = {
 
 export type XPOCManifest = {
   name: string;
-  hostname: string;
+  baseurl: string;
   version: string;
   accounts: Account[];
   content: ContentItem[];

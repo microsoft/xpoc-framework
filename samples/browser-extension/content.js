@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 "\n" +
                 "Origin information\n" +
                 "  Name: " + request.result.name + "\n" +
-                "  Website: " + request.result.hostname + "\n" +
+                "  Website: " + request.result.baseurl + "\n" +
                 "\n" +
                 "Account information\n" +
                 "  URL: " + request.result.account.url + "\n" +
@@ -48,7 +48,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 "\n" +
                 "Origin information\n" +
                 "  Name: " + request.result.name + "\n" +
-                "  Website: " + request.result.hostname + "\n" +
+                "  Website: " + request.result.baseurl + "\n" +
                 "\n" +
                 "Content information\n" +
                 "  Title: " + request.result.content.title + "\n" +

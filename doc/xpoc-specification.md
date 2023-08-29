@@ -33,7 +33,7 @@ A XPOC manifest is a JSON file with the following schema:
 ```
 {
     name: string,
-    hostname: string,
+    baseurl: string,
     version: string,
     accounts: [
         {
@@ -58,7 +58,7 @@ A XPOC manifest is a JSON file with the following schema:
 
 where:
 * `name` is the human-readable name of the Owner,
-* `hostname` is the hostname of the Owner's website, i.e., the top-level URL without the protocol header (e.g., `example.com`),
+* `baseurl` is the base url of the Owner's website, i.e., the hostname (domain) followed by an optional path, without the protocol header (e.g., `example.com` or `example.com/some/path`),
 * `version` is the version number of the specification used to generate the manifest; currently `0.1.1`.
 * `accounts` is an array of the Owner's platform accounts, JSON objects with the following properties:
   * `platform` is the name of the hosting platform,
@@ -92,7 +92,7 @@ Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-
 ```json
 {
     "name": "Alex Example",
-    "hostname": "alexexample.com",
+    "baseurl": "alexexample.com",
     "version": "0.1.1",
     "accounts": [],
     "content": []
@@ -126,13 +126,13 @@ Alex then adds the following JSON object to the manifest's `content` array:
 ### Account validation
 
 A verifier can check that a X (formerly Twitter) account is indeed owned by `alexexample.com` by:
-1. Parsing the XPOC URI on the account page to get the `alexexample.com` hostname,
+1. Parsing the XPOC URI on the account page to get the `alexexample.com` base URL,
 2. Retrieving the XPOC manifest from `https://alexexample.com/xpoc-manifest.json`, and
 3. Verifying that the account page is listed in the manifest's `accounts` property.
 
 ### Content validation
 
 A verifier can check that the Youtube video posted by `@AlexExample` is indeed from `alexexample.com` by:
-1. Parsing the XPOC URI to get the `alexexample.com` hostname,
+1. Parsing the XPOC URI to get the `alexexample.com` base URL,
 2. Retrieving the XPOC manifest from `https://alexexample.com/xpoc-manifest.json`, and
 3. Verifying that the video URL is listed in the manifest's `content` property.

@@ -14,13 +14,21 @@ The repository contains [sample implementations](#sample-implementations) to cre
 
 ## System overview
 
-This section describes the life cycle for data protected using the Cross-Platform Origin of Content framework. The following diagram illustrates the [example](./doc/xpoc-specification.md#example) from the specification. (TODO: update diagram for account linking)
+This section describes the life cycle for data protected using the Cross-Platform Origin of Content framework. The following diagram illustrates the [example](./doc/xpoc-specification.md#example) from the specification.
 
-1. A content owner (Alex Example) creates a XPOC manifest on their website (`alexexample.com`) listing the content they've created across different platforms (e.g., a video on YouTube, a post on Facebook).
-1. The content owner adds a XPOC URI (`xpoc://alexexample.com`) to each referenced content item (e.g., in the YouTube video description, in the Facebook post).
-1. A verifier looking at the content item parses the XPOC URI, fetches the corresponding XPOC manifest, and verifies that the content item is indeed listed therein.  
+1. A content owner (Alex Example) creates a XPOC manifest on their website (`alexexample.com`) listing the accounts they control and the content they've created or approved across different platforms (e.g., YouTube, Facebook, X/Twitter).
 
-![XPOC architecture](./doc/XPOC_arch.svg)
+2. The content owner adds a XPOC URI (`xpoc://alexexample.com!`) to each referenced content item (e.g., in the YouTube video description, in the Facebook post).
+
+![XPOC manifest](./doc/xpoc_manifest.PNG)
+
+3. A verifier can discover a content owner's associated accounts and content by inspecting their manifest.
+
+![XPOC discovery](./doc/xpoc_discovery.PNG)
+
+4. A verifier looking at the content item parses the XPOC URI, fetches the corresponding XPOC manifest, and verifies that the content item is indeed listed therein.  
+
+![XPOC validation](./doc/xpoc_validation.PNG)
 
 ## Sample implementations
 

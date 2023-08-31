@@ -44,13 +44,13 @@ A XPOC manifest is a JSON file with the following schema:
     ]
     content: [
         {
-            timestamp: string (optional),
-            title: string,
+            title: string, (optional),
             desc: string (optional),
             url: string,
             platform: string,
             puid: string (optional),
-            account: string
+            account: string,
+            timestamp: string (optional)
         }, ...
     ]
 }
@@ -66,13 +66,13 @@ where:
     -   `url` is the URL of the account page, and
     -   `account` is the platform-specific account name.
 -   `content` is an array of XPOC content items, JSON objects with the following properties:
-    -   `timestamp` is the creation time of the item, represented in the ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC. For example, Sept 1st, 2023, 10:30 UTC is represented as "2023-09-01T10:30:00Z".
     -   `title` is the label for the content item,
     -   `desc` is a description of the content item,
     -   `url` is the URL of the content item on a hosting platform,
     -   `platform` is the name of the hosting platform,
-    -   `puid` is a platform-specific unique identifier of the hosted content, and
-    -   `account` is the platform-specific account name which owns the content item.
+    -   `puid` is a platform-specific unique identifier of the hosted content,
+    -   `account` is the platform-specific account name which owns the content item, and
+    -   `timestamp` is the creation time of the item, represented in the ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC. For example, Sept 1st, 2023, 10:30 UTC is represented as "2023-09-01T10:30:00Z".
 
 ### Manifest Location
 

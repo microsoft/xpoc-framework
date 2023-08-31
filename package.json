@@ -1,7 +1,7 @@
 {
-  "name": "XPOC framwwork",
+  "name": "XPOC framework",
   "version": "0.1.1",
-  "description": "Cross-Platform Origin of Content (XPOC) framwwork",
+  "description": "Cross-Platform Origin of Content (XPOC) framework",
   "scripts": {
     "lint": "eslint './**/*.{ts,tsx,js,jsx,md}' --fix",
     "prettier": "prettier --write './**/*.{ts,tsx,js,jsx,md}'"

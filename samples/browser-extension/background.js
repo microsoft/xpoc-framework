@@ -4,26 +4,20 @@
 // the text that was clicked by the user
 let clickedText = '';
 
+// Create the context menu item
+let menuItemId = chrome.contextMenus.create({
+    id: "verifyXpocUri",
+    title: "Verify XPOC link",
+    contexts: ["all"],
+    documentUrlPatterns: ["<all_urls>"] // this ensures it will show on all pages
+});
+
+
 // create context menu item, only if what is clicked is a valid XPOC link
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if (message.action === 'showContextMenu') {
-        console.log(`showContextMenu action triggered. message.href: "${message.href}"`);
-        clickedText = message.href;
-        console.log(`clickedText: "${clickedText}"`)
-
-        chrome.contextMenus.removeAll(function() {
-            chrome.contextMenus.create({
-                id: "verifyXpocUri",
-                title: "Verify XPOC link",
-                contexts: ["all"],
-                documentUrlPatterns: ["<all_urls>"] // this ensures it will show on all pages
-            });
-        });
-    }
-
-    if (message.action === 'hideContextMenu') {
-        console.log(`hideContextMenu action triggered`);
-        chrome.contextMenus.removeAll();
+        clickedText = message.data
+        chrome.contextMenus.update(menuItemId, { visible: clickedText != null });
     }
 });
 

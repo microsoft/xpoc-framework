@@ -230,7 +230,7 @@
             manifest.content.forEach((content, index) => {
                 html += `
                     <tr>
-                        <td><input type="text" value="${content.title}" onchange="manifest.content[${index}].title = this.value"></td>
+                        <td><input type="text" value="${content.title || ''}" placeholder="Optional" onchange="manifest.content[${index}].title = this.value"></td>
                         <td><input type="text" value="${content.desc || ''}" placeholder="Optional" onchange="manifest.content[${index}].desc = this.value"></td>
                         <td><input type="text" value="${content.url}" onchange="validateAndUpdateURL('content', ${index}, this.value, this)"></td>
                         <td><input type="text" value="${content.platform}" onchange="manifest.content[${index}].platform = this.value"></td>

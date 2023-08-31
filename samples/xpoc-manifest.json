@@ -4,7 +4,7 @@
 	"version": "0.1.1",
 	"accounts": [
 		{
-			"platform": "x",
+			"platform": "X",
 			"url": "https://twitter.com/xpocvalidator",
 			"account": "xpocvalidator"
 		}
@@ -14,7 +14,7 @@
 			"timestamp": "2023-07-10T00:00:00Z",
 			"title": "XPOC test", 
 			"url": "https://www.youtube.com/watch?v=hDd3t7y1asU",
-			"platform": "youtube",
+			"platform": "YouTube",
 			"puid": "hDd3t7y1asU",
 			"account": "@christianpaquinmsr"
 		}

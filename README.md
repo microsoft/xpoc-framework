@@ -6,7 +6,7 @@ This project introduces the Cross-Platform Origin of Content (XPOC) framework, a
 
 The aim of the XPOC framework is to allow a person or organization (content owner) to create a authoritative list of
 
-1. the various accounts they control over hosting web platforms (such as YouTube, X (formerly Twitter), Facebook, etc.), and
+1. the various accounts they control over hosting web platforms (such as YouTube, X/Twitter, Facebook, etc.), and
 2. the various pieces of content (videos, posts, etc.) they created or approved on these platforms.
 
 Using this framework, content creators protect themselves against falsely attributed accounts or content, providing signals that can be used by automated validation tools.

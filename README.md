@@ -32,7 +32,7 @@ This section describes the life cycle for data protected using the Cross-Platfor
 
 ## Sample implementations
 
-The project contains three sample implementations (refer two their respective `README.md` for details on how to use them):
+The project contains three sample implementations (refer to their respective `README.md` for details on how to use them):
 * A server portal with a HTML front-end to create XPOC manifests and verify XPOC resources ([README](./samples/server-portal/README.md))
 * A client-side HTML portal to create XPOC manifests and verify XPOC resources ([README](./samples/client-side-html/README.md))
 * A Chrome/Edge browser extension to verify XPOC URIs ([README](./samples/browser-extension/README.md))  

@@ -1,5 +1,7 @@
 # Cross-Platform Origin of Content (XPOC) Framework
 
+*This is a pre-release preview of the framework, currently at version 0.1.1. The specification and sample implementations might change significantly as we continue its development and receive feedback.*
+
 This project introduces the Cross-Platform Origin of Content (XPOC) framework, along with a sample implementation.
 
 The aim of the XPOC framework is to allow a person or organization (content owner) to create a authoritative list of
@@ -8,7 +10,7 @@ The aim of the XPOC framework is to allow a person or organization (content owne
 
 Using this framework, content creators protect themselves against falsely attributed accounts or content, providing signals that can be used by automated validation tools.
 
-A content owner creates a XPOC manifest that contains references to the accounts they control and the content items they created across various platforms, and hosts it on its well-known website. The owner then adds a XPOC URI referencing its own manifest to their platform account pages (bio or profile) and content items. Verifiers can validate the origin of an account or content item using a XPOC URI by dereferencing it to retrieve the owner's manifest, and by verifying that the account or content item is listed within it. For details, see the framework's [specification](./doc//xpoc-specification.md) and the [FAQ](./doc/FAQ.md).
+A content owner creates a XPOC manifest that contains references to the accounts they control and the content items they created, participated in, or authorized across various platforms, and hosts it on its well-known website. The owner then adds a XPOC URI referencing its own manifest to their platform account pages (bio or profile) and content items. Verifiers can validate the origin of an account or content item by inspecting the content owner's manifest (if known) or by using a XPOC URI, dereferencing it to retrieve the owner's manifest, and verifying that the account or content item is listed within it. For details, see the framework's [specification](./doc//xpoc-specification.md) and the [FAQ](./doc/FAQ.md).
 
 The repository contains [sample implementations](#sample-implementations) to create XPOC manifests and to verify XPOC content.
 
@@ -32,10 +34,11 @@ This section describes the life cycle for data protected using the Cross-Platfor
 
 ## Sample implementations
 
-The project contains three sample implementations (refer to their respective `README.md` for details on how to use them):
-* A server portal with a HTML front-end to create XPOC manifests and verify XPOC resources ([README](./samples/server-portal/README.md))
+The project contains the following sample implementations for the framework (refer to their respective `README.md` for details on how to use them):
 * A client-side HTML portal to create XPOC manifests and verify XPOC resources ([README](./samples/client-side-html/README.md))
 * A Chrome/Edge browser extension to verify XPOC URIs ([README](./samples/browser-extension/README.md))  
+
+*Note*: we are working on other implementations, including a reference TypeScript library, and a server-side portal. See the project's active branches for work-in-progress implementations.
 
 ## Open questions
 

@@ -6,23 +6,23 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMEND
 
 ## System Overview
 
-A content Owner can attest 1) to the ownership of various accounts on hosting platforms, and 2) to the origin of content items hosted on these platforms by listing both the accounts and content items in a manifest on its own website `[ORIGIN_URL]`. A content Owner can attach a XPOC URI `xpoc://[ORIGIN_URL]` to their platform account page and content items (in a platform-specific way) pointing back to the manifest. Verifiers can validate the origin of an account or content item by using the XPOC URI to discover the Owner's manifest and by verifying that the account or content item is indeed listed therein. 
+A content Owner can attest 1) to the ownership of various accounts on hosting platforms, and 2) to the origin of content items hosted on these platforms by listing both the accounts and content items in a manifest on its own website `[ORIGIN_URL]`. A content Owner can attach a XPOC URI `xpoc://[ORIGIN_URL]` to their platform account page and content items (in a platform-specific way) pointing back to the manifest. Verifiers can validate the origin of an account or content item by using the XPOC URI to discover the Owner's manifest and by verifying that the account or content item is indeed listed therein.
 
 ## Terminology
 
-*Owner*: entity owning or approving content items hosted on various platforms.
+_Owner_: entity owning or approving content items hosted on various platforms.
 
-*Verifier*: entity validating the origin of a content item.
+_Verifier_: entity validating the origin of a content item.
 
-*Origin website*: website of the Owner hosting the XPOC manifest, represented by `[ORIGIN_URL]` in this document.
+_Origin website_: website of the Owner hosting the XPOC manifest, represented by `[ORIGIN_URL]` in this document.
 
-*Manifest*: a file listing of content items owned or authorized by the Owner.
+_Manifest_: a file listing of content items owned or authorized by the Owner.
 
-*Content item*: a piece of content (e.g., post, image, video) hosted on a platform.
+_Content item_: a piece of content (e.g., post, image, video) hosted on a platform.
 
-*Account*: a platform-specific account (e.g., social handle, user name).
+_Account_: a platform-specific account (e.g., social handle, user name).
 
-*Hosting platform*: site where an account or a content item is located.
+_Hosting platform_: site where an account or a content item is located.
 
 ## Manifest
 
@@ -57,23 +57,24 @@ A XPOC manifest is a JSON file with the following schema:
 ```
 
 where:
-* `name` is the human-readable name of the Owner,
-* `baseurl` is the base url of the Owner's website, i.e., the hostname (domain) followed by an optional path, without the protocol header (e.g., `example.com` or `example.com/some/path`),
-* `version` is the version number of the specification used to generate the manifest; currently `0.1.1`.
-* `accounts` is an array of the Owner's platform accounts, JSON objects with the following properties:
-  * `platform` is the name of the hosting platform,
-  * `url` is the URL of the account page, and
-  * `account` is the platform-specific account name.
-* `content` is an array of XPOC content items, JSON objects with the following properties:
-  * `timestamp` is the creation time of the item, represented in the ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC. For example, Sept 1st, 2023, 10:30 UTC is represented as "2023-09-01T10:30:00Z".  
-  * `title` is the label for the content item,
-  * `desc` is a description of the content item,
-  * `url` is the URL of the content item on a hosting platform,
-  * `platform` is the name of the hosting platform,
-  * `puid` is a platform-specific unique identifier of the hosted content, and
-  * `account` is the platform-specific account name which owns the content item.
 
-### Manifest Location 
+-   `name` is the human-readable name of the Owner,
+-   `baseurl` is the base url of the Owner's website, i.e., the hostname (domain) followed by an optional path, without the protocol header (e.g., `example.com` or `example.com/some/path`),
+-   `version` is the version number of the specification used to generate the manifest; currently `0.1.1`.
+-   `accounts` is an array of the Owner's platform accounts, JSON objects with the following properties:
+    -   `platform` is the name of the hosting platform,
+    -   `url` is the URL of the account page, and
+    -   `account` is the platform-specific account name.
+-   `content` is an array of XPOC content items, JSON objects with the following properties:
+    -   `timestamp` is the creation time of the item, represented in the ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC. For example, Sept 1st, 2023, 10:30 UTC is represented as "2023-09-01T10:30:00Z".
+    -   `title` is the label for the content item,
+    -   `desc` is a description of the content item,
+    -   `url` is the URL of the content item on a hosting platform,
+    -   `platform` is the name of the hosting platform,
+    -   `puid` is a platform-specific unique identifier of the hosted content, and
+    -   `account` is the platform-specific account name which owns the content item.
+
+### Manifest Location
 
 The manifest MUST be hosted at the Origin website's TLS-protected location: `https://[ORIGIN_URL]/xpoc-manifest.json`.
 
@@ -102,6 +103,7 @@ Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-
 ### Account linking
 
 Alex adds their Facebook account name `alex.example` and their X (formerly Twitter) account name `@ExAlex` to its known accounts by adding the XPOC URI `xpoc://alexexample.com!` in their Facebook and X bio fields and by adding the following JSON objects to their manifest's `accounts` array:
+
 ```json
 {
     "platform": "Facebook",
@@ -120,6 +122,7 @@ Alex adds their Facebook account name `alex.example` and their X (formerly Twitt
 Alex's conference video is posted on Youtube at `https://www.youtube.com/watch?v=abcdef12345` under the account `@CoolConf` and have them add the XPOC URI `xpoc://alexexample.com!` in the video's description.
 
 Alex then adds the following JSON object to their manifest's `content` array:
+
 ```json
     "title": "Cool conference panel",
     "desc": "My panel at the Cool conference",
@@ -133,6 +136,7 @@ Alex then adds the following JSON object to their manifest's `content` array:
 ### Account validation
 
 A verifier can check that a Facebook or X (formerly Twitter) account is indeed owned by `alexexample.com` by:
+
 1. Parsing the XPOC URI on the account page to get the `alexexample.com` base URL,
 2. Retrieving the XPOC manifest from `https://alexexample.com/xpoc-manifest.json`, and
 3. Verifying that the account page is listed in the manifest's `accounts` property.
@@ -140,6 +144,7 @@ A verifier can check that a Facebook or X (formerly Twitter) account is indeed o
 ### Content validation
 
 A verifier can check that the Youtube video posted by `@CoolConf` is indeed approved by the owner of `alexexample.com` by:
+
 1. Parsing the XPOC URI to get the `alexexample.com` base URL,
 2. Retrieving the XPOC manifest from `https://alexexample.com/xpoc-manifest.json`, and
 3. Verifying that the video URL is listed in the manifest's `content` property.

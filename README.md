@@ -1,10 +1,11 @@
 # Cross-Platform Origin of Content (XPOC) Framework
 
-*This is a pre-release preview of the framework, currently at version 0.1.1. The specification and sample implementations might change significantly as we continue its development and receive feedback.*
+_This is a pre-release preview of the framework, currently at version 0.1.1. The specification and sample implementations might change significantly as we continue its development and receive feedback._
 
 This project introduces the Cross-Platform Origin of Content (XPOC) framework, along with a sample implementation.
 
 The aim of the XPOC framework is to allow a person or organization (content owner) to create a authoritative list of
+
 1. the various accounts they control over hosting web platforms (such as YouTube, X (formerly Twitter), Facebook, etc.), and
 2. the various pieces of content (videos, posts, etc.) they created or approved on these platforms.
 
@@ -28,28 +29,29 @@ This section describes the life cycle for data protected using the Cross-Platfor
 
 ![XPOC discovery](./doc/xpoc_discovery.PNG)
 
-4. A verifier looking at the content item parses the XPOC URI, fetches the corresponding XPOC manifest, and verifies that the content item is indeed listed therein.  
+4. A verifier looking at the content item parses the XPOC URI, fetches the corresponding XPOC manifest, and verifies that the content item is indeed listed therein.
 
 ![XPOC validation](./doc/xpoc_validation.PNG)
 
 ## Sample implementations
 
 The project contains the following sample implementations for the framework (refer to their respective `README.md` for details on how to use them):
-* A client-side HTML portal to create XPOC manifests and verify XPOC resources ([README](./samples/client-side-html/README.md))
-* A Chrome/Edge browser extension to verify XPOC URIs ([README](./samples/browser-extension/README.md))  
 
-*Note*: we are working on other implementations, including a reference TypeScript library, and a server-side portal. See the project's active branches for work-in-progress implementations.
+-   A client-side HTML portal to create XPOC manifests and verify XPOC resources ([README](./samples/client-side-html/README.md))
+-   A Chrome/Edge browser extension to verify XPOC URIs ([README](./samples/browser-extension/README.md))
+
+_Note_: we are working on other implementations, including a reference TypeScript library, and a server-side portal. See the project's active branches for work-in-progress implementations.
 
 ## Open questions
 
 We are seeking feedback on the following open questions:
 
-* Should the XPOC manifest live in the Origin's website root directory (as currently specified) or in a `/.well-known` directory (as specified in [RFC 5785](https://datatracker.ietf.org/doc/html/rfc5785)). The current approaches is simpler, but using a well-known folder follows a pattern used by many web discovery protocols and might provide organizational benefits.
-* Should the linked accounts and content items be listed in the same manifest (as currently specified), or listed in two different ones? Presumably, the linked account list will not change very often while the content item list would grow frequently. Should a different URI prefixes be used for these two different data types? This would facilitate the validation tools implementation, at the expense of a slightly more complicated specification.
+-   Should the XPOC manifest live in the Origin's website root directory (as currently specified) or in a `/.well-known` directory (as specified in [RFC 5785](https://datatracker.ietf.org/doc/html/rfc5785)). The current approaches is simpler, but using a well-known folder follows a pattern used by many web discovery protocols and might provide organizational benefits.
+-   Should the linked accounts and content items be listed in the same manifest (as currently specified), or listed in two different ones? Presumably, the linked account list will not change very often while the content item list would grow frequently. Should a different URI prefixes be used for these two different data types? This would facilitate the validation tools implementation, at the expense of a slightly more complicated specification.
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
 
@@ -63,8 +65,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Trademarks
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
+trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.

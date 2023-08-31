@@ -15,6 +15,7 @@ Using one of the [sample implementations](../README.md#using-the-sample-implemen
 ## How can I verify XPOC-protected content?
 
 There are two mechanisms to verify XPOC-protected content:
+
 1. By inspecting a content owner's XPOC manifest (located on their website at `https://<baseurl>/xpoc-manifest.json`) to discover their associated accounts on various platforms (e.g., YouTube, X/Twitter, Facebook, etc.) and specific content items (e.g., posts, videos, etc.), or
 2. By dereferencing a XPOC URI on a platform account or content page to locate the owner's XPOC manifest and verify if the XPOC resource is indeed listed in the manifest.
 
@@ -34,7 +35,7 @@ Yes. A piece of content (e.g., a video, a podcast) could be posted by a 3rd part
 
 ## What's the difference with C2PA?
 
-The [Coalition for Content Provenance and Authenticity (C2PA)]((https://c2pa.org/)) specifies how to attest to the origin and integrity of various media content types (e.g., pictures, videos) by attaching manifest containing cryptographic signatures (for data creation and updates) to the media files. To provide these strong guarantees, C2PA requires the deployment of a PKI to validate the identity of the content creators and editors. XPOC on the other hand simply links external platform accounts and contents to an origin website, using transport layer security (i.e., control of a web domain). One would need the collaboration of the hosting platforms to verify a C2PA manifest (e.g., an end user doesn't see the signature of a YouTube video, YouTube itself would need to validate it); in contrast XPOC can be self hosted and used without the collaboration of content platforms.
+The [Coalition for Content Provenance and Authenticity (C2PA)](<(https://c2pa.org/)>) specifies how to attest to the origin and integrity of various media content types (e.g., pictures, videos) by attaching manifest containing cryptographic signatures (for data creation and updates) to the media files. To provide these strong guarantees, C2PA requires the deployment of a PKI to validate the identity of the content creators and editors. XPOC on the other hand simply links external platform accounts and contents to an origin website, using transport layer security (i.e., control of a web domain). One would need the collaboration of the hosting platforms to verify a C2PA manifest (e.g., an end user doesn't see the signature of a YouTube video, YouTube itself would need to validate it); in contrast XPOC can be self hosted and used without the collaboration of content platforms.
 
 ## Can implementers contribute to the XPOC framework?
 

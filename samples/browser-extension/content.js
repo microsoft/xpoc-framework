@@ -5,27 +5,40 @@ const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'displayXpocAccount') {
-        if (request.result) {    
-            uwaContentPopup.show(lastContextMenuTarget, 'XPOC Information', chrome.runtime.getURL('icons/xpoc_logo.svg'),
+        if (request.result) {
+            uwaContentPopup.show(
+                lastContextMenuTarget,
+                'XPOC Information',
+                chrome.runtime.getURL('icons/xpoc_logo.svg'),
                 [
-                    "Origin information",
+                    'Origin information',
                     { label: 'Name', value: request.result.name },
-                    { label: 'Website', link: `<a href='https://${request.result.baseurl}' target='_blank'>${request.result.baseurl}<a/>`  }
+                    {
+                        label: 'Website',
+                        link: `<a href='https://${request.result.baseurl}' target='_blank'>${request.result.baseurl}<a/>`,
+                    },
                 ],
                 [
                     'Account information',
-                    { label: 'URL', link: `<a href='${request.result.account.url}' target='_blank'>${request.result.account.url}<a/>`  },
-                    { label: 'Account', value: request.result.account.account }
-                ])
+                    {
+                        label: 'URL',
+                        link: `<a href='${request.result.account.url}' target='_blank'>${request.result.account.url}<a/>`,
+                    },
+                    { label: 'Account', value: request.result.account.account },
+                ],
+            );
         }
     }
     if (request.action === 'displayXpocContent') {
         if (request.result) {
-            uwaContentPopup.show(lastContextMenuTarget, 'XPOC Information', chrome.runtime.getURL('icons/xpoc_logo.svg'),
+            uwaContentPopup.show(
+                lastContextMenuTarget,
+                'XPOC Information',
+                chrome.runtime.getURL('icons/xpoc_logo.svg'),
                 [
-                    "Origin information",
+                    'Origin information',
                     { label: 'Name', value: request.result.name },
-                    { label: 'Website', value: request.result.baseurl }
+                    { label: 'Website', value: request.result.baseurl },
                 ],
                 [
                     'Content information',
@@ -33,14 +46,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                     { label: 'URL', value: request.result.content.url },
                     { label: 'PUID', value: request.result.content.puid },
                     { label: 'Account', value: request.result.content.account },
-                    { label: 'Timestamp', value: request.result.content.timestamp }
-                ])
+                    {
+                        label: 'Timestamp',
+                        value: request.result.content.timestamp,
+                    },
+                ],
+            );
         }
     }
     if (request.action === 'xpocNotFound') {
         alert('Page not found in XPOC manifest');
     }
-})
+});
 
 /*
     When we right-click on a node, we save a reference to it
@@ -60,15 +77,26 @@ let lastContextMenuTarget = undefined;
 
     mouseup works early enough
 */
-document.addEventListener('mouseup', function (event) {
-    if (event.button === 2 /* right click */) {
-        const clickedText = getSubstringAtClick(event.target.textContent, PATTERN, event);
-        if (clickedText) {
-            lastContextMenuTarget = event.target;
+document.addEventListener(
+    'mouseup',
+    function (event) {
+        if (event.button === 2 /* right click */) {
+            const clickedText = getSubstringAtClick(
+                event.target.textContent,
+                PATTERN,
+                event,
+            );
+            if (clickedText) {
+                lastContextMenuTarget = event.target;
+            }
+            chrome.runtime.sendMessage({
+                action: 'showContextMenu',
+                data: clickedText,
+            });
         }
-        chrome.runtime.sendMessage({ action: "showContextMenu", data: clickedText });
-    }
-}, true);
+    },
+    true,
+);
 
 /*
     This will determine if the specific word we click on, even if part of a larger string,
@@ -95,7 +123,7 @@ function getSubstringAtClick(textContent, regex, event) {
     return undefined;
 }
 
-const template = document.createElement('TEMPLATE')
+const template = document.createElement('TEMPLATE');
 template.innerHTML = `
 <style>
 
@@ -242,145 +270,145 @@ template.innerHTML = `
 
 </div>
 
-</div>`
+</div>`;
 
 class UwaContentPopup /* extends HTMLElement */ {
-    container
-    #shadowRoot
-    #tableOrigin
-    #tableAccount
-    #icon
-    #label
-    #label1
-    #label2
-    #button
-    #callback
+    container;
+    #shadowRoot;
+    #tableOrigin;
+    #tableAccount;
+    #icon;
+    #label;
+    #label1;
+    #label2;
+    #button;
+    #callback;
 
     constructor() {
-        this.container = document.createElement('DIV')
-        this.#shadowRoot = this.container.attachShadow({ mode: 'open' })
-        this.#shadowRoot.appendChild((template.cloneNode(true)).content)
-        this.container.style.display = 'none'
-        document.body.appendChild(this.container)
-        this.#tableOrigin = this.#shadowRoot.querySelector('#table-origin')
-        this.#tableAccount = this.#shadowRoot.querySelector('#table-account')
-        this.#icon = this.#shadowRoot.querySelector('#icon')
-        this.#label = this.#shadowRoot.querySelector('#label')
-        this.#label1 = this.#shadowRoot.querySelector('#label-1')
-        this.#label2 = this.#shadowRoot.querySelector('#label-2')
-        this.#button = this.#shadowRoot.querySelector('#button')
-        this.hide()
+        this.container = document.createElement('DIV');
+        this.#shadowRoot = this.container.attachShadow({ mode: 'open' });
+        this.#shadowRoot.appendChild(template.cloneNode(true).content);
+        this.container.style.display = 'none';
+        document.body.appendChild(this.container);
+        this.#tableOrigin = this.#shadowRoot.querySelector('#table-origin');
+        this.#tableAccount = this.#shadowRoot.querySelector('#table-account');
+        this.#icon = this.#shadowRoot.querySelector('#icon');
+        this.#label = this.#shadowRoot.querySelector('#label');
+        this.#label1 = this.#shadowRoot.querySelector('#label-1');
+        this.#label2 = this.#shadowRoot.querySelector('#label-2');
+        this.#button = this.#shadowRoot.querySelector('#button');
+        this.hide();
     }
 
     show(element, label, iconUrl, table1, table2, buttonLabel, callback) {
-        this.#label.textContent = label
-        this.#label.style.display = 'block'
+        this.#label.textContent = label;
+        this.#label.style.display = 'block';
         if (iconUrl != null) {
-            this.#icon.style.display = 'block'
-            this.#icon.src = iconUrl
+            this.#icon.style.display = 'block';
+            this.#icon.src = iconUrl;
         }
         table1.forEach((line, index) => {
             if (index === 0) {
-                this.#label1.textContent = line
-                return
+                this.#label1.textContent = line;
+                return;
             }
-            const tr = this.#tableOrigin.rows[index - 1]
-            tr.style.display = 'table-row'
+            const tr = this.#tableOrigin.rows[index - 1];
+            tr.style.display = 'table-row';
             if (line.value !== undefined || line.link !== undefined) {
-                tr.cells[0].textContent = line.label
+                tr.cells[0].textContent = line.label;
                 if (line.value != null) {
-                    tr.cells[1].textContent = line.value
+                    tr.cells[1].textContent = line.value;
                 } else if (line.link != null) {
-                    tr.cells[1].innerHTML = line.link
+                    tr.cells[1].innerHTML = line.link;
                 }
             }
-        })
+        });
         table2.forEach((line, index) => {
             if (index === 0) {
-                this.#label2.textContent = line
-                return
+                this.#label2.textContent = line;
+                return;
             }
-            const tr = this.#tableAccount.rows[index - 1]
-            tr.style.display = 'table-row'
+            const tr = this.#tableAccount.rows[index - 1];
+            tr.style.display = 'table-row';
             if (line.value !== undefined || line.link !== undefined) {
-                tr.cells[0].textContent = line.label
+                tr.cells[0].textContent = line.label;
                 if (line.value != null) {
-                    tr.cells[1].textContent = line.value
+                    tr.cells[1].textContent = line.value;
                 } else if (line.link != null) {
-                    tr.cells[1].innerHTML = line.link
+                    tr.cells[1].innerHTML = line.link;
                 }
             }
-        })
+        });
 
         if (buttonLabel != null) {
-            this.#button.style.display = 'block'
-            this.#button.value = buttonLabel
-            this.#callback = callback
-            this.#button.addEventListener('click', callback)
+            this.#button.style.display = 'block';
+            this.#button.value = buttonLabel;
+            this.#callback = callback;
+            this.#button.addEventListener('click', callback);
         }
-        this.container.style.display = 'block'
+        this.container.style.display = 'block';
 
         // eslint-disable-next-line no-void
-        void this.container.offsetWidth
+        void this.container.offsetWidth;
 
         // don't position until the icon has loaded or we will get the wrong width
         this.#icon.onload = () => {
-            this.position(element)
-        }
+            this.position(element);
+        };
 
         if (iconUrl === undefined) {
-            this.position(element)
+            this.position(element);
         }
 
         // eslint-disable-next-line no-unused-vars
         const closeListener = (event) => {
-            const isClickInsideElement = this.container.contains(event.target)
+            const isClickInsideElement = this.container.contains(event.target);
 
             if (!isClickInsideElement) {
-                this.hide()
-                document.removeEventListener('click', closeListener)
+                this.hide();
+                document.removeEventListener('click', closeListener);
             }
-        }
+        };
 
-        document.addEventListener('click', closeListener)
+        document.addEventListener('click', closeListener);
     }
 
     hide() {
-        this.#label.textContent = ''
-        Array.from(this.#tableOrigin.rows).forEach(tr => {
-            Array.from(tr.cells).forEach(td => {
-                td.textContent = ''
-            })
-            tr.style.display = 'none'
-        })
-        Array.from(this.#tableAccount.rows).forEach(tr => {
-            Array.from(tr.cells).forEach(td => {
-                td.textContent = ''
-            })
-            tr.style.display = 'none'
-        })
-        this.#icon.style.display = 'none'
-        this.#button.style.display = 'none'
-        this.#button.removeEventListener('click', this.#callback)
-        this.#callback = undefined
-        this.container.style.display = 'none'
+        this.#label.textContent = '';
+        Array.from(this.#tableOrigin.rows).forEach((tr) => {
+            Array.from(tr.cells).forEach((td) => {
+                td.textContent = '';
+            });
+            tr.style.display = 'none';
+        });
+        Array.from(this.#tableAccount.rows).forEach((tr) => {
+            Array.from(tr.cells).forEach((td) => {
+                td.textContent = '';
+            });
+            tr.style.display = 'none';
+        });
+        this.#icon.style.display = 'none';
+        this.#button.style.display = 'none';
+        this.#button.removeEventListener('click', this.#callback);
+        this.#callback = undefined;
+        this.container.style.display = 'none';
     }
 
     position(element) {
-        const boundRect = element.getBoundingClientRect()
+        const boundRect = element.getBoundingClientRect();
 
         // check if the fixed element will go off the right edge of the screen
         this.container.style.left =
             boundRect.right + this.container.offsetWidth > window.innerWidth
                 ? `${window.innerWidth - this.container.offsetWidth - 10}px`
-                : `${boundRect.right}px`
+                : `${boundRect.right}px`;
 
         // check if the fixed element will go off the bottom edge of the screen
         this.container.style.top =
             boundRect.bottom + this.container.offsetHeight > window.innerHeight
                 ? `${window.innerHeight - this.container.offsetHeight - 10}px`
-                : this.container.style.top = `${boundRect.bottom}px`
+                : (this.container.style.top = `${boundRect.bottom}px`);
     }
 }
 
-const uwaContentPopup = new UwaContentPopup()
+const uwaContentPopup = new UwaContentPopup();

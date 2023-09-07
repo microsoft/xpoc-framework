@@ -33,6 +33,10 @@ This section describes the life cycle for data protected using the Cross-Platfor
 
 ![XPOC validation](./doc/xpoc_validation.PNG)
 
+## XPOC library
+
+This project contains a reference implementation in the form of a TypeScript library that can be used to interact with XPOC artifacts. The the [README](./lib/README.md) for more details.
+
 ## Sample implementations
 
 The project contains the following sample implementations for the framework (refer to their respective `README.md` for details on how to use them):

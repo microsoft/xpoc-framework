@@ -1,0 +1,48 @@
+{
+    "name": "A test name",
+    "url": "https://example.com",
+	"version": "0.1.1",
+	"accounts": [
+		{
+			"platform": "X",
+			"url": "https://twitter.com/a_test_account",
+			"account": "a_X_test_account"
+		},
+        {
+			"platform": "Facebook",
+			"url": "https://facebook.com/a_test_account",
+			"account": "a_fb_test_account"
+		},
+        {
+			"platform": "YouTube",
+			"url": "https://youtube.com/@a_test_account/about",
+			"account": "a_test_account"
+		}
+	],
+    "content": [
+		{
+			"timestamp": "2023-07-10T00:00:00Z",
+			"title": "XPOC test", 
+			"url": "https://www.youtube.com/watch?v=abcdef12345",
+			"platform": "YouTube",
+			"puid": "hDd3t7y1asU",
+			"account": "@christianpaquinmsr"
+		},
+        {
+			"timestamp": "2023-07-11T00:00:00Z",
+			"title": "a test title", 
+			"url": "https://twitter.com/chpaquin/status/1234567890123456789",
+			"platform": "X",
+			"puid": "1234567890123456789",
+			"account": "a_X_test_account"
+		},
+        {
+			"timestamp": "2023-07-12T00:00:00Z",
+			"title": "a test picture", 
+			"url": "https://www.facebook.com/photo/?fbid=123456789012345",
+			"platform": "Facebook",
+			"puid": "123456789012345",
+			"account": "a_fb_test_account"
+		}
+    ]
+}

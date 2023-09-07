@@ -74,6 +74,10 @@ where:
     -   `account` is the platform-specific account name which owns the content item, and
     -   `timestamp` is the creation time of the item, represented in the ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC. For example, Sept 1st, 2023, 10:30 UTC is represented as "2023-09-01T10:30:00Z".
 
+Different platforms represent content differently; implementation SHOULD follow the [guidelines](./platforms.md) on how to encode platform-specific data for some popular hosting platforms.
+
+Implementations SHOULD strictly adhere to the schema and content when creating manifests, but SHOULD be lenient when reading them and make a best effort to parse the manifest fields.
+
 ### Manifest Location
 
 The manifest MUST be hosted at the Origin website's TLS-protected location: `https://[ORIGIN_URL]/xpoc-manifest.json`.

@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+      "resolveJsonModule": true,
+      "target": "ES2020",
+      "module": "CommonJS",
+      "lib": ["ES2020"],
+      "declaration": true,
+      "declarationMap": true,
+      "sourceMap": true,
+      "outDir": "./dist",
+      "rootDir": "./src",
+      "strict": true,
+      "strictNullChecks": true,
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "baseUrl": ".",
+      "paths": {
+        "*": [
+          "node_modules/*",
+          "types/*"
+        ]
+      }
+    },
+    "include": [
+      "src/**/*.ts",
+      "tests/**/*.ts",
+      "types/**/*.ts"
+    ],
+    "exclude": [
+      "node_modules"
+    ]
+  }
+  

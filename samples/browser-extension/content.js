@@ -61,7 +61,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 /*
     When we right-click on a node, we save a reference to it
-    When the backgound script responds to the context menu click,
+    When the background script responds to the context menu click,
     we'll know what node we right-clicked on
 */
 let lastContextMenuTarget = undefined;

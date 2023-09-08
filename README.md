@@ -4,12 +4,12 @@ _This is a pre-release preview of the framework, currently at version 0.1.1. The
 
 This project introduces the Cross-Platform Origin of Content (XPOC) framework, along with a sample implementation.
 
-The aim of the XPOC framework is to allow a person or organization (content owner) to create a authoritative list of
+The aim of the XPOC framework is to allow a person or organization (content owner) to create a authoritative list of:  
 
 1. the various accounts they control over hosting web platforms (such as YouTube, X/Twitter, Facebook, etc.), and
 2. the various pieces of content (videos, posts, etc.) they created or approved on these platforms.
 
-Using this framework, content creators protect themselves against falsely attributed accounts or content, providing signals that can be used by automated validation tools.
+Using this framework, content creators protect themselves against falsely attributed accounts or content, by providing signals that can be used by automated validation tools.
 
 A content owner creates a XPOC manifest that contains references to the accounts they control and the content items they created, participated in, or authorized across various platforms, and hosts it on its well-known website. The owner then adds a XPOC URI referencing its own manifest to their platform account pages (bio or profile) and content items. Verifiers can validate the origin of an account or content item by inspecting the content owner's manifest (if known) or by using a XPOC URI, dereferencing it to retrieve the owner's manifest, and verifying that the account or content item is listed within it. For details, see the framework's [specification](./doc//xpoc-specification.md) and the [FAQ](./doc/FAQ.md).
 
@@ -32,6 +32,10 @@ This section describes the life cycle for data protected using the Cross-Platfor
 4. A verifier looking at the content item parses the XPOC URI, fetches the corresponding XPOC manifest, and verifies that the content item is indeed listed therein.
 
 ![XPOC validation](./doc/xpoc_validation.PNG)
+
+## XPOC library
+
+This project contains a reference implementation in the form of a TypeScript library that can be used to interact with XPOC artifacts. See the [README](./lib/README.md) for more details.
 
 ## Sample implementations
 

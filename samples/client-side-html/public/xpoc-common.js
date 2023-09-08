@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 function showError(errMsg) {
     errMsgElem = document.getElementById('errorMsg');
     errMsgElem.textContent = errMsg;

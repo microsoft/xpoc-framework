@@ -62,3 +62,24 @@ It is RECOMMENDED to only list Facebook accounts and not individual pieces of co
 
 -    On the account page: in the account page's Intro field.
 -    For a post: in a post's text field.
+
+## Instagram
+
+It is RECOMMENDED to only list Instagram accounts and not individual pieces of content (posts/reels) in the XPOC manifest.
+
+### Manifest content
+
+-   properties shared by `accounts` and `content`:
+    -   `platform`: "Instagram"
+    -   `account`: the owner's account name `<accountname>`
+-   `accounts` properties:
+    -   `url`: `https://www.instagram.com/<accountname>/`
+-   `content` properties:
+    -   `url`: it is preferred to list the canonical `https://www.instagram.com/<p|reel>/<id>/`
+    -   `puid`: `<id>`,
+    -   `timestamp`: exact creation time in  ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
+
+### XPOC URI placement
+
+-    On the account page: in the account page's Bio field.
+-    For a post: in a post's caption field.

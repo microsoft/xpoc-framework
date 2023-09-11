@@ -347,3 +347,73 @@ export class Facebook extends Platform {
         }
     }
 }
+
+// Instagram platform implementation. This implementation does not fetch account
+// and content URLs; this requires API access.
+export class Instagram extends Platform {
+    constructor() {
+        super('Instagram', 'https://www.instagram.com', false,
+        // matches Instagram URLs, with or without www. or m. subdomains
+        `^https?://(?:www\\.|m\\.)?(instagram\\.com)`,
+        // matches Instagram account URLs
+        `/(?<accountName>[^/]+)/?$`, // TODO: ignore query parameters and anchors
+        // matches Instagram content URLs (a post or reel)
+        `/(?<contentType>p|reel)/(?<id>[a-zA-Z0-9_-]+)/?(?:\\?.*?)?$`
+        );
+    }
+
+    canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
+        if (!this.isValidAccountUrl(url)) {
+            throw new Error('Malformed Instagram account URL');
+        }
+        // extract the account name from the Instagram account URL
+        const accountRegex = new RegExp(this.accountRegexString);
+        const match = accountRegex.exec(url);
+        if (match && match.groups) {
+            const accountName = match.groups.accountName;
+            return {
+                url: `${this.CanonicalHostname}/${accountName}/`, // IG always redirects to URL terminating with a slash
+                account: accountName
+            }
+        } else {
+            const errMsg = `Malformed Instagram account URL: can't extract account name`;
+            console.log(`canonicalizeAccountUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+
+    igContentTypesToContentType(igContentTypes: string): ContentType {
+        switch (igContentTypes) {
+            case 'p':
+                return 'post';
+            case 'reel':
+                return 'reel';
+            default:
+                return 'misc';
+        }
+    }
+
+    canonicalizeContentUrl(url: string): CanonicalizedContentData {
+        if (!this.isValidContentUrl(url)) {
+            throw new Error('Malformed Instagram content URL');
+        }
+        // extract what we can from the Instagram content URL
+        const contentRegex = new RegExp(this.contentRegexString);
+        const match = contentRegex.exec(url);
+        if (match && match.groups) {
+            const id = match.groups.id;
+            const contentType = match.groups.contentType;
+            let canonicalUrl = `${this.CanonicalHostname}/${contentType}/${id}/`;
+            return {
+                account: '',
+                puid: id,
+                type: this.igContentTypesToContentType(contentType),
+                url: canonicalUrl
+            }
+        } else {
+            const errMsg = `Malformed Instagram content URL`;
+            console.log(`canonicalizeContentUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }    
+}

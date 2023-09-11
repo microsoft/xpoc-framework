@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import fs from 'fs';
-import { Platform, XTwitter, YouTube} from './platform';
+import { Platform, XTwitter, YouTube, Facebook, Instagram} from './platform';
 
 /**
  * A platform account.
@@ -39,7 +39,9 @@ export type XPOCManifest = {
 
 const platforms: Platform[] = [
     new YouTube(),
-    new XTwitter()
+    new XTwitter(),
+    new Facebook(),
+    new Instagram()
 ];
 
 /**

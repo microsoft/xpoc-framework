@@ -11,7 +11,7 @@ The aim of the XPOC framework is to allow a person or organization (content owne
 
 Using this framework, content creators protect themselves against falsely attributed accounts or content, by providing signals that can be used by automated validation tools.
 
-A content owner creates a XPOC manifest that contains references to the accounts they control and the content items they created, participated in, or authorized across various platforms, and hosts it on its well-known website. The owner then adds a XPOC URI referencing its own manifest to their platform account pages (bio or profile) and content items. Verifiers can validate the origin of an account or content item by inspecting the content owner's manifest (if known) or by using a XPOC URI, dereferencing it to retrieve the owner's manifest, and verifying that the account or content item is listed within it. For details, see the framework's [specification](./doc//xpoc-specification.md) and the [FAQ](./doc/FAQ.md).
+A content owner creates a XPOC manifest that contains references to the accounts they control and the content items they created, participated in, or authorized across various platforms, and hosts it on its well-known website. The owner then adds a XPOC URI referencing its own manifest to their platform account pages (bio or profile) and content items. Verifiers can validate the origin of an account or content item by inspecting the content owner's manifest (if known) or by using a XPOC URI, dereferencing it to retrieve the owner's manifest, and verifying that the account or content item is listed within it. For details, see the framework's [specification](./doc//xpoc-specification.md) and the [FAQ](./doc/FAQ.md). You can also participate in the project [discussions](https://github.com/microsoft/xpoc-framework/discussions) to give feedback about the framework.
 
 The repository contains [sample implementations](#sample-implementations) to create XPOC manifests and to verify XPOC content.
 
@@ -44,14 +44,7 @@ The project contains the following sample implementations for the framework (ref
 -   A client-side HTML portal to create XPOC manifests and verify XPOC resources ([README](./samples/client-side-html/README.md))
 -   A Chrome/Edge browser extension to verify XPOC URIs ([README](./samples/browser-extension/README.md))
 
-_Note_: we are working on other implementations, including a reference TypeScript library, and a server-side portal. See the project's active branches for work-in-progress implementations.
-
-## Open questions
-
-We are seeking feedback on the following open questions:
-
--   Should the XPOC manifest live in the Origin's website root directory (as currently specified) or in a `/.well-known` directory (as specified in [RFC 5785](https://datatracker.ietf.org/doc/html/rfc5785)). The current approaches is simpler, but using a well-known folder follows a pattern used by many web discovery protocols and might provide organizational benefits.
--   Should the linked accounts and content items be listed in the same manifest (as currently specified), or listed in two different ones? Presumably, the linked account list will not change very often while the content item list would grow frequently. Should a different URI prefixes be used for these two different data types? This would facilitate the validation tools implementation, at the expense of a slightly more complicated specification.
+_Note_: we are working on other implementations, including a portal with a server backend. See the project's active branches for work-in-progress implementations.
 
 ## Contributing
 

@@ -78,8 +78,8 @@ describe('manifest file operations', () => {
         // sanity check
         expect(manifest.manifest.name).toBe('A test name');
         expect(manifest.manifest.version).toBe(Manifest.LatestVersion);
-        expect(manifest.manifest.accounts.length).toBe(3);
-        expect(manifest.manifest.content.length).toBe(3);
+        expect(manifest.manifest.accounts.length).toBe(4);
+        expect(manifest.manifest.content.length).toBe(4);
     });
     
     test('save manifest to file', async () => {
@@ -111,6 +111,10 @@ describe('platform operations', () => {
         expect(Manifest.isSuportedPlatformAccountUrl('https://www.youtube.com/@accountname/about')).toBe(true);
         // X/Twitter test
         expect(Manifest.isSuportedPlatformAccountUrl('https://twitter.com/accountname')).toBe(true);
+        // Facebook test
+        expect(Manifest.isSuportedPlatformAccountUrl('https://www.facebook.com/accountname')).toBe(true);
+        // Instagram test
+        expect(Manifest.isSuportedPlatformAccountUrl('https://www.instagram.com/accountname/')).toBe(true);
         // unsupported platform
         expect(Manifest.isSuportedPlatformAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -120,6 +124,10 @@ describe('platform operations', () => {
         expect(Manifest.isSuportedPlatformContentUrl('https://www.youtube.com/watch?v=abcdef12345')).toBe(true);
         // X/Twitter test
         expect(Manifest.isSuportedPlatformContentUrl('https://twitter.com/accountname/status/1234567890123456789')).toBe(true);
+        // Facebook test
+        expect(Manifest.isSuportedPlatformContentUrl('https://www.facebook.com/accountname/photos/123456789012345')).toBe(true);
+        // Instagram test
+        expect(Manifest.isSuportedPlatformContentUrl('https://www.instagram.com/p/ABCDEF12345/')).toBe(true);
         // unsupported platform
         expect(Manifest.isSuportedPlatformContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });

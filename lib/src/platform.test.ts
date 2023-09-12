@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Facebook, YouTube, XTwitter, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData } from './platform';
+import { Facebook, Instagram, YouTube, XTwitter, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';
@@ -185,6 +185,62 @@ const platformTestDataArray: PlatformTestData[] = [
                 puid: '',
                 type: 'photo'
             }
+        ],
+        sampleAccountData: undefined,
+        sampleContentData: undefined
+    },
+
+    // Instagram test data
+    {
+        platform: new Instagram(),
+        validAccountUrls: [
+            'https://www.instagram.com/microsoft',
+            'https://www.instagram.com/microsoft/',
+            'https://m.instagram.com/microsoft',
+            'https://instagram.com/microsoft/'
+        ],
+        validContentUrls: [
+            'https://www.instagram.com/p/Cw25Z6KJvMa',
+            'https://www.instagram.com/p/Cw25Z6KJvMa/',
+            'https://www.instagram.com/p/Cw25Z6KJvMa/?img_index=1',
+            'https://www.instagram.com/reel/CwQiom2IBrP',
+            'https://www.instagram.com/reel/CwQiom2IBrP/'
+        ],
+        invalidAccountUrls: [
+            'https://www.instagram.com',
+            'https://www.instagram.com/p/Cw25Z6KJvMa/',
+            'https://www.notinstagram.com/microsoft'
+        ],
+        invalidContentUrls: [
+            'https://www.instagram.com',
+            'https://www.instagram.com/microsoft/',
+            'https://www.notinstagram.com/p/Cw25Z6KJvMa/'
+        ],
+        canonicalAccountData: new Array(4).fill(
+            // canonicalized version of validAccountUrls (representing all the same account)
+            {
+                url: 'https://www.instagram.com/microsoft/',
+                account: 'microsoft'
+            }
+        ),
+        canonicalContentData: [
+            // canonicalized version of validContentUrls (first 3 are the same, last 2 are the same)
+            ...new Array(3).fill(
+                {
+                    url: 'https://www.instagram.com/p/Cw25Z6KJvMa/',
+                    account: '',
+                    puid: 'Cw25Z6KJvMa',
+                    type: 'post'
+                }
+            ),
+            ...new Array(2).fill(
+                {
+                    url: 'https://www.instagram.com/reel/CwQiom2IBrP/',
+                    account: '',
+                    puid: 'CwQiom2IBrP',
+                    type: 'reel'
+                }
+            )
         ],
         sampleAccountData: undefined,
         sampleContentData: undefined

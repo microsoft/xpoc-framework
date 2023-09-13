@@ -425,12 +425,12 @@ export class Medium extends Platform {
     // account regex (default form) - matches https://medium.com/@accountName with optional /about path and query params
     private defaultAccountRegexString = '^https?:\/\/(?:www\\.)?medium\\.com\/@(?<accountName>[^\/?]+)(?:\/about)?\/?(?:\\?.*)?$';
     // account regex (subdomain form) - matches https://accountName.medium.com with optional /about path and query params
-    private subdomainFormRegexString = '^https?:\/\/(?<accountName>[^\.]+)\\.medium\\.com(?:\/about)?\/?(?:\\?.*)?$';
+    private subdomainFormRegexString = '^https?:\/\/(?<accountName>[^\\.]+)\\.medium\\.com(?:\/about)?\/?(?:\\?.*)?$';
 
     // content regex (default form) - matches https://medium.com/@accountName/title-storyID with optional query params  
     private defaultContentRegexString = '^https?:\/\/(?:www\\.)?medium\\.com\/@(?<accountName>[^\/]+)\/(?<title>[^\/]+)-(?<storyID>[a-fA-F0-9]+)\/?(?:\\?.*)?$';
     // content regex (subdomain form) - matches https://accountName.medium.com/title-storyID with optional query params
-    private subdomainContentRegexString = '^https?:\/\/(?<accountName>[^.]+)\\.medium\\.com\/(?<title>[^\/]+)-(?<storyID>[a-fA-F0-9]+)\/?(?:\\?.*)?$';
+    private subdomainContentRegexString = '^https?:\/\/(?<accountName>[^\\.]+)\\.medium\\.com\/(?<title>[^\/]+)-(?<storyID>[a-fA-F0-9]+)\/?(?:\\?.*)?$';
     // content regex (short form) - matches https://medium.com/p/storyID with optional query params
     private shortContentRegexString = '^https?:\/\/(?:www\\.)?medium\\.com\/p\/(?<storyID>[a-fA-F0-9]+)\/?(?:\\?.*)?$';
 

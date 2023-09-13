@@ -146,6 +146,15 @@ describe('platform operations', () => {
         // X/Twitter test (no public access, expect a not supported exception)
         await expect(Manifest.getAccountFromUrl('https://twitter.com/chpaquin')).rejects.toThrow();
 
+        // Facebook test (no public access, expect a not supported exception)
+        await expect(Manifest.getAccountFromUrl('https://facebook.com/Microsoft')).rejects.toThrow();
+
+        // Instagram test (no public access, expect a not supported exception)
+        await expect(Manifest.getAccountFromUrl('https://www.instagram.com/microsoft/')).rejects.toThrow();
+
+        // Medium test (not yet implemented (TODO), expect a not supported exception)
+        await expect(Manifest.getAccountFromUrl('https://medium.com/@chpaquin')).rejects.toThrow();
+
         // unsupported platform
         await expect(Manifest.getAccountFromUrl('https://www.notaplatform.com/accountname')).rejects.toThrow();
     });
@@ -161,6 +170,15 @@ describe('platform operations', () => {
 
         // X/Twitter test (no public access, expect a not supported exception)
         await expect(Manifest.getContentFromUrl('https://twitter.com/chpaquin/status/1694698274618319246')).rejects.toThrow();
+
+        // Facebook test (no public access, expect a not supported exception)
+        await expect(Manifest.getContentFromUrl('https://www.facebook.com/Microsoft/photos/a.10150199519298721/10150199519298721/')).rejects.toThrow();
+
+        // Instagram test (no public access, expect a not supported exception)
+        await expect(Manifest.getContentFromUrl('https://www.instagram.com/p/CQ7Z1Y1JZ1s/')).rejects.toThrow();
+
+        // Medium test (not yet implemented (TODO), expect a not supported exception)
+        await expect(Manifest.getContentFromUrl('https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8')).rejects.toThrow();
 
         // unsupported platform
         await expect(Manifest.getContentFromUrl('https://www.notaplatform.com/abc123')).rejects.toThrow();

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Facebook, Instagram, YouTube, XTwitter, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData } from './platform';
+import { Facebook, Instagram, YouTube, XTwitter, Medium, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';
@@ -244,7 +244,97 @@ const platformTestDataArray: PlatformTestData[] = [
         ],
         sampleAccountData: undefined,
         sampleContentData: undefined
-    }
+    },
+
+        // Medium test data
+        {
+            platform: new Medium(),
+            validAccountUrls: [
+                // default form
+                'https://medium.com/@chpaquin',
+                'https://medium.com/@chpaquin/',
+                'https://www.medium.com/@chpaquin',
+                'https://medium.com/@chpaquin?utm_source=bing&utm_content=textlink',
+                'https://medium.com/@chpaquin/about',                
+                'https://medium.com/@chpaquin/about/',
+                // subdomain form
+                'https://christianpaquin.medium.com',
+                'https://christianpaquin.medium.com/',
+                'https://christianpaquin.medium.com/about',
+                'https://christianpaquin.medium.com/about/',
+                'https://christianpaquin.medium.com?utm_source=bing&utm_content=textlink'
+            ],
+            validContentUrls: [
+                // default form
+                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8/',
+                'https://www.medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8?utm_source=bing&utm_content=textlink',
+                // subdomain form
+                'https://christianpaquin.medium.com/hello-world-d4011bf78829',
+                'https://christianpaquin.medium.com/hello-world-d4011bf78829/',
+                'https://christianpaquin.medium.com/hello-world-d4011bf78829?utm_source=bing&utm_content=textlink',
+                // short form
+                'https://medium.com/p/4fecf28be9a8',
+                'https://medium.com/p/4fecf28be9a8/',
+                'https://www.medium.com/p/4fecf28be9a8',
+                'https://medium.com/p/4fecf28be9a8?utm_source=bing&utm_content=textlink',
+            ],
+            invalidAccountUrls: [
+                'https://medium.com',
+                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+                'https://notmedium.com/@chpaquin'
+            ],
+            invalidContentUrls: [
+                'https://medium.com',
+                'https://medium.com/@chpaquin',
+                'https://notmedium.com/@chpaquin/xpoc-test-4fecf28be9a8'
+            ],
+            canonicalAccountData: [
+                // canonicalized version of validAccountUrls (first 6 are the same, last 5 are the same)
+                ...new Array(6).fill(
+                    {
+                        url: 'https://medium.com/@chpaquin',
+                        account: 'chpaquin'
+                    }
+                ),
+                ...new Array(5).fill(
+                    {
+                        url: 'https://christianpaquin.medium.com',
+                        account: 'christianpaquin'
+                    }
+                )
+            ],
+            canonicalContentData: [
+                // canonicalized version of validContentUrls (first 4, next 3, and last 3 are the same)
+                ...new Array(4).fill(
+                    {
+                        url: 'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+                        account: 'chpaquin',
+                        puid: '4fecf28be9a8',
+                        type: 'post'
+                    }
+                ),
+                ...new Array(3).fill(
+                    {
+                        url: 'https://christianpaquin.medium.com/hello-world-d4011bf78829',
+                        account: 'christianpaquin',
+                        puid: 'd4011bf78829',
+                        type: 'post'
+                    }
+                ),
+                ...new Array(4).fill(
+                    {
+                        url: 'https://medium.com/p/4fecf28be9a8',
+                        account: '',
+                        puid: '4fecf28be9a8',
+                        type: 'post'
+                    }
+                )                
+            ],
+            sampleAccountData: undefined,
+            sampleContentData: undefined
+        }
 ];
 
 const hasValue = (s: string | undefined): boolean => s !== undefined && s !== '';

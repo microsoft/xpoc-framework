@@ -78,8 +78,8 @@ describe('manifest file operations', () => {
         // sanity check
         expect(manifest.manifest.name).toBe('A test name');
         expect(manifest.manifest.version).toBe(Manifest.LatestVersion);
-        expect(manifest.manifest.accounts.length).toBe(4);
-        expect(manifest.manifest.content.length).toBe(4);
+        expect(manifest.manifest.accounts.length).toBe(5);
+        expect(manifest.manifest.content.length).toBe(5);
     });
     
     test('save manifest to file', async () => {
@@ -115,6 +115,8 @@ describe('platform operations', () => {
         expect(Manifest.isSuportedPlatformAccountUrl('https://www.facebook.com/accountname')).toBe(true);
         // Instagram test
         expect(Manifest.isSuportedPlatformAccountUrl('https://www.instagram.com/accountname/')).toBe(true);
+        // Medium test
+        expect(Manifest.isSuportedPlatformAccountUrl('https://medium.com/@accountname')).toBe(true);
         // unsupported platform
         expect(Manifest.isSuportedPlatformAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -128,6 +130,8 @@ describe('platform operations', () => {
         expect(Manifest.isSuportedPlatformContentUrl('https://www.facebook.com/accountname/photos/123456789012345')).toBe(true);
         // Instagram test
         expect(Manifest.isSuportedPlatformContentUrl('https://www.instagram.com/p/ABCDEF12345/')).toBe(true);
+        // Medium test
+        expect(Manifest.isSuportedPlatformContentUrl('https://medium.com/@accountname/title-abcdef123456')).toBe(true);
         // unsupported platform
         expect(Manifest.isSuportedPlatformContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });

@@ -34,7 +34,7 @@ It is RECOMMENDED to only list X/Twitter accounts and not individual pieces of c
     -   `url`: `https://twitter.com/<accountname>`
 -   `content` properties:
     -   `url`: `https://twitter.com/<accountname>/status/<statusID>`
-    -   `puid`: `<statusID>`,
+    -   `puid`: the `<statusID>` from the `url`
     -   `timestamp`: exact creation time in  ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
 
 ### XPOC URI placement
@@ -54,8 +54,8 @@ It is RECOMMENDED to only list Facebook accounts and not individual pieces of co
 -   `accounts` properties:
     -   `url`: `https://www.facebook.com/<accountname>`
 -   `content` properties:
-    -   `url`: it is preferred to list the canonical `https://www.facebook.com/<accountname>/<posts|photos|videos|reels>/<fbid>`
-    -   `puid`: the Facebook ID `<fbid>` of the item,
+    -   `url`: it is preferred to list the canonical `https://www.facebook.com/<accountname>/<posts|photos|videos|reels>/<fbid>` URL
+    -   `puid`: the Facebook ID `<fbid>` of the item
     -   `timestamp`: exact creation time in  ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
 
 ### XPOC URI placement
@@ -75,11 +75,32 @@ It is RECOMMENDED to only list Instagram accounts and not individual pieces of c
 -   `accounts` properties:
     -   `url`: `https://www.instagram.com/<accountname>/`
 -   `content` properties:
-    -   `url`: it is preferred to list the canonical `https://www.instagram.com/<p|reel>/<id>/`
-    -   `puid`: `<id>`,
+    -   `url`: it is preferred to list the canonical `https://www.instagram.com/<p|reel>/<id>/` form
+    -   `puid`: the `<id>` from the `url`
     -   `timestamp`: exact creation time in  ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
 
 ### XPOC URI placement
 
 -    On the account page: in the account page's Bio field.
 -    For a post: in a post's caption field.
+
+## Medium
+
+Medium accounts and specific stories can be added to a XPOC manifest.
+
+### Manifest content
+
+-   properties shared by `accounts` and `content`:
+    -   `platform`: "Medium"
+    -   `account`: the owner's account name `<accountname>` (without the `@`)
+-   `accounts` properties:
+    -   `url`: either the default `https://medium.com/@<accountname>/` form or the subdomain `https://<accountname>.medium.com` form (depending on the owner's account settings).
+-   `content` properties:
+    -   `url`: either the default `https://medium.com/@<accountname>/<title>-<id>` form or the subdomain `https://<accountname>.medium.com/<title>-<id>` form (depending on the account setting). This is preferred over using the `https://medium.com/p/<id>` short form; these can be used for unlisted stories.
+    -   `puid`: the `<id>` from the `url`
+    -   `timestamp`: exact creation time in  ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
+
+### XPOC URI placement
+
+-    On the account page: preferably in the account page's Bio field, optionally in the about page's description.
+-    For a story: in the story's body, either at the top or the end.

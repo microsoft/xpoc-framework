@@ -103,6 +103,8 @@ const findXpocUri = (text:string | undefined) => {
     }
 }
 
+// TODO: make sure all regex ignore the case of the hostname
+
 // YouTube platform implementation. This implementation fetches YouTube URLs directly.
 // An alternate implementation could make use of the YouTube API, which would require
 // an API key and a Google account.
@@ -133,7 +135,7 @@ export class YouTube extends Platform {
             }
         } else {
             const errMsg = `Malformed YouTube account URL: can't extract account name`;
-            console.log(`canonicalizeAccountUrl: ${errMsg}`);
+            console.error(`canonicalizeAccountUrl: ${errMsg}`);
             throw new Error(errMsg);
         }
     }
@@ -155,7 +157,7 @@ export class YouTube extends Platform {
             }
         } else {
             const errMsg = `Malformed YouTube content URL: can't extract video ID`;
-            console.log(`canonicalizeContentUrl: ${errMsg}`);
+            console.error(`canonicalizeContentUrl: ${errMsg}`);
             throw new Error(errMsg);
         }
     }
@@ -233,7 +235,7 @@ export class XTwitter extends Platform {
             }
         } else {
             const errMsg = `Malformed X/Twitter account URL: can't extract account name`;
-            console.log(`canonicalizeAccountUrl: ${errMsg}`);
+            console.error(`canonicalizeAccountUrl: ${errMsg}`);
             throw new Error(errMsg);
         }
     }
@@ -256,7 +258,7 @@ export class XTwitter extends Platform {
             }
         } else {
             const errMsg = `Malformed X/Twitter content URL: can't extract status ID`;
-            console.log(`canonicalizeContentUrl: ${errMsg}`);
+            console.error(`canonicalizeContentUrl: ${errMsg}`);
             throw new Error(errMsg);
         }
     }
@@ -293,7 +295,7 @@ export class Facebook extends Platform {
             }
         } else {
             const errMsg = `Malformed Facebook account URL: can't extract account name`;
-            console.log(`canonicalizeAccountUrl: ${errMsg}`);
+            console.error(`canonicalizeAccountUrl: ${errMsg}`);
             throw new Error(errMsg);
         }
     }
@@ -342,7 +344,7 @@ export class Facebook extends Platform {
             }
         } else {
             const errMsg = `Malformed Facebook content URL`;
-            console.log(`canonicalizeContentUrl: ${errMsg}`);
+            console.error(`canonicalizeContentUrl: ${errMsg}`);
             throw new Error(errMsg);
         }
     }
@@ -377,7 +379,7 @@ export class Instagram extends Platform {
             }
         } else {
             const errMsg = `Malformed Instagram account URL: can't extract account name`;
-            console.log(`canonicalizeAccountUrl: ${errMsg}`);
+            console.error(`canonicalizeAccountUrl: ${errMsg}`);
             throw new Error(errMsg);
         }
     }
@@ -412,8 +414,152 @@ export class Instagram extends Platform {
             }
         } else {
             const errMsg = `Malformed Instagram content URL`;
-            console.log(`canonicalizeContentUrl: ${errMsg}`);
+            console.error(`canonicalizeContentUrl: ${errMsg}`);
             throw new Error(errMsg);
         }
     }    
+}
+
+// Medium platform implementation.
+export class Medium extends Platform {
+    // account regex (default form) - matches https://medium.com/@accountName with optional /about path and query params
+    private defaultAccountRegexString = '^https?:\/\/(?:www\\.)?medium\\.com\/@(?<accountName>[^\/?]+)(?:\/about)?\/?(?:\\?.*)?$';
+    // account regex (subdomain form) - matches https://accountName.medium.com with optional /about path and query params
+    private subdomainFormRegexString = '^https?:\/\/(?<accountName>[^\\.]+)\\.medium\\.com(?:\/about)?\/?(?:\\?.*)?$';
+
+    // content regex (default form) - matches https://medium.com/@accountName/title-storyID with optional query params  
+    private defaultContentRegexString = '^https?:\/\/(?:www\\.)?medium\\.com\/@(?<accountName>[^\/]+)\/(?<title>[^\/]+)-(?<storyID>[a-fA-F0-9]+)\/?(?:\\?.*)?$';
+    // content regex (subdomain form) - matches https://accountName.medium.com/title-storyID with optional query params
+    private subdomainContentRegexString = '^https?:\/\/(?<accountName>[^\\.]+)\\.medium\\.com\/(?<title>[^\/]+)-(?<storyID>[a-fA-F0-9]+)\/?(?:\\?.*)?$';
+    // content regex (short form) - matches https://medium.com/p/storyID with optional query params
+    private shortContentRegexString = '^https?:\/\/(?:www\\.)?medium\\.com\/p\/(?<storyID>[a-fA-F0-9]+)\/?(?:\\?.*)?$';
+
+    constructor() {
+        super('Medium', 'https://medium.com',
+            false, // some (most) stories are publicly available, so we could make that true (TODO)
+            // not using the base class regexp strings, because of how Medium URLs are structured
+            '', '', ''
+        );
+    }
+
+    // override base class's implementation
+    isValidAccountUrl(url: string): boolean {
+        // test the default form
+        let accountRegex = new RegExp(this.defaultAccountRegexString);
+        if (accountRegex.test(url)) {
+            return true;
+        }
+        // test the subdomain form
+        accountRegex = new RegExp(this.subdomainFormRegexString);
+        if (accountRegex.test(url)) {
+            return true;
+        }
+        // url doesn't match either account form
+        return false;
+    }
+
+    // override base class's implementation
+    isValidContentUrl(url: string): boolean {
+        // test the default form
+        let contentRegex = new RegExp(this.defaultContentRegexString);
+        if (contentRegex.test(url)) {
+            return true;
+        }
+        // test the subdomain form
+        contentRegex = new RegExp(this.subdomainContentRegexString);
+        if (contentRegex.test(url)) {
+            return true;
+        }
+        // test the short form
+        contentRegex = new RegExp(this.shortContentRegexString);
+        if (contentRegex.test(url)) {
+            return true;
+        }
+        // url doesn't match any content form
+        return false;
+    }
+    
+    canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
+        if (!this.isValidAccountUrl(url)) {
+            throw new Error('Malformed Medium account URL');
+        }
+
+        // extract the account name from the Medium account URL
+       
+        // test the default form
+        let accountRegex = new RegExp(this.defaultAccountRegexString);
+        let match = accountRegex.exec(url);
+        if (match && match.groups && match.groups.accountName) {
+            return {
+                url: `${this.CanonicalHostname}/@${match.groups.accountName}`,
+                account: match.groups.accountName
+            }
+        }
+
+        // test the subdomain form
+        accountRegex = new RegExp(this.subdomainFormRegexString);
+        match = accountRegex.exec(url);
+        if (match && match.groups && match.groups.accountName) {
+            return {
+                url: `https://${match.groups.accountName}.medium.com`,
+                account: match.groups.accountName
+            }
+        }
+
+        // url doesn't match either account form
+        const errMsg = `Malformed Medium account URL: can't extract account name`;
+        console.error(`canonicalizeAccountUrl: ${errMsg}`);
+        throw new Error(errMsg);
+    }
+
+    canonicalizeContentUrl(url: string): CanonicalizedContentData {
+        if (!this.isValidContentUrl(url)) {
+            throw new Error('Malformed Medium content URL');
+        }
+
+        // extract the storyID and accountName (if available) from the Medium content URL
+
+        // test the default form
+        let contentRegex = new RegExp(this.defaultContentRegexString);
+        let match = contentRegex.exec(url);
+        if (match && match.groups && match.groups.storyID && match.groups.title && match.groups.accountName) {
+            return {
+                account: match.groups.accountName,
+                puid: match.groups.storyID,
+                type: 'post',
+                url: `${this.CanonicalHostname}/@${match.groups.accountName}/${match.groups.title}-${match.groups.storyID}`
+            }
+        }
+
+        // test the subdomain form
+        contentRegex = new RegExp(this.subdomainContentRegexString);
+        match = contentRegex.exec(url);
+        if (match && match.groups && match.groups.storyID && match.groups.title && match.groups.accountName) {
+            return {
+                account: match.groups.accountName,
+                puid: match.groups.storyID,
+                type: 'post',
+                url: `https://${match.groups.accountName}.medium.com/${match.groups.title}-${match.groups.storyID}`
+            }
+        }
+
+        // test the short form
+        contentRegex = new RegExp(this.shortContentRegexString);
+        match = contentRegex.exec(url);
+        if (match && match.groups && match.groups.storyID) {
+            return {
+                account: '',
+                puid: match.groups.storyID,
+                type: 'post',
+                url: `${this.CanonicalHostname}/p/${match.groups.storyID}`
+            }
+        }
+        
+        // url doesn't match any content form
+        const errMsg = `Malformed Medium content URL`;
+        console.error(`canonicalizeContentUrl: ${errMsg}`);
+        throw new Error(errMsg);
+    }
+
+    // TODO: implement getAccountData and getContentData
 }

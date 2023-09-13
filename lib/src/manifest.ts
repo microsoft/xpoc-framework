@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import fs from 'fs';
-import { Platform, XTwitter, YouTube, Facebook, Instagram} from './platform';
+import { Platform, XTwitter, YouTube, Facebook, Instagram, Medium} from './platform';
 
 /**
  * A platform account.
@@ -41,7 +41,8 @@ const platforms: Platform[] = [
     new YouTube(),
     new XTwitter(),
     new Facebook(),
-    new Instagram()
+    new Instagram(),
+    new Medium()
 ];
 
 /**

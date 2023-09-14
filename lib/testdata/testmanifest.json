@@ -17,6 +17,16 @@
 			"platform": "YouTube",
 			"url": "https://youtube.com/@a_test_account/about",
 			"account": "a_test_account"
+		},
+		{
+			"platform": "Instagram",
+			"url": "https://www.instagram.com/a_test_account/",
+			"account": "a_test_account"
+		},
+		{
+			"platform": "Medium",
+			"url": "https://medium.com/@a_test_account",
+			"account": "a_test_account"
 		}
 	],
     "content": [
@@ -43,6 +53,22 @@
 			"platform": "Facebook",
 			"puid": "123456789012345",
 			"account": "a_fb_test_account"
+		},
+		{
+			"timestamp": "2023-07-13T00:00:00Z",
+			"title": "a test picture", 
+			"url": "https://www.instagram.com/p/ABCDE12345/",
+			"platform": "Instagram",
+			"puid": "ABCDE12345",
+			"account": "a_ig_test_account"
+		},
+		{
+			"timestamp": "2023-07-14T00:00:00Z",
+			"title": "a test story", 
+			"url": "https://medium.com/@a_md_test_account/a-test-story-abcdef123456",
+			"platform": "Medium",
+			"puid": "abcdef123456",
+			"account": "a_md_test_account"
 		}
     ]
 }

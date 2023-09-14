@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Facebook, YouTube, XTwitter, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData } from './platform';
+import { Facebook, Instagram, YouTube, XTwitter, Medium, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';
@@ -188,7 +188,153 @@ const platformTestDataArray: PlatformTestData[] = [
         ],
         sampleAccountData: undefined,
         sampleContentData: undefined
-    }
+    },
+
+    // Instagram test data
+    {
+        platform: new Instagram(),
+        validAccountUrls: [
+            'https://www.instagram.com/microsoft',
+            'https://www.instagram.com/microsoft/',
+            'https://m.instagram.com/microsoft',
+            'https://instagram.com/microsoft/'
+        ],
+        validContentUrls: [
+            'https://www.instagram.com/p/Cw25Z6KJvMa',
+            'https://www.instagram.com/p/Cw25Z6KJvMa/',
+            'https://www.instagram.com/p/Cw25Z6KJvMa/?img_index=1',
+            'https://www.instagram.com/reel/CwQiom2IBrP',
+            'https://www.instagram.com/reel/CwQiom2IBrP/'
+        ],
+        invalidAccountUrls: [
+            'https://www.instagram.com',
+            'https://www.instagram.com/p/Cw25Z6KJvMa/',
+            'https://www.notinstagram.com/microsoft'
+        ],
+        invalidContentUrls: [
+            'https://www.instagram.com',
+            'https://www.instagram.com/microsoft/',
+            'https://www.notinstagram.com/p/Cw25Z6KJvMa/'
+        ],
+        canonicalAccountData: new Array(4).fill(
+            // canonicalized version of validAccountUrls (representing all the same account)
+            {
+                url: 'https://www.instagram.com/microsoft/',
+                account: 'microsoft'
+            }
+        ),
+        canonicalContentData: [
+            // canonicalized version of validContentUrls (first 3 are the same, last 2 are the same)
+            ...new Array(3).fill(
+                {
+                    url: 'https://www.instagram.com/p/Cw25Z6KJvMa/',
+                    account: '',
+                    puid: 'Cw25Z6KJvMa',
+                    type: 'post'
+                }
+            ),
+            ...new Array(2).fill(
+                {
+                    url: 'https://www.instagram.com/reel/CwQiom2IBrP/',
+                    account: '',
+                    puid: 'CwQiom2IBrP',
+                    type: 'reel'
+                }
+            )
+        ],
+        sampleAccountData: undefined,
+        sampleContentData: undefined
+    },
+
+        // Medium test data
+        {
+            platform: new Medium(),
+            validAccountUrls: [
+                // default form
+                'https://medium.com/@chpaquin',
+                'https://medium.com/@chpaquin/',
+                'https://www.medium.com/@chpaquin',
+                'https://medium.com/@chpaquin?utm_source=bing&utm_content=textlink',
+                'https://medium.com/@chpaquin/about',                
+                'https://medium.com/@chpaquin/about/',
+                // subdomain form
+                'https://christianpaquin.medium.com',
+                'https://christianpaquin.medium.com/',
+                'https://christianpaquin.medium.com/about',
+                'https://christianpaquin.medium.com/about/',
+                'https://christianpaquin.medium.com?utm_source=bing&utm_content=textlink'
+            ],
+            validContentUrls: [
+                // default form
+                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8/',
+                'https://www.medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8?utm_source=bing&utm_content=textlink',
+                // subdomain form
+                'https://christianpaquin.medium.com/hello-world-d4011bf78829',
+                'https://christianpaquin.medium.com/hello-world-d4011bf78829/',
+                'https://christianpaquin.medium.com/hello-world-d4011bf78829?utm_source=bing&utm_content=textlink',
+                // short form
+                'https://medium.com/p/4fecf28be9a8',
+                'https://medium.com/p/4fecf28be9a8/',
+                'https://www.medium.com/p/4fecf28be9a8',
+                'https://medium.com/p/4fecf28be9a8?utm_source=bing&utm_content=textlink',
+            ],
+            invalidAccountUrls: [
+                'https://medium.com',
+                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+                'https://notmedium.com/@chpaquin'
+            ],
+            invalidContentUrls: [
+                'https://medium.com',
+                'https://medium.com/@chpaquin',
+                'https://notmedium.com/@chpaquin/xpoc-test-4fecf28be9a8'
+            ],
+            canonicalAccountData: [
+                // canonicalized version of validAccountUrls (first 6 are the same, last 5 are the same)
+                ...new Array(6).fill(
+                    {
+                        url: 'https://medium.com/@chpaquin',
+                        account: 'chpaquin'
+                    }
+                ),
+                ...new Array(5).fill(
+                    {
+                        url: 'https://christianpaquin.medium.com',
+                        account: 'christianpaquin'
+                    }
+                )
+            ],
+            canonicalContentData: [
+                // canonicalized version of validContentUrls (first 4, next 3, and last 3 are the same)
+                ...new Array(4).fill(
+                    {
+                        url: 'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+                        account: 'chpaquin',
+                        puid: '4fecf28be9a8',
+                        type: 'post'
+                    }
+                ),
+                ...new Array(3).fill(
+                    {
+                        url: 'https://christianpaquin.medium.com/hello-world-d4011bf78829',
+                        account: 'christianpaquin',
+                        puid: 'd4011bf78829',
+                        type: 'post'
+                    }
+                ),
+                ...new Array(4).fill(
+                    {
+                        url: 'https://medium.com/p/4fecf28be9a8',
+                        account: '',
+                        puid: '4fecf28be9a8',
+                        type: 'post'
+                    }
+                )                
+            ],
+            sampleAccountData: undefined,
+            sampleContentData: undefined
+        }
 ];
 
 const hasValue = (s: string | undefined): boolean => s !== undefined && s !== '';
@@ -240,7 +386,7 @@ for (const platformTestData of platformTestDataArray) {
             }
         });
 
-        if (platform.CanFetchData) {
+        if (platform.CanFetchAccountData) {
             test(`${platformName} account fetch test`, async () => {
                 const sampleAccount = platformTestData.sampleAccountData;
                 if (sampleAccount) {
@@ -253,7 +399,9 @@ for (const platformTestData of platformTestDataArray) {
                     throw new Error(`No sample account data for ${platformName}`);
                 }
             });
+        }
 
+        if (platform.CanFetchContentData) {
             test(`${platformName} content fetch test`, async () => {
                 const sampleContent = platformTestData.sampleContentData;
                 if (sampleContent) {

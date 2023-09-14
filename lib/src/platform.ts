@@ -35,9 +35,13 @@ export abstract class Platform {
     // canonical hostname
     public CanonicalHostname: string;
 
-    // returns true if the platform is accessible (either publicly, or through pre-configured API access)
-    // if true, @see getAccountData and @see getContentData can be called
-    public CanFetchData: boolean;
+    // returns true if the platform account data is accessible (either publicly, or through pre-configured API access)
+    // if true, @see getAccountData can be called
+    public CanFetchAccountData: boolean;
+
+    // returns true if the platform content data is accessible (either publicly, or through pre-configured API access)
+    // if true, @see getContentData can be called
+    public CanFetchContentData: boolean;
 
     // regex strings used to validate and canonicalize hostname URLs
     protected regexHostnameString: string;
@@ -48,11 +52,12 @@ export abstract class Platform {
     // regex strings used to validate and canonicalize content URLs
     protected contentRegexString: string;
 
-    constructor(displayName: string, canonicalHostname: string, canFetchData: boolean,
+    constructor(displayName: string, canonicalHostname: string, canFetchAccountData: boolean, canFetchContentData: boolean,
                 regexHostnameString: string, accountRegexStringSuffix: string, contentRegexStringSuffix: string) {
         this.DisplayName = displayName;
         this.CanonicalHostname = canonicalHostname;
-        this.CanFetchData = canFetchData;
+        this.CanFetchAccountData = canFetchAccountData;
+        this.CanFetchContentData = canFetchContentData;
         this.regexHostnameString = regexHostnameString;
         this.accountRegexString = regexHostnameString + accountRegexStringSuffix;
         this.contentRegexString = regexHostnameString + contentRegexStringSuffix;
@@ -110,7 +115,7 @@ const findXpocUri = (text:string | undefined) => {
 // an API key and a Google account.
 export class YouTube extends Platform {
     constructor() {
-        super('YouTube', 'https://www.youtube.com', true,
+        super('YouTube', 'https://www.youtube.com', true, true,
             // matches YouTube URLs, with or without www. or m. subdomains
             "^https?://(?:www\\.|m\\.)?(youtube\\.com|youtu\\.be)",
             // matches YouTube account URLs, with an optional 'about/' path
@@ -210,7 +215,7 @@ export class YouTube extends Platform {
 export class XTwitter extends Platform {
 
     constructor() {
-        super('X/Twitter', 'https://twitter.com', false,
+        super('X/Twitter', 'https://twitter.com', false, false,
         // matches X/Twitter URLs, with or without a www. subdomain (TODO: is the www. subdomain ever used?)
         "^https?://(?:www\\.)?(twitter\\.com|x\\.com)",
         // matches X/Twitter account URLs, with an optional '@' prefix (gets removed by redirect)
@@ -269,7 +274,7 @@ export class XTwitter extends Platform {
 export class Facebook extends Platform {
 
     constructor() {
-        super('Facebook', 'https://www.facebook.com', false,
+        super('Facebook', 'https://www.facebook.com', false, false,
         // matches Facebook URLs, with or without www. or m. subdomains
         `^https?://(?:www\\.|m\\.)?(facebook\\.com|fb\\.com)`,
         // matches Facebook account URLs, with an optional 'about/' path
@@ -354,7 +359,7 @@ export class Facebook extends Platform {
 // and content URLs; this requires API access.
 export class Instagram extends Platform {
     constructor() {
-        super('Instagram', 'https://www.instagram.com', false,
+        super('Instagram', 'https://www.instagram.com', false, false,
         // matches Instagram URLs, with or without www. or m. subdomains
         `^https?://(?:www\\.|m\\.)?(instagram\\.com)`,
         // matches Instagram account URLs
@@ -436,7 +441,7 @@ export class Medium extends Platform {
 
     constructor() {
         super('Medium', 'https://medium.com',
-            false, // some (most) stories are publicly available, so we could make that true (TODO)
+            false, false, // some (most) accounts and stories are publicly available, so we could make these true (TODO)
             // not using the base class regexp strings, because of how Medium URLs are structured
             '', '', ''
         );

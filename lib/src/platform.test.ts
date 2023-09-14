@@ -386,7 +386,7 @@ for (const platformTestData of platformTestDataArray) {
             }
         });
 
-        if (platform.CanFetchData) {
+        if (platform.CanFetchAccountData) {
             test(`${platformName} account fetch test`, async () => {
                 const sampleAccount = platformTestData.sampleAccountData;
                 if (sampleAccount) {
@@ -399,7 +399,9 @@ for (const platformTestData of platformTestDataArray) {
                     throw new Error(`No sample account data for ${platformName}`);
                 }
             });
+        }
 
+        if (platform.CanFetchContentData) {
             test(`${platformName} content fetch test`, async () => {
                 const sampleContent = platformTestData.sampleContentData;
                 if (sampleContent) {

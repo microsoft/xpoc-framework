@@ -44,9 +44,8 @@ This project contains a reference implementation in the form of a TypeScript lib
 The project contains the following sample implementations for the framework (refer to their respective `README.md` for details on how to use them):
 
 -   A client-side HTML portal to create XPOC manifests and verify XPOC resources ([README](./samples/client-side-html/README.md))
+-   A backend server using the reference implementation library and a HTML frontend to create XPOC manifests and verify XPOC resources ([README](./samples/server-backend/README.md))
 -   A Chrome/Edge browser extension to verify XPOC URIs ([README](./samples/browser-extension/README.md))
-
-_Note_: we are working on other implementations, including a portal with a server backend. See the project's active branches for work-in-progress implementations.
 
 ## Contributing
 

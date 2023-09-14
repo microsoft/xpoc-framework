@@ -90,14 +90,28 @@ export class Manifest {
     }
 
     /**
-     * Checks if a URL is an account URL from a supported platform. If so,
-     * getAccountFromUrl() can be used to extract the account data.
+     * Checks if a URL is an account URL from a supported platform.
      * @param url URL to check.
      * @returns true if the URL is a supported platform account URL.
      */
-    static isSuportedPlatformAccountUrl(url: string): boolean {
+    static isSuportedAccountUrl(url: string): boolean {
         for (const platform of platforms) {
             if (platform.isValidAccountUrl(url)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if account data can be retrieved from the URL. If so,
+     * getAccountFromUrl() can be called.
+     * @param url URL to check.
+     * @returns true if account data can be retrieved from the URL.
+     */
+    static canFetchAccountFromUrl(url: string): boolean {
+        for (const platform of platforms) {
+            if (platform.isValidAccountUrl(url) && platform.CanFetchAccountData) {
                 return true;
             }
         }
@@ -124,14 +138,28 @@ export class Manifest {
     }
 
    /**
-     * Checks if a URL is a content URL from a supported platform. If so,
-     * getContentFromUrl() can be used to extract the content data.
+     * Checks if a URL is a content URL from a supported platform.
      * @param url URL to check.
      * @returns true if the URL is a supported platform content URL.
      */
-   static isSuportedPlatformContentUrl(url: string): boolean {
+   static isSuportedContentUrl(url: string): boolean {
         for (const platform of platforms) {
             if (platform.isValidContentUrl(url)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if content data can be retrieved from the URL. If so,
+     * getContentFromUrl() can be called.
+     * @param url URL to check.
+     * @returns true if content data can be retrieved from the URL.
+     */
+    static canFetchContentFromUrl(url: string): boolean {
+        for (const platform of platforms) {
+            if (platform.isValidContentUrl(url) && platform.CanFetchContentData) {
                 return true;
             }
         }

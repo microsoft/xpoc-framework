@@ -108,32 +108,32 @@ describe('manifest file operations', () => {
 describe('platform operations', () => {
     test('platform account URL validation', () => {
         // YouTube test
-        expect(Manifest.isSuportedAccountUrl('https://www.youtube.com/@accountname/about')).toBe(true);
+        expect(Manifest.isSupportedAccountUrl('https://www.youtube.com/@accountname/about')).toBe(true);
         // X/Twitter test
-        expect(Manifest.isSuportedAccountUrl('https://twitter.com/accountname')).toBe(true);
+        expect(Manifest.isSupportedAccountUrl('https://twitter.com/accountname')).toBe(true);
         // Facebook test
-        expect(Manifest.isSuportedAccountUrl('https://www.facebook.com/accountname')).toBe(true);
+        expect(Manifest.isSupportedAccountUrl('https://www.facebook.com/accountname')).toBe(true);
         // Instagram test
-        expect(Manifest.isSuportedAccountUrl('https://www.instagram.com/accountname/')).toBe(true);
+        expect(Manifest.isSupportedAccountUrl('https://www.instagram.com/accountname/')).toBe(true);
         // Medium test
-        expect(Manifest.isSuportedAccountUrl('https://medium.com/@accountname')).toBe(true);
+        expect(Manifest.isSupportedAccountUrl('https://medium.com/@accountname')).toBe(true);
         // unsupported platform
-        expect(Manifest.isSuportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
+        expect(Manifest.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
 
     test('platform content URL validation', () => {
         // YouTube test
-        expect(Manifest.isSuportedContentUrl('https://www.youtube.com/watch?v=abcdef12345')).toBe(true);
+        expect(Manifest.isSupportedContentUrl('https://www.youtube.com/watch?v=abcdef12345')).toBe(true);
         // X/Twitter test
-        expect(Manifest.isSuportedContentUrl('https://twitter.com/accountname/status/1234567890123456789')).toBe(true);
+        expect(Manifest.isSupportedContentUrl('https://twitter.com/accountname/status/1234567890123456789')).toBe(true);
         // Facebook test
-        expect(Manifest.isSuportedContentUrl('https://www.facebook.com/accountname/photos/123456789012345')).toBe(true);
+        expect(Manifest.isSupportedContentUrl('https://www.facebook.com/accountname/photos/123456789012345')).toBe(true);
         // Instagram test
-        expect(Manifest.isSuportedContentUrl('https://www.instagram.com/p/ABCDEF12345/')).toBe(true);
+        expect(Manifest.isSupportedContentUrl('https://www.instagram.com/p/ABCDEF12345/')).toBe(true);
         // Medium test
-        expect(Manifest.isSuportedContentUrl('https://medium.com/@accountname/title-abcdef123456')).toBe(true);
+        expect(Manifest.isSupportedContentUrl('https://medium.com/@accountname/title-abcdef123456')).toBe(true);
         // unsupported platform
-        expect(Manifest.isSuportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
+        expect(Manifest.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });
 
     test('platform account URL extraction', async () => {

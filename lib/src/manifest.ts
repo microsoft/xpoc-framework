@@ -94,7 +94,7 @@ export class Manifest {
      * @param url URL to check.
      * @returns true if the URL is a supported platform account URL.
      */
-    static isSuportedAccountUrl(url: string): boolean {
+    static isSupportedAccountUrl(url: string): boolean {
         for (const platform of platforms) {
             if (platform.isValidAccountUrl(url)) {
                 return true;
@@ -142,7 +142,7 @@ export class Manifest {
      * @param url URL to check.
      * @returns true if the URL is a supported platform content URL.
      */
-   static isSuportedContentUrl(url: string): boolean {
+   static isSupportedContentUrl(url: string): boolean {
         for (const platform of platforms) {
             if (platform.isValidContentUrl(url)) {
                 return true;

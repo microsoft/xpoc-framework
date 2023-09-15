@@ -92,7 +92,6 @@ export abstract class Platform {
     async getContentData(url: string): Promise<PlatformContentData> {
         throw new Error('Not supported');
     }
-
 }
 
 // extracts a XPOC URI from a string
@@ -567,4 +566,103 @@ export class Medium extends Platform {
     }
 
     // TODO: implement getAccountData and getContentData
+}
+
+// supported platforms
+export const Platforms = {
+
+    platforms: [
+        new YouTube(),
+        new XTwitter(),
+        new Facebook(),
+        new Instagram(),
+        new Medium()
+    ],
+
+    /**
+     * Checks if a URL is an account URL from a supported platform.
+     * @param url URL to check.
+     * @returns true if the URL is a supported platform account URL.
+     */
+    isSupportedAccountUrl(url: string): boolean {
+        for (const platform of Platforms.platforms) {
+            if (platform.isValidAccountUrl(url)) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Checks if account data can be retrieved from the URL. If so,
+     * getAccountFromUrl() can be called.
+     * @param url URL to check.
+     * @returns true if account data can be retrieved from the URL.
+     */
+    canFetchAccountFromUrl(url: string): boolean {
+        for (const platform of Platforms.platforms) {
+            if (platform.isValidAccountUrl(url) && platform.CanFetchAccountData) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Returns the account data for a given account URL on a supported platform.
+     * @param url URL to extract account data from.
+     * @returns account data.
+     */
+    async getAccountFromUrl(url: string): Promise<PlatformAccountData> {
+        for (const platform of Platforms.platforms) {
+            if (platform.isValidAccountUrl(url)) {
+                return await platform.getAccountData(url);
+            }
+        }
+        throw new Error(`Unsupported platform: ${url}`);
+    },
+
+   /**
+     * Checks if a URL is a content URL from a supported platform.
+     * @param url URL to check.
+     * @returns true if the URL is a supported platform content URL.
+     */
+   isSupportedContentUrl(url: string): boolean {
+        for (const platform of Platforms.platforms) {
+            if (platform.isValidContentUrl(url)) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Checks if content data can be retrieved from the URL. If so,
+     * getContentFromUrl() can be called.
+     * @param url URL to check.
+     * @returns true if content data can be retrieved from the URL.
+     */
+    canFetchContentFromUrl(url: string): boolean {
+        for (const platform of Platforms.platforms) {
+            if (platform.isValidContentUrl(url) && platform.CanFetchContentData) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Returns the content data for a given content URL on a supported platform.
+     * @param url URL to extract content data from.
+     * @returns content data.
+     */
+    async getContentFromUrl(url: string): Promise<PlatformContentData> {
+        for (const platform of Platforms.platforms) {
+            if (platform.isValidContentUrl(url)) {
+                return await platform.getContentData(url);
+            }
+        }
+        throw new Error(`Unsupported platform: ${url}`);
+    }    
+    
 }

@@ -1,0 +1,272 @@
+<!--
+    This is a proof-of-concept XPOC manifest editor.
+
+    It is intended to be used as a starting point for developers to build their own XPOC manifest editors.
+
+    The editor is written in HTML and JavaScript, and can be run locally in a browser. It can also be hosted on a web server.
+
+    The editor performs minimal input validation. Here is a list of usability and validation improvements that can be made:
+    - Validate the manifest against the XPOC manifest schema
+    - Validate URLs more robustly (using regex)
+    - Implement better error handling and reporting (highlight erroneous fields, tooltips, etc.)
+    - Provide input pickers for common fields (e.g., platform, timestamp)
+    - Add auto-fill based on URL (by fetching the target page and deducing content fields); would require CORS support
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit XPOC Manifest</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>XPOC Manifest Editor</h1>
+
+    <!-- Create New Manifest -->
+    <label for="createNewButton">Create a new manifest</label>
+    <button id="createNewButton" onclick="createNewManifest()">New</button>
+    <br><br>
+    <!-- Load Manifest -->
+    <label for="fileInput">Load a manifest from file</label>
+    <button onclick="document.getElementById('fileInput').click()">Open</button>
+    <input type="file" id="fileInput" onchange="loadFile(event)" />
+    <br><br>
+
+    <div class="error" id="errorMsg"></div>
+
+    <div id="manifestContent" style="display: none;">
+        <h2>Manifest Info</h2>
+        <table id="manifestInfoTable">
+            <tbody>
+                <tr>
+                    <td><label for="manifestName">Name:</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
+                    <td><input type="text" id="manifestName" onchange="manifest.name = this.value"></td>
+                </tr>
+                <tr>
+                    <td><label for="manifestBaseUrl">Base URL:</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
+                    <td><input type="text" id="manifestBaseUrl" onchange="manifest.baseurl = this.value"></td>
+                </tr>
+                <tr>
+                    <td><label for="manifestVersion">Version:</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.1.1</span></span></td>
+                    <td><input type="text" id="manifestVersion" onchange="manifest.version = this.value"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Accounts</h2>
+        <table id="accountsTable">
+            <!-- Dynamic content will be inserted here -->
+        </table>
+        <button onclick="addAccount()">Add Account</button>
+
+        <h2>Content</h2>
+        <table id="contentTable">
+            <!-- Dynamic content will be inserted here -->
+        </table>
+        <button onclick="addContent()">Add Content</button>
+
+        <br><br>
+        <!-- Save the manifest -->
+        <label for="saveButton">Save manifest</label>
+        <button id="saveButton" onclick="saveToFile()">Save</button>
+    </div>
+
+    <script src="xpoc-common.js"></script>
+    <script>
+        let manifest = {
+            name: "",
+            baseurl: "",
+            version: "0.1.1",
+            accounts: [],
+            content: []
+        };
+
+        function initializeManifestInfo() {
+            clearError();
+            document.getElementById('manifestName').value = manifest.name || '';
+            document.getElementById('manifestBaseUrl').value = manifest.baseurl || '';
+            document.getElementById('manifestVersion').value = manifest.version || '0.1.1';
+        }
+
+        function createNewManifest() {
+            manifest = {
+                name: "",
+                baseurl: "",
+                version: "0.1.1",
+                accounts: [],
+                content: []
+            };
+            
+            // Display the initialized manifest info and clear tables
+            initializeManifestInfo();
+            updateAccountsTable();
+            updateContentTable();
+            document.getElementById('manifestContent').style.display = 'block';
+        }
+
+        function loadFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    manifest = JSON.parse(e.target.result);
+                    displayManifest();
+                    document.getElementById('manifestContent').style.display = 'block';
+                } catch (err) {
+                    showError("Failed to parse the manifest.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function displayManifest() {
+            initializeManifestInfo();
+            updateAccountsTable();
+            updateContentTable();
+        }
+
+        function addAccount() {
+            manifest.accounts.push({ platform: "", url: "", account: "" });
+            updateAccountsTable();
+        }
+
+        function addContent() {
+            manifest.content.push({ title: "", desc: "", url: "", platform: "", puid: "", account: "", timestamp: "" });
+            updateContentTable();
+        }
+
+        function isValidURL(string) {
+            // TODO: more robust validation (e.g., https://bogus is currently valid)
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function validateAndUpdateURL(contentType, index, inputValue, inputElement) {
+            inputValue = inputValue.trim().toLowerCase();
+            // If it doesn't start with 'http://', or 'https://', prepend 'https://'
+            if (!/^https?:\/\//i.test(inputValue)) {
+                validatedURL = 'https://' + inputValue;
+            }
+            if (!isValidURL(validatedURL)) {
+                alert('Please enter a valid URL.');
+                return;
+            }
+            if (contentType === 'content') {
+                manifest.content[index].url = validatedURL;
+            } else if (contentType === 'account') {
+                manifest.accounts[index].url = validatedURL;
+            }
+            // update value in the input field
+            inputElement.value = validatedURL;
+        }
+
+        function validateAndUpdateTimestamp(index, inputValue, inputElement) {
+            let date = new Date(inputValue);
+            if (isNaN(date.getTime())) {
+                date = null;
+            } else {
+                date = date.toISOString();
+            }
+            manifest.content[index].timestamp = date;
+            // update value in the input field
+            inputElement.value = date;
+        }
+
+        function updateAccountsTable() {
+            let html = `
+                <thead>
+                    <tr>
+                        <th>Platform<span class="info-tooltip">i<span class="tooltip-text">The platform hosting the account (e.g., YouTube, X, Facebook)</span></span></th>
+                        <th>URL<span class="info-tooltip">i<span class="tooltip-text">Location of the account page (e.g., bio or profile)</span></span></th>
+                        <th>Account<span class="info-tooltip">i<span class="tooltip-text">Account identifier (e.g., handle, username)</span></span></th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+
+            manifest.accounts.forEach((account, index) => {
+                html += `
+                    <tr>
+                        <td><input type="text" value="${account.platform}" onchange="manifest.accounts[${index}].platform = this.value"></td>
+                        <td><input type="text" value="${account.url}" onchange="validateAndUpdateURL('account', ${index}, this.value, this)"></td>
+                        <td><input type="text" value="${account.account}" onchange="manifest.accounts[${index}].account = this.value"></td>
+                        <td><button onclick="deleteAccount(${index})">Delete</button></td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody>`;
+            document.getElementById('accountsTable').innerHTML = html;
+        }
+
+        function updateContentTable() {
+            let html = `
+                <thead>
+                    <tr>
+                        <th>Title<span class="info-tooltip">i<span class="tooltip-text">Short title for the content</span></span></th>
+                        <th>Description<span class="info-tooltip">i<span class="tooltip-text">Short description of the content</span></span></th>
+                        <th>URL<span class="info-tooltip">i<span class="tooltip-text">Location of the content</span></span></th>
+                        <th>Platform<span class="info-tooltip">i<span class="tooltip-text">Platform hosting the content (e.g., YouTube, X, Facebook)</span></span></th>
+                        <th>PUID<span class="info-tooltip">i<span class="tooltip-text">Platform-specific Unique Identifier for the content</span></span></th>
+                        <th>Account<span class="info-tooltip">i<span class="tooltip-text">Platform account associated with the content</span></span></th>
+                        <th>Timestamp<span class="info-tooltip">i<span class="tooltip-text">Content creation time in ISO format (e.g., (YYYY-MM-DDTHH:MM:SSZ))</span></span></th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+
+            manifest.content.forEach((content, index) => {
+                html += `
+                    <tr>
+                        <td><input type="text" value="${content.title || ''}" placeholder="Optional" onchange="manifest.content[${index}].title = this.value"></td>
+                        <td><input type="text" value="${content.desc || ''}" placeholder="Optional" onchange="manifest.content[${index}].desc = this.value"></td>
+                        <td><input type="text" value="${content.url}" onchange="validateAndUpdateURL('content', ${index}, this.value, this)"></td>
+                        <td><input type="text" value="${content.platform}" onchange="manifest.content[${index}].platform = this.value"></td>
+                        <td><input type="text" value="${content.puid || ''}" placeholder="Optional" onchange="manifest.content[${index}].puid = this.value"></td>
+                        <td><input type="text" value="${content.account}" onchange="manifest.content[${index}].account = this.value"></td>
+                        <td><input type="text" value="${content.timestamp || ''}" placeholder="Optional" onchange="validateAndUpdateTimestamp(${index}, this.value, this)"></td>
+                        <td><button onclick="deleteContent(${index})">Delete</button></td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody>`;
+            document.getElementById('contentTable').innerHTML = html;
+        }
+
+        function deleteAccount(index) {
+            manifest.accounts.splice(index, 1);
+            updateAccountsTable();
+        }
+
+        function deleteContent(index) {
+            manifest.content.splice(index, 1);
+            updateContentTable();
+        }
+
+        function saveToFile() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(manifest, null, 4));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "xpoc-manifest.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+    </script>
+</body>
+
+</html>

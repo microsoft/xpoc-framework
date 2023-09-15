@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XPOC Manifest Viewer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>XPOC Manifest Viewer</h1>
+
+    <label>Enter the website hosting the XPOC manifest: </label>
+    <input type="text" id="urlInput" placeholder="Enter URL...">
+    <button onclick="fetchManifest()">View</button>
+
+    <div class="error" id="errorMsg"></div>
+
+    <div id="manifestContent" style="display: none;">
+    <h2>Manifest Info</h2>
+    <table id="manifestInfoTable"></table>
+
+    <h2>Accounts</h2>
+    <table id="accountsTable"></table>
+
+    <h2>Content</h2>
+    <table id="contentTable"></table>
+    </div>
+
+    <script src="xpoc-common.js"></script>
+    <script>
+        function fetchManifest() {
+            let url = document.getElementById('urlInput').value.trim();
+            if (!url) {
+                showError('Please enter a URL.');
+                return;
+            }
+
+            fetchXpocManifest(url)
+                .then(data => {if (data) { displayManifest(data) }} )
+                .catch(error => {
+                    console.log('manifest display error', error);
+                    showError(`Error parsing the XPOC manifest from ${url}.`);
+                    document.getElementById('accountsTable').innerHTML = '';
+                    document.getElementById('contentTable').innerHTML = '';
+                });
+        }
+
+        function displayManifest(data) {
+            clearError();
+            document.getElementById('errorMsg').textContent = '';
+
+            // Manifest Info Table
+            let manifestInfoHtml = `
+            <tbody>
+            <tr>
+                <td><label for="manifestName">Name:</label></td>
+                <td>${data.name}</td>
+            </tr>
+            <tr>
+                <td><label for="manifestBaseUrl">Base URL:</td>
+                <td>${data.baseurl}</td>
+            </tr>
+            <tr>
+                <td><label for="manifestVersion">Version:</td>
+                <td>${data.version}</td>
+            </tr>
+            </tbody>
+            `;
+            document.getElementById('manifestInfoTable').innerHTML = manifestInfoHtml;
+
+            // Accounts Table
+            let accountsHtml = `
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>URL</th>
+                        <th>Account</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+
+            data.accounts.forEach(account => {
+                accountsHtml += `
+                    <tr>
+                        <td>${account.platform}</td>
+                        <td>${account.url}</td>
+                        <td>${account.account}</td>
+                    </tr>
+                `;
+            });
+
+            accountsHtml += `</tbody>`;
+            document.getElementById('accountsTable').innerHTML = accountsHtml;
+
+            // Content Table
+            let contentHtml = `
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>URL</th>
+                        <th>Platform</th>
+                        <th>PUID</th>
+                        <th>Account</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+
+            data.content.forEach(content => {
+                contentHtml += `
+                    <tr>
+                        <td>${content.title}</td>
+                        <td>${content.desc}</td>
+                        <td>${content.url}</td>
+                        <td>${content.platform}</td>
+                        <td>${content.puid}</td>
+                        <td>${content.account}</td>
+                        <td>${content.timestamp}</td>
+                    </tr>
+                `;
+            });
+
+            contentHtml += `</tbody>`;
+            document.getElementById('contentTable').innerHTML = contentHtml;
+            
+            // Show the manifest content
+            document.getElementById('manifestContent').style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

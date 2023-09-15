@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        sample: [client-side-html]
+        sample: [client-side-html, server-backend]
 
     steps:
       - name: Checkout code
@@ -38,6 +38,12 @@ jobs:
         run: |
           cd samples/${{ matrix.sample }}
           npm install
+
+      - name: Build (only for server-portal)
+        if: matrix.sample == 'server-backend'
+        run: |
+          cd samples/server-backend
+          npm run build
 
       - name: Start Server and Check
         run: |

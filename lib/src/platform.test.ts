@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Facebook, Instagram, YouTube, XTwitter, Medium, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData } from './platform';
+import { Facebook, Instagram, YouTube, XTwitter, Medium, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';
@@ -246,95 +246,95 @@ const platformTestDataArray: PlatformTestData[] = [
         sampleContentData: undefined
     },
 
-        // Medium test data
-        {
-            platform: new Medium(),
-            validAccountUrls: [
-                // default form
-                'https://medium.com/@chpaquin',
-                'https://medium.com/@chpaquin/',
-                'https://www.medium.com/@chpaquin',
-                'https://medium.com/@chpaquin?utm_source=bing&utm_content=textlink',
-                'https://medium.com/@chpaquin/about',                
-                'https://medium.com/@chpaquin/about/',
-                // subdomain form
-                'https://christianpaquin.medium.com',
-                'https://christianpaquin.medium.com/',
-                'https://christianpaquin.medium.com/about',
-                'https://christianpaquin.medium.com/about/',
-                'https://christianpaquin.medium.com?utm_source=bing&utm_content=textlink'
-            ],
-            validContentUrls: [
-                // default form
-                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
-                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8/',
-                'https://www.medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
-                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8?utm_source=bing&utm_content=textlink',
-                // subdomain form
-                'https://christianpaquin.medium.com/hello-world-d4011bf78829',
-                'https://christianpaquin.medium.com/hello-world-d4011bf78829/',
-                'https://christianpaquin.medium.com/hello-world-d4011bf78829?utm_source=bing&utm_content=textlink',
-                // short form
-                'https://medium.com/p/4fecf28be9a8',
-                'https://medium.com/p/4fecf28be9a8/',
-                'https://www.medium.com/p/4fecf28be9a8',
-                'https://medium.com/p/4fecf28be9a8?utm_source=bing&utm_content=textlink',
-            ],
-            invalidAccountUrls: [
-                'https://medium.com',
-                'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
-                'https://notmedium.com/@chpaquin'
-            ],
-            invalidContentUrls: [
-                'https://medium.com',
-                'https://medium.com/@chpaquin',
-                'https://notmedium.com/@chpaquin/xpoc-test-4fecf28be9a8'
-            ],
-            canonicalAccountData: [
-                // canonicalized version of validAccountUrls (first 6 are the same, last 5 are the same)
-                ...new Array(6).fill(
-                    {
-                        url: 'https://medium.com/@chpaquin',
-                        account: 'chpaquin'
-                    }
-                ),
-                ...new Array(5).fill(
-                    {
-                        url: 'https://christianpaquin.medium.com',
-                        account: 'christianpaquin'
-                    }
-                )
-            ],
-            canonicalContentData: [
-                // canonicalized version of validContentUrls (first 4, next 3, and last 3 are the same)
-                ...new Array(4).fill(
-                    {
-                        url: 'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
-                        account: 'chpaquin',
-                        puid: '4fecf28be9a8',
-                        type: 'post'
-                    }
-                ),
-                ...new Array(3).fill(
-                    {
-                        url: 'https://christianpaquin.medium.com/hello-world-d4011bf78829',
-                        account: 'christianpaquin',
-                        puid: 'd4011bf78829',
-                        type: 'post'
-                    }
-                ),
-                ...new Array(4).fill(
-                    {
-                        url: 'https://medium.com/p/4fecf28be9a8',
-                        account: '',
-                        puid: '4fecf28be9a8',
-                        type: 'post'
-                    }
-                )                
-            ],
-            sampleAccountData: undefined,
-            sampleContentData: undefined
-        }
+    // Medium test data
+    {
+        platform: new Medium(),
+        validAccountUrls: [
+            // default form
+            'https://medium.com/@chpaquin',
+            'https://medium.com/@chpaquin/',
+            'https://www.medium.com/@chpaquin',
+            'https://medium.com/@chpaquin?utm_source=bing&utm_content=textlink',
+            'https://medium.com/@chpaquin/about',                
+            'https://medium.com/@chpaquin/about/',
+            // subdomain form
+            'https://christianpaquin.medium.com',
+            'https://christianpaquin.medium.com/',
+            'https://christianpaquin.medium.com/about',
+            'https://christianpaquin.medium.com/about/',
+            'https://christianpaquin.medium.com?utm_source=bing&utm_content=textlink'
+        ],
+        validContentUrls: [
+            // default form
+            'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+            'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8/',
+            'https://www.medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+            'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8?utm_source=bing&utm_content=textlink',
+            // subdomain form
+            'https://christianpaquin.medium.com/hello-world-d4011bf78829',
+            'https://christianpaquin.medium.com/hello-world-d4011bf78829/',
+            'https://christianpaquin.medium.com/hello-world-d4011bf78829?utm_source=bing&utm_content=textlink',
+            // short form
+            'https://medium.com/p/4fecf28be9a8',
+            'https://medium.com/p/4fecf28be9a8/',
+            'https://www.medium.com/p/4fecf28be9a8',
+            'https://medium.com/p/4fecf28be9a8?utm_source=bing&utm_content=textlink',
+        ],
+        invalidAccountUrls: [
+            'https://medium.com',
+            'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+            'https://notmedium.com/@chpaquin'
+        ],
+        invalidContentUrls: [
+            'https://medium.com',
+            'https://medium.com/@chpaquin',
+            'https://notmedium.com/@chpaquin/xpoc-test-4fecf28be9a8'
+        ],
+        canonicalAccountData: [
+            // canonicalized version of validAccountUrls (first 6 are the same, last 5 are the same)
+            ...new Array(6).fill(
+                {
+                    url: 'https://medium.com/@chpaquin',
+                    account: 'chpaquin'
+                }
+            ),
+            ...new Array(5).fill(
+                {
+                    url: 'https://christianpaquin.medium.com',
+                    account: 'christianpaquin'
+                }
+            )
+        ],
+        canonicalContentData: [
+            // canonicalized version of validContentUrls (first 4, next 3, and last 3 are the same)
+            ...new Array(4).fill(
+                {
+                    url: 'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+                    account: 'chpaquin',
+                    puid: '4fecf28be9a8',
+                    type: 'post'
+                }
+            ),
+            ...new Array(3).fill(
+                {
+                    url: 'https://christianpaquin.medium.com/hello-world-d4011bf78829',
+                    account: 'christianpaquin',
+                    puid: 'd4011bf78829',
+                    type: 'post'
+                }
+            ),
+            ...new Array(4).fill(
+                {
+                    url: 'https://medium.com/p/4fecf28be9a8',
+                    account: '',
+                    puid: '4fecf28be9a8',
+                    type: 'post'
+                }
+            )                
+        ],
+        sampleAccountData: undefined,
+        sampleContentData: undefined
+    }
 ];
 
 const hasValue = (s: string | undefined): boolean => s !== undefined && s !== '';
@@ -419,3 +419,107 @@ for (const platformTestData of platformTestDataArray) {
         }
     });
 }
+
+describe('platform operations', () => {
+    test('platform account URL validation', () => {
+        // YouTube test
+        expect(Platforms.isSupportedAccountUrl('https://www.youtube.com/@accountname/about')).toBe(true);
+        // X/Twitter test
+        expect(Platforms.isSupportedAccountUrl('https://twitter.com/accountname')).toBe(true);
+        // Facebook test
+        expect(Platforms.isSupportedAccountUrl('https://www.facebook.com/accountname')).toBe(true);
+        // Instagram test
+        expect(Platforms.isSupportedAccountUrl('https://www.instagram.com/accountname/')).toBe(true);
+        // Medium test
+        expect(Platforms.isSupportedAccountUrl('https://medium.com/@accountname')).toBe(true);
+        // unsupported platform
+        expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
+    });
+
+    test('platform content URL validation', () => {
+        // YouTube test
+        expect(Platforms.isSupportedContentUrl('https://www.youtube.com/watch?v=abcdef12345')).toBe(true);
+        // X/Twitter test
+        expect(Platforms.isSupportedContentUrl('https://twitter.com/accountname/status/1234567890123456789')).toBe(true);
+        // Facebook test
+        expect(Platforms.isSupportedContentUrl('https://www.facebook.com/accountname/photos/123456789012345')).toBe(true);
+        // Instagram test
+        expect(Platforms.isSupportedContentUrl('https://www.instagram.com/p/ABCDEF12345/')).toBe(true);
+        // Medium test
+        expect(Platforms.isSupportedContentUrl('https://medium.com/@accountname/title-abcdef123456')).toBe(true);
+        // unsupported platform
+        expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
+    });
+
+    test('platform account URL extraction', async () => {
+        // YouTube test
+        let url = 'https://www.youtube.com/@christianpaquinmsr';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(true);
+        const accountData = await Platforms.getAccountFromUrl(url);
+        expect(accountData.platform).toBe('YouTube');
+        expect(accountData.account).toBe('christianpaquinmsr');
+        expect(accountData.url).toBe('https://www.youtube.com/@christianpaquinmsr/about');
+
+        // X/Twitter test (no public access, expect a not supported exception)
+        url = 'https://twitter.com/chpaquin';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
+        await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
+
+        // Facebook test (no public access, expect a not supported exception)
+        url = 'https://www.facebook.com/Microsoft';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
+        await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
+
+        // Instagram test (no public access, expect a not supported exception)
+        url = 'https://www.instagram.com/microsoft/';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
+        await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
+
+        // Medium test (not yet implemented (TODO), expect a not supported exception)
+        url = 'https://medium.com/@chpaquin';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
+        await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
+
+        // unsupported platform
+        url = 'https://www.notaplatform.com/accountname';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
+        await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
+    });
+
+    test('platform content URL extraction', async () => {
+        // YouTube test
+        let url = 'https://www.youtube.com/watch?v=hDd3t7y1asU';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(true);
+        const contentData = await Platforms.getContentFromUrl(url);
+        expect(contentData.platform).toBe('YouTube');
+        expect(contentData.puid).toBe('hDd3t7y1asU');
+        expect(contentData.url).toBe('https://www.youtube.com/watch?v=hDd3t7y1asU');
+        expect(contentData.account).toBe('christianpaquinmsr');
+        expect(contentData.timestamp).toBe('2023-07-10T00:00:00Z');
+
+        // X/Twitter test (no public access, expect a not supported exception)
+        url = 'https://twitter.com/chpaquin/status/1694698274618319246';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+
+        // Facebook test (no public access, expect a not supported exception)
+        url = 'https://www.facebook.com/Microsoft/photos/a.10150199519298721/10150199519298721/';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+
+        // Instagram test (no public access, expect a not supported exception)
+        url = 'https://www.instagram.com/p/CQ7Z1Y1JZ1s/';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+
+        // Medium test (not yet implemented (TODO), expect a not supported exception)
+        url = 'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+
+        // unsupported platform
+        url = 'https://www.notaplatform.com/abc123';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+    });
+});

@@ -63,13 +63,12 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ### Contributing platform implementations
 
-Contributors can help the project by implementing support for additional platforms in the reference implementation
-library under `lib/src`. This can be done by submitting PRs with the following changes:
+Contributors can help the project by implementing support for additional platforms in the reference implementation.
+This can be done by submitting PRs with the following changes:
 
--    `platform.ts`: adding a class for the new platform
--    `platform.test.ts`: adding the platform to the `import` statement and platform test data to the `platformTestDataArray` array 
--    `manifest.ts`: adding the platform to the `import` statement and the `platforms` array
--    `manifest.test.ts`: adding platform data in the `platform operations` tests
+-    `doc/platforms.md`: add a section for the new platform,
+-    `lib/src/platform.ts`: add a class for the new platform, and add it to the `Platforms` object's `platforms` array, and
+-    `lib/src/platform.test.ts`: add the platform to the `import` statement, and add platform test data to the `platformTestDataArray` array and the `platform operations` tests.
 
 ## Trademarks
 

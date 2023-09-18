@@ -42,14 +42,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 ],
                 [
                     'Content information',
-                    { label: 'Title', value: request.result.content.title },
+                    { label: 'Description', value: request.result.content.desc },
                     { label: 'URL', value: request.result.content.url },
                     { label: 'PUID', value: request.result.content.puid },
                     { label: 'Account', value: request.result.content.account },
-                    {
-                        label: 'Timestamp',
-                        value: request.result.content.timestamp,
-                    },
+                    { label: 'Timestamp', value: request.result.content.timestamp},
                 ],
             );
         }

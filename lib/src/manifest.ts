@@ -7,21 +7,20 @@ import fs from 'fs';
  * A platform account.
  */
 export type Account = {
-    platform: string,
-    url: string,
     account: string;
+    platform: string;
+    url: string;
 }
 
 /**
  * A platform content item.
  */
 export type ContentItem = {
-    title?: string;
-    desc?: string;
-    url: string;
-    platform: string;
-    puid?: string;
     account: string;
+    platform: string;
+    url: string;
+    desc?: string;
+    puid?: string;
     timestamp?: string;
 };
 

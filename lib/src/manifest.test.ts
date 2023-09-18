@@ -15,19 +15,18 @@ describe('manifest file operations', () => {
             version: Manifest.LatestVersion,
             accounts: [
                 {
+                    account: 'abc',
                     platform: 'test',
-                    url: 'https://platform.test/abc',
-                    account: 'abc'
+                    url: 'https://platform.test/abc'
                 }
             ],
             content: [
                 {
-                    title: 'test',
-                    desc: 'test',
-                    url: 'https://platform.test/xyz',
-                    platform: 'test',
-                    puid: 'xyz',
                     account: 'test',
+                    platform: 'test',
+                    url: 'https://platform.test/xyz',
+                    desc: 'test',
+                    puid: 'xyz',
                     timestamp: '2020-01-01T00:00:00Z'
                 }
             ]
@@ -37,21 +36,20 @@ describe('manifest file operations', () => {
 
     test('add account', () => {
         manifest.addAccount({
+            account: 'def',
             platform: 'test',
-            url: 'https://platform.test/def',
-            account: 'def'
+            url: 'https://platform.test/def'
         });
         expect(manifest.manifest.accounts.length).toBe(2);
     });
 
     test('add content', () => {
         manifest.addContentItem({
-            title: 'test2',
-            desc: 'test2',
-            url: 'https://platform.test/uvw',
-            platform: 'test',
-            puid: 'uvw',
             account: 'test2',
+            platform: 'test',
+            url: 'https://platform.test/uvw',
+            desc: 'test2',
+            puid: 'uvw',
             timestamp: '2021-01-01T00:00:00Z'
         });
         expect(manifest.manifest.content.length).toBe(2);
@@ -100,7 +98,11 @@ describe('manifest file operations', () => {
 
     // clean up
     afterAll(async () => {
-        await fs.unlink(tmpFilePath); // delete the file
-        await fs.rmdir(tmpDir);
+        try {
+            await fs.unlink(tmpFilePath); // delete the file
+            await fs.rmdir(tmpDir);
+        } catch (err) {
+            // ignore errors
+        }
     });
 });

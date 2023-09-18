@@ -4,71 +4,72 @@
 	"version": "0.1.2",
 	"accounts": [
 		{
+			"account": "a_X_test_account",
 			"platform": "X",
-			"url": "https://twitter.com/a_test_account",
-			"account": "a_X_test_account"
+			"url": "https://twitter.com/a_test_account"
 		},
         {
+			"account": "a_fb_test_account",
 			"platform": "Facebook",
-			"url": "https://facebook.com/a_test_account",
-			"account": "a_fb_test_account"
+			"url": "https://facebook.com/a_test_account"
 		},
         {
+			"account": "a_test_account",
 			"platform": "YouTube",
-			"url": "https://youtube.com/@a_test_account/about",
-			"account": "a_test_account"
+			"url": "https://youtube.com/@a_test_account/about"
 		},
 		{
+			"account": "a_test_account",
 			"platform": "Instagram",
-			"url": "https://www.instagram.com/a_test_account/",
-			"account": "a_test_account"
+			"url": "https://www.instagram.com/a_test_account/"
 		},
 		{
+			"account": "a_test_account",
 			"platform": "Medium",
-			"url": "https://medium.com/@a_test_account",
-			"account": "a_test_account"
+			"url": "https://medium.com/@a_test_account"
 		}
 	],
     "content": [
 		{
-			"timestamp": "2023-07-10T00:00:00Z",
-			"desc": "XPOC test", 
-			"url": "https://www.youtube.com/watch?v=abcdef12345",
+
+			"account": "christianpaquinmsr",
 			"platform": "YouTube",
+			"url": "https://www.youtube.com/watch?v=abcdef12345",
+			"desc": "XPOC test", 
 			"puid": "hDd3t7y1asU",
-			"account": "@christianpaquinmsr"
+			"timestamp": "2023-07-10T00:00:00Z"
 		},
         {
-			"timestamp": "2023-07-11T00:00:00Z",
-			"desc": "a test title", 
-			"url": "https://twitter.com/chpaquin/status/1234567890123456789",
+			"account": "a_X_test_account",
 			"platform": "X",
+			"url": "https://twitter.com/chpaquin/status/1234567890123456789",
+			"desc": "a test description", 
 			"puid": "1234567890123456789",
-			"account": "a_X_test_account"
+			"timestamp": "2023-07-11T00:00:00Z"
 		},
         {
-			"timestamp": "2023-07-12T00:00:00Z",
-			"desc": "a test picture", 
-			"url": "https://www.facebook.com/photo/?fbid=123456789012345",
+			"account": "a_fb_test_account",
 			"platform": "Facebook",
-			"puid": "123456789012345",
-			"account": "a_fb_test_account"
-		},
-		{
-			"timestamp": "2023-07-13T00:00:00Z",
+			"url": "https://www.facebook.com/photo/?fbid=123456789012345",
 			"desc": "a test picture", 
-			"url": "https://www.instagram.com/p/ABCDE12345/",
-			"platform": "Instagram",
-			"puid": "ABCDE12345",
-			"account": "a_ig_test_account"
+			"puid": "123456789012345",
+			"timestamp": "2023-07-12T00:00:00Z"
 		},
 		{
-			"timestamp": "2023-07-14T00:00:00Z",
-			"desc": "a test story", 
-			"url": "https://medium.com/@a_md_test_account/a-test-story-abcdef123456",
+			"account": "a_ig_test_account",
+			"platform": "Instagram",
+			"url": "https://www.instagram.com/p/ABCDE12345/",
+			"puid": "ABCDE12345",
+			"desc": "a test picture",
+			"timestamp": "2023-07-13T00:00:00Z"
+		},
+		{
+			"account": "a_md_test_account",
 			"platform": "Medium",
+			"url": "https://medium.com/@a_md_test_account/a-test-story-abcdef123456",
+			"desc": "a test story", 
 			"puid": "abcdef123456",
-			"account": "a_md_test_account"
+			"timestamp": "2023-07-14T00:00:00Z"
 		}
     ]
 }

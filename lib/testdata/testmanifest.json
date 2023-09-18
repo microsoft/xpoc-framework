@@ -1,7 +1,7 @@
 {
     "name": "A test name",
     "url": "https://example.com",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"accounts": [
 		{
 			"platform": "X",
@@ -32,7 +32,7 @@
     "content": [
 		{
 			"timestamp": "2023-07-10T00:00:00Z",
-			"title": "XPOC test", 
+			"desc": "XPOC test", 
 			"url": "https://www.youtube.com/watch?v=abcdef12345",
 			"platform": "YouTube",
 			"puid": "hDd3t7y1asU",
@@ -40,7 +40,7 @@
 		},
         {
 			"timestamp": "2023-07-11T00:00:00Z",
-			"title": "a test title", 
+			"desc": "a test title", 
 			"url": "https://twitter.com/chpaquin/status/1234567890123456789",
 			"platform": "X",
 			"puid": "1234567890123456789",
@@ -48,7 +48,7 @@
 		},
         {
 			"timestamp": "2023-07-12T00:00:00Z",
-			"title": "a test picture", 
+			"desc": "a test picture", 
 			"url": "https://www.facebook.com/photo/?fbid=123456789012345",
 			"platform": "Facebook",
 			"puid": "123456789012345",
@@ -56,7 +56,7 @@
 		},
 		{
 			"timestamp": "2023-07-13T00:00:00Z",
-			"title": "a test picture", 
+			"desc": "a test picture", 
 			"url": "https://www.instagram.com/p/ABCDE12345/",
 			"platform": "Instagram",
 			"puid": "ABCDE12345",
@@ -64,7 +64,7 @@
 		},
 		{
 			"timestamp": "2023-07-14T00:00:00Z",
-			"title": "a test story", 
+			"desc": "a test story", 
 			"url": "https://medium.com/@a_md_test_account/a-test-story-abcdef123456",
 			"platform": "Medium",
 			"puid": "abcdef123456",

@@ -41,7 +41,7 @@ export type XPOCManifest = {
  */
 export class Manifest {
     manifest: XPOCManifest;
-    static LatestVersion = '0.1.1';
+    static LatestVersion = '0.1.2';
 
     constructor(manifest: XPOCManifest) {
         this.manifest = manifest;

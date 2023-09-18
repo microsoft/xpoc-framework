@@ -1,6 +1,6 @@
 # Cross-Platform Origin of Content (XPOC) Framework Specification
 
-This document specifies the Cross-Platform Origin of Content (XPOC) framework, to enable interoperable implementation. The current version of the specification is 0.1.1.
+This document specifies the Cross-Platform Origin of Content (XPOC) framework, to enable interoperable implementation. The current version of the specification is 0.1.2.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC2119](https://www.rfc-editor.org/rfc/rfc2119).
 
@@ -37,19 +37,18 @@ A XPOC manifest is a JSON file with the following schema:
     version: string,
     accounts: [
         {
+            account: string
             platform: string,
             url: string,
-            account: string
         }
     ]
     content: [
         {
-            title: string, (optional),
-            desc: string (optional),
-            url: string,
-            platform: string,
-            puid: string (optional),
             account: string,
+            platform: string,
+            url: string,
+            desc: string (optional),
+            puid: string (optional),
             timestamp: string (optional)
         }, ...
     ]
@@ -60,18 +59,17 @@ where:
 
 -   `name` is the human-readable name of the Owner,
 -   `baseurl` is the base url of the Owner's website, i.e., the hostname (domain) followed by an optional path, without the protocol header (e.g., `example.com` or `example.com/some/path`),
--   `version` is the version number of the specification used to generate the manifest; currently `0.1.1`.
+-   `version` is the version number of the specification used to generate the manifest; currently `0.1.2`.
 -   `accounts` is an array of the Owner's platform accounts, JSON objects with the following properties:
-    -   `platform` is the name of the hosting platform,
-    -   `url` is the URL of the account page, and
-    -   `account` is the platform-specific account name.
+    -   `account` is the platform-specific account name,
+    -   `platform` is the name of the hosting platform, and
+    -   `url` is the URL of the account page.
 -   `content` is an array of XPOC content items, JSON objects with the following properties:
-    -   `title` is the label for the content item,
-    -   `desc` is a description of the content item,
-    -   `url` is the URL of the content item on a hosting platform,
+    -   `account` is the platform-specific account name which owns the content item,
     -   `platform` is the name of the hosting platform,
-    -   `puid` is a platform-specific unique identifier of the hosted content,
-    -   `account` is the platform-specific account name which owns the content item, and
+    -   `url` is the URL of the content item on a hosting platform,
+    -   `desc` is a description of the content item,
+    -   `puid` is a platform-specific unique identifier of the hosted content, and
     -   `timestamp` is the creation time of the item, represented in the ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC. For example, Sept 1st, 2023, 10:30 UTC is represented as "2023-09-01T10:30:00Z".
 
 Different platforms represent content differently; implementation SHOULD follow the [guidelines](./platforms.md) on how to encode platform-specific data for some popular hosting platforms.
@@ -98,7 +96,7 @@ Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-
 {
     "name": "Alex Example",
     "baseurl": "alexexample.com",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "accounts": [],
     "content": []
 }
@@ -110,14 +108,14 @@ Alex adds their Facebook account name `alex.example` and their X/Twitter account
 
 ```json
 {
+    "account": "alex.example",
     "platform": "Facebook",
-    "url": "https://facebook.com/alex.example",
-    "account": "alex.example"
+    "url": "https://facebook.com/alex.example"
 },
 {
+    "account": "ExAlex",
     "platform": "X",
-    "url": "https://twitter.com/ExAlex",
-    "account": "ExAlex"
+    "url": "https://twitter.com/ExAlex"
 }
 ```
 
@@ -128,12 +126,11 @@ Alex's conference video is posted on YouTube at `https://www.youtube.com/watch?v
 Alex then adds the following JSON object to their manifest's `content` array:
 
 ```json
-    "title": "Cool conference panel",
-    "desc": "My panel at the Cool conference",
-    "url": "https://www.youtube.com/watch?v=abcdef12345",
-    "platform": "YouTube",
-    "puid": "abcde12345",
     "account": "@CoolConf",
+    "platform": "YouTube",
+    "url": "https://www.youtube.com/watch?v=abcdef12345",
+    "desc": "My panel at the Cool conference",
+    "puid": "abcde12345",
     "timestamp": "2023-08-24T08:45:00Z"
 ```
 

@@ -1,7 +1,7 @@
 {
     "name": "XPOC framework sample",
     "url": "https://raw.githubusercontent.com/microsoft/xpoc-framework/main/samples",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"accounts": [
 		{
 			"platform": "X",
@@ -12,7 +12,7 @@
     "content": [
 		{
 			"timestamp": "2023-07-10T00:00:00Z",
-			"title": "XPOC test", 
+			"desc": "XPOC test", 
 			"url": "https://www.youtube.com/watch?v=hDd3t7y1asU",
 			"platform": "YouTube",
 			"puid": "hDd3t7y1asU",

@@ -29,8 +29,7 @@
     <pre id="output"></pre>
 
     <!-- Include PapaParse library to parse CSV file -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    
+    <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js" integrity="sha384-D/t0ZMqQW31H3az8ktEiNb39wyKnS82iFY52QPACM+IjKW3jDUhyIgh2PApRqJZs" crossorigin="anonymous"></script>    
     <script>
         function parseCSV(file, callback) {
             Papa.parse(file, {

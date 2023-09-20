@@ -70,7 +70,7 @@ jobs:
 
       - name: Build (only for server-backend)
         if: matrix.sample == 'server-backend'
-        run: cd samples/server-backend && npm run build
+        run: ls -al lib && cd samples/server-backend && npm run build
 
       - name: Start Server and Check
         run: |

@@ -79,6 +79,14 @@ jobs:
         run: |
           cd samples/${{ matrix.sample }}
           npm run start &
-          sleep 10 # wait for 10 seconds to ensure server starts
-          # Now, kill the server (running on port 3000 in our samples):
-          kill -9 $(lsof -t -i:3000)
+          sleep 15 # wait for 15 seconds to ensure server starts and binds to the port
+
+          # Determine which port to target based on the sample
+          if [[ "${{ matrix.sample }}" == "client-side-html" ]]; then
+            PORT=3000
+          elif [[ "${{ matrix.sample }}" == "server-backend" ]]; then
+            PORT=4000
+          fi
+
+          # Now, kill the server running on the determined port
+          kill -9 $(lsof -t -i:$PORT)

@@ -39,7 +39,7 @@
                     <td>${manifest.baseurl}</td>
                 </tr>
                 <tr>
-                    <td><label>Version:</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.1.1</span></span></td>
+                    <td><label>Version:</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.1.2</span></span></td>
                     <td>${manifest.version}</td>
                 </tr>
                 </tbody>
@@ -116,9 +116,9 @@
                     showManifestInfo(data.manifest);
                 }
                 if (data.hasOwnProperty("content")) {
-                    showContentInfo(data.content);
+                    showContentInfo(data.content[0]); // TODO: display all results
                 } else {
-                    showAccountInfo(data.account);
+                    showAccountInfo(data.accounts[0]); // TODO: display all results
                 }
             } catch (err) {
                 console.log('verifyXpocResource error', err);

@@ -177,26 +177,26 @@ app.get('/verifyXpocResource', async (req, res) => {
         }
     }
 
-    // fetch the XPOC manifest from the XPOC URI
-    let manifest: xpoc.XPOCManifest;
     try {
-        manifest = await fetchManifest(xpocUri);
-        console.log(`verifyXpocResource: retrieved manifest: ${JSON.stringify(manifest)}`);
+        // fetch the XPOC manifest from the XPOC URI
+        const manifestJson = await fetchManifest(xpocUri);
+        console.log(`verifyXpocResource: retrieved manifest: ${JSON.stringify(manifestJson)}`);
 
-        // TODO: there could be more than one match; accumulate them
+        // load the manifest
+        const manifest = new xpoc.Manifest(manifestJson);
 
         // check if the url matches an account in the manifest
-        const matchingAccount = manifest.accounts.find(account => account.url === url); // TODO: implement this in Manifest class
-        if (matchingAccount) {
+        const matchingAccounts = manifest.matchAccount({ url: url });
+        if (matchingAccounts) {
             res.json({ 
                 manifest: manifest,
-                account: matchingAccount }
+                accounts: matchingAccounts }
             );
             return;
         }
 
         // check if the url matches a content item in the manifest
-        const matchingContent = manifest.content.find(content => content.url === url); // TODO: implement this in Manifest class
+        const matchingContent = manifest.matchContent({ url: url });
         if (matchingContent) {
             res.json({
                 manifest: manifest,

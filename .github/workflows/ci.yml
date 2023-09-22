@@ -9,17 +9,48 @@ on:
       - main
 
 jobs:
-  build:
+  lib:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        sample: [client-side-html]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '19'
+
+      # Cache for lib directory
+      - name: Cache Node.js modules for lib
+        uses: actions/cache@v2
+        with:
+          path: lib/node_modules
+          key: ${{ runner.os }}-build-lib-${{ hashFiles('./lib/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-lib-
+
+      - name: Install Dependencies for lib
+        run: cd lib && npm install
+
+      - name: Build for lib
+        run: cd lib && npm run build
+
+      - name: Test for lib
+        run: cd lib && npm test
+
+  samples:
+    needs: lib
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        sample: [client-side-html, server-backend]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
@@ -35,38 +66,27 @@ jobs:
             ${{ runner.os }}-build-${{ matrix.sample }}-
 
       - name: Install Dependencies for samples
-        run: |
-          cd samples/${{ matrix.sample }}
-          npm install
+        run: cd samples/${{ matrix.sample }} && npm install
+
+      - name: Build (only for server-backend)
+        if: matrix.sample == 'server-backend'
+        # TODO: build lib here because the lib/dist is not available. Why not?
+        run: | 
+          cd lib && npm install && npm run build && cd ..
+          cd samples/server-backend && npm run build
 
       - name: Start Server and Check
         run: |
           cd samples/${{ matrix.sample }}
           npm run start &
-          sleep 10 # wait for 10 seconds to ensure server starts
-          # Now, kill the server (running on port 3000 in our samples):
-          kill -9 $(lsof -t -i:3000)
+          sleep 15 # wait for 15 seconds to ensure server starts and binds to the port
 
-      # Cache for lib directory
-      - name: Cache Node.js modules for lib
-        uses: actions/cache@v2
-        with:
-          path: lib/node_modules
-          key: ${{ runner.os }}-build-lib-${{ hashFiles('./lib/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-lib-
+          # Determine which port to target based on the sample
+          if [[ "${{ matrix.sample }}" == "client-side-html" ]]; then
+            PORT=3000
+          elif [[ "${{ matrix.sample }}" == "server-backend" ]]; then
+            PORT=4000
+          fi
 
-      - name: Install Dependencies for lib
-        run: |
-          cd lib
-          npm install
-
-      - name: Build for lib
-        run: |
-          cd lib
-          npm run build
-
-      - name: Test for lib
-        run: |
-          cd lib
-          npm test
+          # Now, kill the server running on the determined port
+          kill -9 $(lsof -t -i:$PORT)

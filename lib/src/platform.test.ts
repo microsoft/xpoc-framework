@@ -8,6 +8,7 @@ const expectedXpocUri = 'xpoc://christianpaquin.github.io!';
 
 interface PlatformTestData {
     platform: Platform;
+    accountNames: string[];
     validAccountUrls: string[];
     validContentUrls: string[];
     invalidAccountUrls: string[];
@@ -22,6 +23,12 @@ const platformTestDataArray: PlatformTestData[] = [
     // YouTube test data
     {
         platform: new YouTube(),
+        accountNames: [
+            'christianpaquinmsr',
+            '@christianpaquinmsr',
+            ' christianpaquinmsr ',
+            ' @christianpaquinmsr '
+        ],
         validAccountUrls: [
             'https://www.youtube.com/@christianpaquinmsr',
             'https://www.youtube.com/@christianpaquinmsr/',
@@ -85,6 +92,12 @@ const platformTestDataArray: PlatformTestData[] = [
     // X/Twitter test data
     {
         platform: new XTwitter(),
+        accountNames: [
+            'chpaquin',
+            '@chpaquin',
+            ' chpaquin ',
+            ' @chpaquin '
+        ],
         validAccountUrls: [
             'https://twitter.com/chpaquin',
             'https://twitter.com/@chpaquin',
@@ -128,6 +141,10 @@ const platformTestDataArray: PlatformTestData[] = [
     // Facebook test data
     {
         platform: new Facebook(),
+        accountNames: [
+            'Microsoft',
+            ' Microsoft '
+        ],
         validAccountUrls: [
             'https://www.facebook.com/Microsoft',
             'https://www.facebook.com/Microsoft/',
@@ -193,6 +210,10 @@ const platformTestDataArray: PlatformTestData[] = [
     // Instagram test data
     {
         platform: new Instagram(),
+        accountNames: [
+            'microsoft',
+            ' microsoft '
+        ],
         validAccountUrls: [
             'https://www.instagram.com/microsoft',
             'https://www.instagram.com/microsoft/',
@@ -249,6 +270,12 @@ const platformTestDataArray: PlatformTestData[] = [
     // Medium test data
     {
         platform: new Medium(),
+        accountNames: [
+            'chpaquin',
+            '@chpaquin',
+            ' chpaquin ',
+            ' @chpaquin '
+        ],
         validAccountUrls: [
             // default form
             'https://medium.com/@chpaquin',
@@ -346,6 +373,13 @@ for (const platformTestData of platformTestDataArray) {
 
     describe(`${platformName} platform test`, () => {
     
+        test(`${platformName} account name canonicalization`, () => {
+            for (const account of platformTestData.accountNames) {
+                const expected = platformTestData.accountNames[0];
+                expect(platform.canonicalizeAccountName(account)).toBe(expected);
+            }
+        });
+
         test(`${platformName} account URL validation`, () => {
             for (const url of platformTestData.validAccountUrls) {
                 expect(platform.isValidAccountUrl(url)).toBe(true);

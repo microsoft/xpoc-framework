@@ -14,24 +14,28 @@
 			"url": "https://facebook.com/a_test_account"
 		},
         {
-			"account": "a_test_account",
+			"account": "a_yt_test_account",
 			"platform": "YouTube",
-			"url": "https://youtube.com/@a_test_account/about"
+			"url": "https://youtube.com/@a_yt_test_account/about"
 		},
 		{
-			"account": "a_test_account",
+			"account": "a_ig_test_account",
 			"platform": "Instagram",
-			"url": "https://www.instagram.com/a_test_account/"
+			"url": "https://www.instagram.com/a_ig_test_account/"
 		},
 		{
-			"account": "a_test_account",
+			"account": "a_md_test_account",
 			"platform": "Medium",
-			"url": "https://medium.com/@a_test_account"
+			"url": "https://medium.com/@a_md_test_account"
+		},
+		{
+			"account": "a_us_test_account",
+			"platform": "Unsupported",
+			"url": "https://unsupported.platform/a_us_test_account"
 		}
 	],
     "content": [
 		{
-
 			"account": "christianpaquinmsr",
 			"platform": "YouTube",
 			"url": "https://www.youtube.com/watch?v=abcdef12345",
@@ -42,7 +46,7 @@
         {
 			"account": "a_X_test_account",
 			"platform": "X",
-			"url": "https://twitter.com/chpaquin/status/1234567890123456789",
+			"url": "https://twitter.com/a_X_test_account/status/1234567890123456789",
 			"desc": "a test description", 
 			"puid": "1234567890123456789",
 			"timestamp": "2023-07-11T00:00:00Z"
@@ -70,6 +74,14 @@
 			"desc": "a test story", 
 			"puid": "abcdef123456",
 			"timestamp": "2023-07-14T00:00:00Z"
+		},
+		{
+			"account": "a_us_test_account",
+			"platform": "Unsupported",
+			"url": "https://unsupported.platform/?foobar=12345",
+			"desc": "a test foobar", 
+			"puid": "12345",
+			"timestamp": "2023-07-15T00:00:00Z"
 		}
     ]
 }

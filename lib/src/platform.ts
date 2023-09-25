@@ -585,6 +585,69 @@ export class Medium extends Platform {
     // TODO: implement getAccountData and getContentData
 }
 
+// TikTok platform implementation.
+export class TikTok extends Platform {
+
+    constructor() {
+        super('TikTok', 'https://www.tiktok.com', false, false,
+        // matches TikTok URLs, with or without a www. subdomain
+        "^https?://(?:www\\.)?(tiktok\\.com)",
+        // matches TikTok account URLs with a '@' prefix
+        `/@(?<accountName>[a-zA-Z0-9\\._]{1,24})\/?(?:\\?.*)?$`,
+        // matches TikTok content URLs with a status path and a status ID path
+        `/@?(?<accountName>[a-zA-Z0-9_]{1,15})/video/(?<id>\\d{1,19})\/?(?:\\?.*)?$`
+        );
+    }
+
+    canonicalizeAccountName = trimAndRemoveAtPrefix;
+
+    canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
+        if (!this.isValidAccountUrl(url)) {
+            throw new Error('Malformed TikTok account URL');
+        }
+        // extract the account name from the TikTok account URL
+        const accountRegex = new RegExp(this.accountRegexString);
+        const match = accountRegex.exec(url);
+        if (match && match.groups) {
+            const accountName = match.groups.accountName;
+            return {
+                url: `${this.CanonicalHostname}/@${accountName}`,
+                account: accountName
+            }
+        } else {
+            const errMsg = `Malformed TikTok account URL: can't extract account name`;
+            console.error(`canonicalizeAccountUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+
+    canonicalizeContentUrl(url: string): CanonicalizedContentData {
+        if (!this.isValidContentUrl(url)) {
+            throw new Error('Malformed TikTok content URL');
+        }
+        // extract the ID from the TikTok content URL
+        const contentRegex = new RegExp(this.contentRegexString);
+        const match = contentRegex.exec(url);
+        if (match && match.groups) {
+            const accountName = match.groups.accountName;
+            const id = match.groups.id;
+            return {
+                account: accountName,
+                puid: id,
+                type: 'video',
+                url: `${this.CanonicalHostname}/@${accountName}/video/${id}`
+            }
+        } else {
+            const errMsg = `Malformed TikTok content URL: can't extract video ID`;
+            console.error(`canonicalizeContentUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+
+    // TODO: implement getAccountData and getContentData
+}
+
+
 // supported platforms
 export const Platforms = {
 
@@ -593,7 +656,8 @@ export const Platforms = {
         new XTwitter(),
         new Facebook(),
         new Instagram(),
-        new Medium()
+        new Medium(),
+        new TikTok()
     ],
 
     /**

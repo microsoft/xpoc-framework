@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Facebook, Instagram, YouTube, XTwitter, Medium, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
+import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';
@@ -361,8 +361,66 @@ const platformTestDataArray: PlatformTestData[] = [
         ],
         sampleAccountData: undefined,
         sampleContentData: undefined
+    },
+
+    // TikTok test data
+    {
+        platform: new TikTok(),
+        accountNames: [
+            'microsoft',
+            '@microsoft',
+            ' microsoft ',
+            ' @microsoft '
+        ],
+        validAccountUrls: [
+            'https://www.tiktok.com/@microsoft',
+            'https://www.tiktok.com/@microsoft/',
+            'https://www.tiktok.com/@microsoft?lang=en',
+            'https://www.tiktok.com/@a_valid_account.name1234',
+        ],
+        validContentUrls: [
+            'https://www.tiktok.com/@microsoft/video/7281710200761978155',
+            'https://www.tiktok.com/@microsoft/video/7281710200761978155/',
+            'https://tiktok.com/@microsoft/video/7281710200761978155',
+            'https://www.tiktok.com/@microsoft/video/7281710200761978155?lang=en'
+        ],
+        invalidAccountUrls: [
+            'https://tiktok.com',
+            'https://www.tiktok.com/@microsoft/video/7281710200761978155',
+            'https://www.nottiktok.com/@microsoft'
+        ],
+        invalidContentUrls: [
+            'https://tiktok.com',
+            'https://www.tiktok.com/@microsoft',
+            'https://www.nottiktok.com/@microsoft/video/7281710200761978155'
+        ],
+        canonicalAccountData: [
+            ...new Array(3).fill(
+                // canonicalized version of validAccountUrls (first 3 are the same)
+                {
+                    url: 'https://www.tiktok.com/@microsoft',
+                    account: 'microsoft'
+                },
+            ),
+            {
+                url: 'https://www.tiktok.com/@a_valid_account.name1234',
+                account: 'a_valid_account.name1234'
+            }],
+        canonicalContentData: new Array(4).fill(
+            // canonicalized version of validContentUrls (representing all the same content)
+            {
+                url: 'https://www.tiktok.com/@microsoft/video/7281710200761978155',
+                account: 'microsoft',
+                puid: '7281710200761978155',
+                type: 'video'
+            }
+        ),
+        sampleAccountData: undefined,
+        sampleContentData: undefined
     }
 ];
+
+
 
 const hasValue = (s: string | undefined): boolean => s !== undefined && s !== '';
 
@@ -466,6 +524,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedAccountUrl('https://www.instagram.com/accountname/')).toBe(true);
         // Medium test
         expect(Platforms.isSupportedAccountUrl('https://medium.com/@accountname')).toBe(true);
+        // TikTok
+        expect(Platforms.isSupportedAccountUrl('https://www.tiktok.com/@accountname')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -481,6 +541,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedContentUrl('https://www.instagram.com/p/ABCDEF12345/')).toBe(true);
         // Medium test
         expect(Platforms.isSupportedContentUrl('https://medium.com/@accountname/title-abcdef123456')).toBe(true);
+        // TikTok
+        expect(Platforms.isSupportedContentUrl('https://www.tiktok.com/@accountname/video/1234567890123456789')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });
@@ -511,6 +573,11 @@ describe('platform operations', () => {
 
         // Medium test (not yet implemented (TODO), expect a not supported exception)
         url = 'https://medium.com/@chpaquin';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
+        await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
+
+        // TikTok test (not yet implemented (TODO), expect a not supported exception)
+        url = 'https://www.tiktok.com/@christian.paquin';
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
         await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
 
@@ -548,6 +615,11 @@ describe('platform operations', () => {
 
         // Medium test (not yet implemented (TODO), expect a not supported exception)
         url = 'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+
+        // TikTok test (not yet implemented (TODO), expect a not supported exception)
+        url = 'https://www.tiktok.com/@christian.paquin/video/7282144635848346923';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 

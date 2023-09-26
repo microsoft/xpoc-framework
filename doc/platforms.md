@@ -104,3 +104,24 @@ Medium accounts and specific stories can be added to a XPOC manifest.
 
 -    On the account page: preferably in the account page's Bio field, optionally in the about page's description.
 -    For a story: in the story's body, either at the top or the end.
+
+## TikTok
+
+It is RECOMMENDED to only list TikTok accounts and not individual pieces of content (videos) in the XPOC manifest.
+
+### Manifest content
+
+-   properties shared by `accounts` and `content`:
+    -   `platform`: "TikTok"
+    -   `account`: the owner's account name `<accountname>`
+-   `accounts` properties:
+    -   `url`: `https://www.tiktok.com/@<accountname>`
+-   `content` properties:
+    -   `url`: `https://www.tiktok.com/@<accountname>/video/<id>`
+    -   `puid`: the `<id>` from the `url`
+    -   `timestamp`: exact creation time in ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
+
+### XPOC URI placement
+
+-    On the account page: in the account page's Bio field.
+-    For a video: in a video's caption field.

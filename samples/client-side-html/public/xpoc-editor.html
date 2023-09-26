@@ -9,7 +9,6 @@
     - Validate the manifest against the XPOC manifest schema
     - Validate URLs more robustly (using regex)
     - Implement better error handling and reporting (highlight erroneous fields, tooltips, etc.)
-    - Provide input pickers for common fields (e.g., platform, timestamp)
     - Add auto-fill based on URL (by fetching the target page and deducing content fields); would require CORS support
 -->
 
@@ -48,11 +47,11 @@
                 </tr>
                 <tr>
                     <td><label for="manifestBaseUrl">Base URL:</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
-                    <td><input type="text" id="manifestBaseUrl" onchange="manifest.baseurl = this.value"></td>
+                    <td><input type="text" id="manifestBaseUrl" onchange="validateAndUpdateURL('info', 0, this.value, this)"></td>
                 </tr>
                 <tr>
                     <td><label for="manifestVersion">Version:</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.1.2</span></span></td>
-                    <td><input type="text" id="manifestVersion" onchange="manifest.version = this.value"></td>
+                    <td><input type="text" id="manifestVersion" value="0.1.2" readonly></td>
                 </tr>
             </tbody>
         </table>
@@ -78,6 +77,16 @@
     <script src="xpoc-common.js"></script>
     <script>
         const currentVersion = "0.1.2";
+
+        const supportedPlatforms = [
+            // {name: platform name, alias: other names for the platform}
+            { name: "YouTube"},
+            { name: "X", alias: "Twitter"},
+            { name: "Facebook"},
+            { name: "Instagram"},
+            { name: "Medium"},
+            { name: "TikTok"},
+        ]
 
         let manifest = {
             name: "",
@@ -153,8 +162,32 @@
             }
         }
 
+        function validateAndUpdatePlatform(contentType, index, inputValue, inputElement) {
+            // TODO: use library for this
+            inputValue= inputValue.trim();
+            let platform = inputValue;
+            let lcPlatform = platform.toLowerCase();
+            for (let p of supportedPlatforms) {
+                if (p.name.toLowerCase() === lcPlatform) {
+                    platform = p.name;
+                    break;
+                } else if (p.alias && p.alias.toLowerCase() === lcPlatform) {
+                    platform = p.name;
+                    break;
+                }
+            }
+            if (contentType === 'content') {
+                manifest.content[index].platform = platform;
+            } else if (contentType === 'account') {
+                manifest.accounts[index].platform = platform;
+            }
+            // update value in the input field
+            inputElement.value = platform;
+        }
+    
         function validateAndUpdateURL(contentType, index, inputValue, inputElement) {
-            inputValue = inputValue.trim().toLowerCase();
+            inputValue = inputValue.trim();
+            validatedURL = inputValue;
             // If it doesn't start with 'http://', or 'https://', prepend 'https://'
             if (!/^https?:\/\//i.test(inputValue)) {
                 validatedURL = 'https://' + inputValue;
@@ -163,7 +196,9 @@
                 alert('Please enter a valid URL.');
                 return;
             }
-            if (contentType === 'content') {
+            if (contentType === 'info') {
+                manifest.baseurl = validatedURL;
+            } else if (contentType === 'content') {
                 manifest.content[index].url = validatedURL;
             } else if (contentType === 'account') {
                 manifest.accounts[index].url = validatedURL;
@@ -172,16 +207,50 @@
             inputElement.value = validatedURL;
         }
 
-        function validateAndUpdateTimestamp(index, inputValue, inputElement) {
-            let date = new Date(inputValue);
-            if (isNaN(date.getTime())) {
-                date = null;
-            } else {
-                date = date.toISOString();
+        function validateAndUpdateAccount(contentType, index, inputValue, inputElement) {
+            inputValue = inputValue.trim();
+            accountName = inputValue;
+            // remove '@' prefix (if present)
+            accountName = accountName.replace(/^@/, '');
+            if (contentType === 'content') {
+                manifest.content[index].account = accountName;
+            } else if (contentType === 'account') {
+                manifest.accounts[index].account = accountName;
             }
-            manifest.content[index].timestamp = date;
             // update value in the input field
-            inputElement.value = date;
+            inputElement.value = accountName;
+        }
+
+        function validateAndUpdateTimestamp(index, inputValue, inputElement) {
+            let date = null;
+            if (inputValue) {
+                date = new Date(inputValue);
+                if (isNaN(date.getTime())) {
+                    date = null;
+                } else {
+                    date = date.toISOString();
+                }
+                // update value in the input field
+                inputElement.value = inputValue;
+            }
+            if (date) {
+                manifest.content[index].timestamp = date;
+            }
+        }
+
+        function convertIsoToDatetimeLocal(isoString) {
+            if(!isoString) return '';
+            
+            let date = new Date(isoString);
+            if(isNaN(date)) return ''; // return an empty string if the date is invalid
+            
+            let year = date.getUTCFullYear();
+            let month = (date.getUTCMonth() + 1).toString().padStart(2, '0'); // months are 0-indexed in JS
+            let day = date.getUTCDate().toString().padStart(2, '0');
+            let hours = date.getUTCHours().toString().padStart(2, '0');
+            let minutes = date.getUTCMinutes().toString().padStart(2, '0');
+            
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
         }
 
         function updateAccountsTable() {
@@ -200,9 +269,9 @@
             manifest.accounts.forEach((account, index) => {
                 html += `
                     <tr>
-                        <td><input type="text" value="${account.platform}" onchange="manifest.accounts[${index}].platform = this.value"></td>
+                        <td><input type="text" value="${account.platform}" onchange="validateAndUpdatePlatform('account', ${index}, this.value, this)"></td>
                         <td><input type="text" value="${account.url}" onchange="validateAndUpdateURL('account', ${index}, this.value, this)"></td>
-                        <td><input type="text" value="${account.account}" onchange="manifest.accounts[${index}].account = this.value"></td>
+                        <td><input type="text" value="${account.account}" onchange="validateAndUpdateAccount('account', ${index}, this.value, this)"></td>
                         <td><button onclick="deleteAccount(${index})">Delete</button></td>
                     </tr>
                 `;
@@ -233,10 +302,10 @@
                     <tr>
                         <td><input type="text" value="${content.desc || ''}" placeholder="Optional" onchange="manifest.content[${index}].desc = this.value"></td>
                         <td><input type="text" value="${content.url}" onchange="validateAndUpdateURL('content', ${index}, this.value, this)"></td>
-                        <td><input type="text" value="${content.platform}" onchange="manifest.content[${index}].platform = this.value"></td>
+                        <td><input type="text" value="${content.platform}" onchange="validateAndUpdatePlatform('content', ${index}, this.value, this)"></td>
                         <td><input type="text" value="${content.puid || ''}" placeholder="Optional" onchange="manifest.content[${index}].puid = this.value"></td>
-                        <td><input type="text" value="${content.account}" onchange="manifest.content[${index}].account = this.value"></td>
-                        <td><input type="text" value="${content.timestamp || ''}" placeholder="Optional" onchange="validateAndUpdateTimestamp(${index}, this.value, this)"></td>
+                        <td><input type="text" value="${content.account}" onchange="validateAndUpdateAccount('content', ${index}, this.value, this)"></td>
+                        <td><input type="datetime-local" value="${convertIsoToDatetimeLocal(content.timestamp) || ''}" placeholder="Optional" onchange="validateAndUpdateTimestamp(${index}, this.value, this)"></td>
                         <td><button onclick="deleteContent(${index})">Delete</button></td>
                     </tr>
                 `;

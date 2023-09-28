@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV to JSON</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>XPOC Manifest CSV Converter</h1>
+    <p>This page converts accounts and content data stored in comma-separated-value files (.cvs) into a XPOC manifest.</p>
+    <P>Enter the XPOC manifest owner information, select an accounts or a content file (or both), and click the generation button to create the manifest.</P>
+    <h4>Enter XPOC owner details</h4>
+    Name: <input type="text" id="nameInput" placeholder="Enter name">
+    <br><br>
+    Website: <input type="text" id="baseURLInput" placeholder="Enter website">
+    <br><br>
+
+    <h4>Select accounts file to convert (CSV format <span class="info-tooltip">i<span class="tooltip-text">The .cvs file must contain a header line with the following fields: account, platform, url</span></span>)</h4>
+    <input type="file" id="accountsCsvFile" />
+    
+    <h4>Select content file to convert (CSV format<span class="info-tooltip">i<span class="tooltip-text">The .cvs file must contain a header line with the following fields: account, platform, url, desc, puid, timestamp</span></span>)</h4>
+    <input type="file" id="contentCsvFile" />
+    
+    <br><br>
+    
+    <button onclick="convertToJSON()">Generate manifest</button>
+    <a id="downloadLink" style="display:none; margin-left: 20px;" download="manifest.json">Download JSON</a>
+    <pre id="output"></pre>
+
+    <!-- Include PapaParse library to parse CSV file -->
+    <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js" integrity="sha384-D/t0ZMqQW31H3az8ktEiNb39wyKnS82iFY52QPACM+IjKW3jDUhyIgh2PApRqJZs" crossorigin="anonymous"></script>    
+    <script>
+        function parseCSV(file, callback) {
+            Papa.parse(file, {
+                skipEmptyLines: true,
+                header: true, // expect a header line in the csv file
+                complete: callback
+            });
+        }
+
+        function convertToJSON() {
+            const name = document.getElementById('nameInput').value || "";
+            const baseurl = document.getElementById('baseURLInput').value || "";
+
+            const accountsFile = document.getElementById('accountsCsvFile').files[0];
+            const contentFile = document.getElementById('contentCsvFile').files[0];
+
+            if (!accountsFile && !contentFile) {
+                alert("Please provide at least one CSV files.");
+                return;
+            }
+
+            let accountsData, contentData;
+
+            if (accountsFile) {
+                parseCSV(accountsFile, function (results) {
+                    accountsData = results.data;
+                    if (!contentFile || contentData) {
+                        finalizeConversion(name, baseurl, accountsData, contentData);
+                    }
+                });
+            }
+
+            if (contentFile) {
+                parseCSV(contentFile, function (results) {
+                    contentData = results.data;
+                    if (!accountsFile || accountsData) {
+                        finalizeConversion(name, baseurl, accountsData, contentData);
+                    }
+                });
+            }
+        }
+
+        function finalizeConversion(name, baseurl, accountsData, contentData) {
+            const jsonData = {
+                name: name,
+                baseurl: baseurl,
+                version: "0.1.2",
+                accounts: [],
+                content: []
+            };
+
+            if (accountsData) {
+                accountsData.forEach(row => {
+                    jsonData.accounts.push({
+                        platform: row.platform || "",
+                        url: row.url  || "",
+                        account: row.account  || ""
+                    });
+                });
+            }
+
+            if (contentData) {
+                contentData.forEach(row => {
+                    const contentData = {
+                        account: row.account || "",
+                        platform: row.platform || "",
+                        url: row.url || ""
+                    }
+                    // optional elements
+                    if (row.desc) contentData.desc = row.desc;
+                    if (row.puid) contentData.puid = row.puid;
+                    if (row.timestamp) contentData.timestamp = row.timestamp;
+                    jsonData.content.push(contentData);
+                });
+            }
+
+            const jsonOutput = JSON.stringify(jsonData, null, 4);
+            document.getElementById('output').textContent = jsonOutput;
+            
+            // Provide download link
+            const blob = new Blob([jsonOutput], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const downloadLink = document.getElementById('downloadLink');
+            downloadLink.href = url;
+            downloadLink.style.display = 'inline';  // make the download link visible
+        }
+    </script>
+</body>
+</html>

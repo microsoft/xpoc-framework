@@ -125,8 +125,3 @@ label {
     visibility: visible;
     opacity: 1;
 }
-
-input[readonly] {
-    background-color: #e9ecef; /* A light grey background */
-    cursor: not-allowed; /* Display a 'not-allowed' cursor */
-}

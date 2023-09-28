@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>XPOC Content Verifier</title>
+    <link href="styles.css" rel="stylesheet" />
+</head>
+
+<body>
+    <h1>XPOC Content Verifier</h1>
+
+    <label for="urlInput">Enter the URL of the content to verify:</label>
+    <input id="urlInput" type="text" />
+    <br /><br />
+    <div id="xpocDiv" style="display:none;">
+        <label for="xpocUriInput">This platform doesn't allow public access to content. Please locate the XPOC URI associated with the content (for example: "xpoc://example.com!"), and copy it here:</label>
+        <input id="xpocUriInput" type="text" />
+    </div>
+    <button onclick="verify()">Verify</button>
+    <div class="error" id="errorMsg"></div>
+    <div class="result" id="resultBox"></div>
+    <script src="xpoc-common.js"></script>
+    <script>
+        function showManifestInfo(manifest) {
+            resultBox.innerHTML = `
+            <p>Found a match in the manifest.</p>
+            <h2>Manifest Info</h2>
+            <table>
+                <tbody>
+                <tr>
+                    <td><label>Name:</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
+                    <td>${manifest.name}</td>
+                </tr>
+                <tr>
+                    <td><label>Manifest location:</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location</span></span></td>
+                    <td>${manifest.baseurl}</td>
+                </tr>
+                <tr>
+                    <td><label>Version:</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.1.2</span></span></td>
+                    <td>${manifest.version}</td>
+                </tr>
+                </tbody>
+            </table>
+            `;
+        }
+
+        function showAccountInfo(account) {
+            resultBox.innerHTML += `
+            <h2>Match Account Info</h2>
+            <table>
+                <tbody>
+                <tr>
+                    <td><label>Platform:</label><span class="info-tooltip">i<span class="tooltip-text">The platform hosting the account</span></span></td>
+                    <td>${account.platform}</td>
+                </tr>
+                <tr>
+                    <td><label>URL:</label><span class="info-tooltip">i<span class="tooltip-text">Location of the account page (e.g., bio or profile)</span></span></td>
+                    <td>${account.url}</td>
+                </tr>
+                <tr>
+                    <td><label>Account:</label><span class="info-tooltip">i<span class="tooltip-text">Account identifier (e.g., handle, username)</span></span></td>
+                    <td>${account.account}</td>
+                </tr>
+                </tbody>
+            </table>
+            `;
+        }
+
+        function showContentInfo(content) {
+            resultBox.innerHTML += `
+            <h2>Match Content Info</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <td><label>Description:</label><span class="info-tooltip">i<span class="tooltip-text">Short description of the content</span></span></td>
+                        <td>${content.desc}</td>
+                    </tr>
+                    <tr>
+                        <td><label>URL:</label><span class="info-tooltip">i<span class="tooltip-text">Location of the content</span></span></td>
+                        <td>${content.url}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Platform:</label><span class="info-tooltip">i<span class="tooltip-text">Platform hosting the content</span></span></td>
+                        <td>${content.platform}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Content UID:</label><span class="info-tooltip">i<span class="tooltip-text">Platform-specific Unique Identifier for the content</span></span></td>
+                        <td>${content.puid}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Account:</label><span class="info-tooltip">i<span class="tooltip-text">Platform account associated with the content</span></span></td>
+                        <td>${content.account}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Timestamp:</label><span class="info-tooltip">i<span class="tooltip-text">Content creation time in UTC</span></span></td>
+                        <td>${content.timestamp}</td>
+                    </tr>
+                </tbody>
+            </table>
+            `;
+        }
+
+        async function verifyXpocResource(url, xpocUri) {
+            let resultBox = document.getElementById('resultBox');
+            try {
+                const response = await fetch(`/verifyXpocResource?url=${encodeURIComponent(url)}&xpocUri=${encodeURIComponent(xpocUri)}`);
+                if (!response.ok) {
+                    throw new Error('Response not ok');
+                }
+                const data = await response.json();
+                console.log('verifyXpocResource response', data);
+                if (data.hasOwnProperty("manifest")) {
+                    showManifestInfo(data.manifest);
+                }
+                if (data.hasOwnProperty("content")) {
+                    showContentInfo(data.content[0]); // TODO: display all results
+                } else {
+                    showAccountInfo(data.accounts[0]); // TODO: display all results
+                }
+            } catch (err) {
+                console.log('verifyXpocResource error', err);
+                showError(`Error verifying XPOC resource`);
+            }
+        }
+
+        async function verify() {
+            const urlInput = document.getElementById('urlInput').value.trim();
+            const xpocUriInput = document.getElementById('xpocUriInput').value.trim();
+
+            // check if we need the XPOC URI (if the platform doesn't allow public access to content)
+            if (!xpocUriInput) {
+                const canFetch = await canFetchPlatformResource(urlInput);
+                if (canFetch) {
+                    // can fetch the resource, so no need to ask for the XPOC URI
+                    document.getElementById("xpocDiv").style.display = "none";
+                } else {
+                    // can't fetch the resource, so we need to ask for the XPOC URI
+                    document.getElementById("xpocDiv").style.display = "block";
+                    return;
+                }
+            }
+
+            // verify the resource
+            verifyXpocResource(urlInput, xpocUriInput);
+        }
+
+    </script>
+</body>
+
+</html>

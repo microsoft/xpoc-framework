@@ -10,7 +10,7 @@ export type Account = {
     account: string;
     platform: string;
     url: string;
-}
+};
 
 /**
  * A platform content item.
@@ -36,31 +36,14 @@ export type XPOCManifest = {
 };
 
 /**
- * XPOC manifest class.
+ * XPOC manifest class. Without fs operations.
  */
-export class Manifest {
+export class ManifestBase {
     manifest: XPOCManifest;
     static LatestVersion = '0.1.2';
 
     constructor(manifest: XPOCManifest) {
         this.manifest = manifest;
-    }
-
-    /**
-     * Loads a manifest from a file.
-     * @param path path to the file to load.
-     * @returns a manifest.
-     */
-    static loadFromFile(path: string): Manifest {
-        return new Manifest(JSON.parse(fs.readFileSync(path, 'utf8')) as XPOCManifest);
-    }
-
-    /**
-     * Saves the manifest to a file.
-     * @param path path to the file.
-     */
-    saveToFile(path: string): void {
-        fs.writeFileSync(path, JSON.stringify(this.manifest, null, 4));
     }
 
     /**
@@ -77,5 +60,29 @@ export class Manifest {
      */
     addContentItem(contentItem: ContentItem): void {
         this.manifest.content.push(contentItem);
+    }
+}
+
+/**
+ * XPOC manifest class.
+ */
+export class Manifest extends ManifestBase {
+    /**
+     * Loads a manifest from a file.
+     * @param path path to the file to load.
+     * @returns a manifest.
+     */
+    static loadFromFile(path: string): Manifest {
+        return new Manifest(
+            JSON.parse(fs.readFileSync(path, 'utf8')) as XPOCManifest,
+        );
+    }
+
+    /**
+     * Saves the manifest to a file.
+     * @param path path to the file.
+     */
+    saveToFile(path: string): void {
+        fs.writeFileSync(path, JSON.stringify(this.manifest, null, 4));
     }
 }

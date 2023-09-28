@@ -2,7 +2,7 @@
     "compilerOptions": {
       "resolveJsonModule": true,
       "target": "ES2020",
-      "module": "CommonJS",
+      "module": "ES2020",
       "lib": ["ES2020"],
       "declaration": true,
       "declarationMap": true,
@@ -30,7 +30,9 @@
       "types/**/*.ts"
     ],
     "exclude": [
-      "node_modules"
+      "node_modules",
+      "src/bundle.ts",
+      "**/*.test.ts"
     ]
   }
   

@@ -26,7 +26,7 @@ Include this in your html file with a script tag:
 <script src='lib/browser/xpoc.min.js'></script>
 ```
 
-You can then access the XPOC libraray throught the global `xpoc` variable.
+You can then access the XPOC library through the global `xpoc` variable.
 ```html
 <script>
     const platform = new xpoc.YouTube()

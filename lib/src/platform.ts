@@ -4,7 +4,7 @@
 import axios from 'axios';
 import {load} from 'cheerio';
 
-export type ContentType = 'post' | 'photo' | 'video' | 'reel' | 'misc';
+export type ContentType = 'post' | 'photo' | 'video' | 'reel' | 'event' | 'misc';
 
 export interface PlatformAccountData {
     xpocUri: string,
@@ -647,6 +647,84 @@ export class TikTok extends Platform {
     // TODO: implement getAccountData and getContentData
 }
 
+// LinkedIn platform implementation. This implementation does not fetch account
+// and content URLs; this requires API access.
+export class LinkedIn extends Platform {
+
+    constructor() {
+        super('LinkedIn', 'https://www.linkedin.com', false, false,
+        // matches LinkedIn URLs, with or without a subdomain
+        "^https?://(?:[a-zA-Z0-9-]+\\.)?(linkedin\\.com)",
+        // matches LinkedIn account URLs (either in/, company/, or school/ subpaths)
+        '/(?<type>in|company|school)/(?<accountName>[^/]+)(?:\/about)?\/?(?:\\?.*)?$',
+        // matches LinkedIn content URLs  
+        `/(?!in/|school/|company/)(?<type>[a-zA-Z0-9-]+)/(?<title>[a-zA-Z0-9-_]+)?\/?(?:/|\\?.*)?$`
+        );
+    }
+
+    liContentTypesToContentType(liContentTypes: string): ContentType {
+        switch (liContentTypes) {
+            case 'posts':
+                return 'post';
+            case 'events':
+                return 'event';
+            case 'learning':
+            case 'pulse':
+            default:
+                return 'misc';
+        }
+    }
+
+    canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
+        if (!this.isValidAccountUrl(url)) {
+            throw new Error('Malformed LinkedIn account URL');
+        }
+        // extract the account name from the LinkedIn account URL
+        const accountRegex = new RegExp(this.accountRegexString);
+        const match = accountRegex.exec(url);
+        if (match && match.groups) {
+            const accountName = match.groups.accountName;
+            const type = match.groups.type;
+            let url = `${this.CanonicalHostname}/${type}/${accountName}/`;
+            if (type === 'school' || type === 'company') {
+                url += 'about/';
+            }
+            return {
+                url: url,
+                account: accountName
+            }
+        } else {
+            const errMsg = `Malformed LinkedIn account URL: can't extract account name`;
+            console.error(`canonicalizeAccountUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+
+    canonicalizeContentUrl(url: string): CanonicalizedContentData {
+        if (!this.isValidContentUrl(url)) {
+            throw new Error('Malformed LinkedIn content URL');
+        }
+        // extract the type from the LinkedIn content URL
+        const contentRegex = new RegExp(this.contentRegexString);
+        const match = contentRegex.exec(url);
+        if (match && match.groups) {
+            const type = match.groups.type;
+            const title = match.groups.title;
+            return {
+                account: '',
+                puid: '',
+                type: this.liContentTypesToContentType(type),
+                url: `${this.CanonicalHostname}/${type}/${title}/`
+            }
+        } else {
+            const errMsg = `Malformed LinkedIn content URL`;
+            console.error(`canonicalizeContentUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+
+    // TODO: implement getAccountData and getContentData
+}
 
 // supported platforms
 export const Platforms = {
@@ -657,7 +735,8 @@ export const Platforms = {
         new Facebook(),
         new Instagram(),
         new Medium(),
-        new TikTok()
+        new TikTok(),
+        new LinkedIn()
     ],
 
     /**

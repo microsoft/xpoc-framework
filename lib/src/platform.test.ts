@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
+import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, LinkedIn, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';
@@ -417,6 +417,86 @@ const platformTestDataArray: PlatformTestData[] = [
         ),
         sampleAccountData: undefined,
         sampleContentData: undefined
+    },
+
+    // LinkedIn test data
+    {
+        platform: new LinkedIn(),
+        accountNames: [
+            'microsoft',
+            ' microsoft '
+        ],
+        validAccountUrls: [
+            'https://www.linkedin.com/in/paquinchristian/',
+            'https://www.linkedin.com/in/paquinchristian',
+            'https://linkedin.com/in/paquinchristian/',
+            'https://www.linkedin.com/company/microsoft/',
+            'https://www.linkedin.com/company/microsoft',
+            'https://linkedin.com/company/microsoft/',
+            'https://www.linkedin.com/school/universite-de-montreal/',
+            'https://www.linkedin.com/school/universite-de-montreal',
+            'https://ca.linkedin.com/school/universite-de-montreal'
+        ],
+        validContentUrls: [
+            'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880/',
+            'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880',
+            'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880/?utm_source=share&utm_medium=member_desktop',
+            'https://www.linkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx/',
+            'https://www.linkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx',
+            'https://www.linkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx/?utm_source=share&utm_medium=member_desktop',
+        ],
+        invalidAccountUrls: [
+            'https://www.linkedin.com',
+            'https://www.linkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx',
+            'https://www.notlinkedin.com/company/microsoft/'
+        ],
+        invalidContentUrls: [
+            'https://www.linkedin.com',
+            'https://www.linkedin.com/company/microsoft/',
+            'https://www.notlinkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx'
+        ],
+        canonicalAccountData: [
+            // canonicalized version of validAccountUrls (1st, 2nd, 3rd group of 3 are the same)
+            ...new Array(3).fill(
+                {
+                    url: 'https://www.linkedin.com/in/paquinchristian/',
+                    account: 'paquinchristian'
+                },
+            ),
+            ...new Array(3).fill(
+                {
+                    url: 'https://www.linkedin.com/company/microsoft/about/',
+                    account: 'microsoft'
+                },
+            ),
+            ...new Array(3).fill(
+                {
+                    url: 'https://www.linkedin.com/school/universite-de-montreal/about/',
+                    account: 'universite-de-montreal'
+                },
+            )
+        ],
+        // canonicalized version of validContentUrls (1st, 2nd group of 3 are the same)
+        canonicalContentData: [
+            ...new Array(3).fill(
+                {
+                    url: 'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880/',
+                    account: '',
+                    puid: '',
+                    type: 'event'
+                }
+            ),
+            ...new Array(3).fill(
+                {
+                    url: 'https://www.linkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx/',
+                    account: '',
+                    puid: '',
+                    type: 'post'
+                }
+            )
+        ],
+        sampleAccountData: undefined,
+        sampleContentData: undefined
     }
 ];
 
@@ -526,6 +606,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedAccountUrl('https://medium.com/@accountname')).toBe(true);
         // TikTok
         expect(Platforms.isSupportedAccountUrl('https://www.tiktok.com/@accountname')).toBe(true);
+        // LinkedIn
+        expect(Platforms.isSupportedAccountUrl('https://www.linkedin.com/in/accountname/')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -543,6 +625,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedContentUrl('https://medium.com/@accountname/title-abcdef123456')).toBe(true);
         // TikTok
         expect(Platforms.isSupportedContentUrl('https://www.tiktok.com/@accountname/video/1234567890123456789')).toBe(true);
+        // LinkedIn
+        expect(Platforms.isSupportedContentUrl('https://www.linkedin.com/posts/title')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });
@@ -576,8 +660,13 @@ describe('platform operations', () => {
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
         await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
 
-        // TikTok test (not yet implemented (TODO), expect a not supported exception)
+        // TikTok test (no public access, expect a not supported exception)
         url = 'https://www.tiktok.com/@christian.paquin';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
+        await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
+
+        // LinkedIn test (no public access, expect a not supported exception)
+        url = 'https://www.linkedin.com/company/microsoft/';
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
         await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
 
@@ -618,11 +707,16 @@ describe('platform operations', () => {
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 
-        // TikTok test (not yet implemented (TODO), expect a not supported exception)
+        // TikTok test (no public access, expect a not supported exception)
         url = 'https://www.tiktok.com/@christian.paquin/video/7282144635848346923';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 
+        // LinkedIn test (no public access, expect a not supported exception)
+        url = 'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880/';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+        
         // unsupported platform
         url = 'https://www.notaplatform.com/abc123';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);

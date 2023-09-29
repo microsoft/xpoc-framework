@@ -113,12 +113,14 @@
                 const data = await response.json();
                 console.log('verifyXpocResource response', data);
                 if (data.hasOwnProperty("manifest")) {
-                    showManifestInfo(data.manifest);
+                    showManifestInfo(data.manifest.manifest);
                 }
                 if (data.hasOwnProperty("content")) {
                     showContentInfo(data.content[0]); // TODO: display all results
-                } else {
+                } else if (data.hasOwnProperty("accounts")) {
                     showAccountInfo(data.accounts[0]); // TODO: display all results
+                } else {
+                    console.log('unknown resource type (neither content nor accounts)', data);
                 }
             } catch (err) {
                 console.log('verifyXpocResource error', err);

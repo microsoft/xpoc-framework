@@ -187,7 +187,8 @@ app.get('/verifyXpocResource', async (req, res) => {
 
         // check if the url matches an account in the manifest
         const matchingAccounts = manifest.matchAccount({ url: url });
-        if (matchingAccounts) {
+        if (matchingAccounts && matchingAccounts.length > 0) {
+            console.log(`verifyXpocResource: found matching account: ${JSON.stringify(matchingAccounts)}`);
             res.json({ 
                 manifest: manifest,
                 accounts: matchingAccounts }
@@ -197,7 +198,8 @@ app.get('/verifyXpocResource', async (req, res) => {
 
         // check if the url matches a content item in the manifest
         const matchingContent = manifest.matchContent({ url: url });
-        if (matchingContent) {
+        if (matchingContent && matchingContent.length > 0) {
+            console.log(`verifyXpocResource: found matching content: ${JSON.stringify(matchingContent)}`);
             res.json({
                 manifest: manifest,
                 content: matchingContent }

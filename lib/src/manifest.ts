@@ -36,7 +36,7 @@ export type XPOCManifest = {
 };
 
 /**
- * XPOC manifest class. Without fs operations.
+ * XPOC manifest class (without fs operations for browser export).
  */
 export class ManifestBase {
     manifest: XPOCManifest;

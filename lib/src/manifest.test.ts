@@ -4,7 +4,7 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { Manifest, XPOCManifest } from './manifest';
+import { Manifest, XPOCManifest, AccountMatchValues, ContentMatchValues } from './manifest';
 
 describe('manifest file operations', () => {
     let manifest: Manifest;
@@ -71,15 +71,55 @@ describe('manifest file operations', () => {
         }
     });
 
+    let testManifest = Manifest.loadFromFile('./testdata/testmanifest.json');
     test('load manifest from file', () => {
-        const manifest = Manifest.loadFromFile('./testdata/testmanifest.json');
         // sanity check
-        expect(manifest.manifest.name).toBe('A test name');
-        expect(manifest.manifest.version).toBe(Manifest.LatestVersion);
-        expect(manifest.manifest.accounts.length).toBe(5);
-        expect(manifest.manifest.content.length).toBe(5);
+        expect(testManifest).toBeDefined();
+        expect(testManifest?.manifest.name).toBe('A test name');
+        expect(testManifest?.manifest.version).toBe(Manifest.LatestVersion);
+        expect(testManifest?.manifest.accounts.length).toBe(6);
+        expect(testManifest?.manifest.content.length).toBe(6);
     });
     
+    (testManifest ? test : test.skip)('match accounts', () => {
+        // search using each parameter (values will be canonicalized)
+        const searchValues: AccountMatchValues[] = [
+            {account: "@a_ig_test_account "},
+            {platform: "instagram"},
+            {url: "https://www.instagram.com/a_ig_test_account"}
+        ]
+        for (const searchValue of searchValues) {
+            const accounts = testManifest?.matchAccount(searchValue);
+            expect(accounts?.length).toBe(1);
+            if (accounts) {
+                const account = accounts[0];
+                expect(account.account).toBe('a_ig_test_account');
+                expect(account.platform).toBe('Instagram');
+                expect(account.url).toBe('https://www.instagram.com/a_ig_test_account/');
+            }
+        }
+    });
+
+    (testManifest ? test : test.skip)('match content', () => {
+        // search using each parameter (values will be canonicalized)
+        const searchValues: ContentMatchValues[] = [
+            {account: "@a_ig_test_account "},
+            {platform: "instagram"},
+            {url: "https://www.instagram.com/p/ABCDE12345/"},
+            {puid: "ABCDE12345"}
+        ]
+        for (const searchValue of searchValues) {
+            const contents = testManifest?.matchContent(searchValue);
+            expect(contents?.length).toBe(1);
+            if (contents) {
+                const content = contents[0];
+                expect(content.account).toBe('a_ig_test_account');
+                expect(content.platform).toBe('Instagram');
+                expect(content.url).toBe('https://www.instagram.com/p/ABCDE12345/');
+            }
+        }
+    });
+
     test('save manifest to file', async () => {
         const manifest = new Manifest({
             name: 'A test name',

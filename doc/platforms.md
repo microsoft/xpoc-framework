@@ -54,7 +54,7 @@ It is RECOMMENDED to only list Facebook accounts and not individual pieces of co
 -   `accounts` properties:
     -   `url`: `https://www.facebook.com/<accountname>`
 -   `content` properties:
-    -   `url`: it is preferred to list the canonical `https://www.facebook.com/<accountname>/<posts|photos|videos|reels>/<fbid>` URL
+    -   `url`: it is preferred to list the canonical `https://www.facebook.com/<accountname>/<type>/<fbid>` form, where `<type>` is `posts`, `photos`, `videos` or `reels`
     -   `puid`: the Facebook ID `<fbid>` of the item
     -   `timestamp`: exact creation time in  ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
 
@@ -75,7 +75,7 @@ It is RECOMMENDED to only list Instagram accounts and not individual pieces of c
 -   `accounts` properties:
     -   `url`: `https://www.instagram.com/<accountname>/`
 -   `content` properties:
-    -   `url`: it is preferred to list the canonical `https://www.instagram.com/<p|reel>/<id>/` form
+    -   `url`: it is preferred to list the canonical `https://www.instagram.com/<type>/<id>/` form, where `<type>` is `p` (for posts) or `reel`
     -   `puid`: the `<id>` from the `url`
     -   `timestamp`: exact creation time in  ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
 
@@ -102,5 +102,49 @@ Medium accounts and specific stories can be added to a XPOC manifest.
 
 ### XPOC URI placement
 
--    On the account page: preferably in the account page's Bio field, optionally in the about page's description.
+-    On the account page: preferably in the account page's Bio field, optionally in the About page's description.
 -    For a story: in the story's body, either at the top or the end.
+
+## TikTok
+
+It is RECOMMENDED to only list TikTok accounts and not individual pieces of content (videos) in the XPOC manifest.
+
+### Manifest content
+
+-   properties shared by `accounts` and `content`:
+    -   `platform`: "TikTok"
+    -   `account`: the owner's account name `<accountname>`
+-   `accounts` properties:
+    -   `url`: `https://www.tiktok.com/@<accountname>`
+-   `content` properties:
+    -   `url`: `https://www.tiktok.com/@<accountname>/video/<id>`
+    -   `puid`: the `<id>` from the `url`
+    -   `timestamp`: exact creation time in ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
+
+### XPOC URI placement
+
+-    On the account page: in the account page's Bio field.
+-    For a video: in a video's caption field.
+
+## LinkedIn
+
+### Manifest content
+
+-   properties shared by `accounts` and `content`:
+    -   `platform`: "LinkedIn"
+    -   `account`: the owner's account name `<accountname>`
+-   `accounts` properties:
+    -   `url`:
+        - for individuals `https://www.linkedin.com/in/@<accountname>/`
+        - for schools and companies: `https://www.linkedin.com/<type>/@<accountname>/about/`, where `<type>` is `school` or `company`
+-   `content` properties:
+    -   `url`: `https://www.linkedin.com/<type>/<title>/...` where `<type>` is `posts`, `events`, `pulse` or `learning`.
+    -   `puid`: n/a
+    -   `timestamp`: exact creation time in ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
+
+### XPOC URI placement
+
+-    On the account page:
+    - For individuals: in the account page's About field
+    - For schools and companies: in the account page's Overview section. 
+-    For a post: in a post's text field.

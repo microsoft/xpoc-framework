@@ -24,6 +24,21 @@ jobs:
         with:
           node-version: '19'
 
+      - name: Install Dependencies for lib
+        run: |
+          cd lib
+          npm install
+
+      - name: Build for lib
+        run: |
+          cd lib
+          npm run build
+
+      - name: Test for lib
+        run: |
+          cd lib
+          npm test
+
       # Cache for samples directory
       - name: Cache Node.js modules for samples
         uses: actions/cache@v2
@@ -60,18 +75,3 @@ jobs:
           key: ${{ runner.os }}-build-lib-${{ hashFiles('./lib/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-lib-
-
-      - name: Install Dependencies for lib
-        run: |
-          cd lib
-          npm install
-
-      - name: Build for lib
-        run: |
-          cd lib
-          npm run build
-
-      - name: Test for lib
-        run: |
-          cd lib
-          npm test

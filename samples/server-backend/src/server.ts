@@ -3,7 +3,7 @@ import cors from 'cors';
 import * as xpoc from 'xpoc-ts-lib';
 
 const app = express();
-const PORT = 4000;
+const PORT = 3000;
 
 app.use(express.static('public'));
 app.use(cors());

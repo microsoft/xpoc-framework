@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import fs from 'fs';
-import { Platforms } from './platform';
+import { Platforms } from './platform.js';
 
 /**
  * A platform account.

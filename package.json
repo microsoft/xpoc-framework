@@ -1,6 +1,7 @@
 {
-  "name": "XPOC framework",
+  "name": "xpoc-framework",
   "version": "0.1.2",
+  "type": "module",
   "description": "Cross-Platform Origin of Content (XPOC) framework",
   "scripts": {
     "lint": "eslint './**/*.{ts,tsx,js,jsx,md}' --fix",

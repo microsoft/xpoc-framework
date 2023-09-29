@@ -16,3 +16,19 @@ Optionally, run the tests:
 ```
 npm test
 ```
+
+## Browser
+
+Building the XPOC library will also build a browser-compatible bundle at `./browser/xpoc.min.js`
+
+Include this in your html file with a script tag:
+```html
+<script src='lib/browser/xpoc.min.js'></script>
+```
+
+You can then access the XPOC library through the global `xpoc` variable.
+```html
+<script>
+    const platform = new xpoc.YouTube()
+</script>
+```

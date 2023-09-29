@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import fs from 'fs';
-import { Platforms } from './platform';
+import { Platforms } from './platform.js';
 
 /**
  * A platform account.
@@ -11,7 +11,7 @@ export type Account = {
     account: string;
     platform: string;
     url: string;
-}
+};
 
 /**
  * A platform content item.
@@ -65,31 +65,14 @@ const areResourcesEqual = (url1: string, url2: string): boolean => {
 }
 
 /**
- * XPOC manifest class.
+ * XPOC manifest class (without fs operations for browser export).
  */
-export class Manifest {
+export class ManifestBase {
     manifest: XPOCManifest;
     static LatestVersion = '0.1.2';
 
     constructor(manifest: XPOCManifest) {
         this.manifest = manifest;
-    }
-
-    /**
-     * Loads a manifest from a file.
-     * @param path path to the file to load.
-     * @returns a manifest.
-     */
-    static loadFromFile(path: string): Manifest {
-        return new Manifest(JSON.parse(fs.readFileSync(path, 'utf8')) as XPOCManifest);
-    }
-
-    /**
-     * Saves the manifest to a file.
-     * @param path path to the file.
-     */
-    saveToFile(path: string): void {
-        fs.writeFileSync(path, JSON.stringify(this.manifest, null, 4));
     }
 
     /**
@@ -210,3 +193,28 @@ export class Manifest {
         return result;
     }
 }
+
+/**
+ * XPOC manifest class.
+ */
+export class Manifest extends ManifestBase {
+    /**
+     * Loads a manifest from a file.
+     * @param path path to the file to load.
+     * @returns a manifest.
+     */
+    static loadFromFile(path: string): Manifest {
+        return new Manifest(
+            JSON.parse(fs.readFileSync(path, 'utf8')) as XPOCManifest,
+        );
+    }
+
+    /**
+     * Saves the manifest to a file.
+     * @param path path to the file.
+     */
+    saveToFile(path: string): void {
+        fs.writeFileSync(path, JSON.stringify(this.manifest, null, 4));
+    }
+}
+

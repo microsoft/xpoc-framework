@@ -1,0 +1,132 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #F4F4F4;
+    margin: 0;
+    padding: 20px;
+}
+
+h1, h2 {
+    color: #333;
+}
+
+button {
+    background-color: #007BFF;
+    color: #FFF;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.error {
+    color: red;
+    margin-top: 10px;
+    padding: 8px;
+    background-color: #FFE0E0;
+    border: 1px solid #FFB3B3;
+    border-radius: 5px;
+    display: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #FFF;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table, th, td {
+    border: 1px solid #DDD;
+    padding: 5px;
+}
+
+table {
+    width: 100%;
+    overflow-x: auto; /* adds horizontal scroll on smaller screens */
+}
+
+th {
+    background-color: #E7E7E7;
+}
+
+td input[type="text"] {
+    max-width: 95%;
+    box-sizing: border-box;
+}
+
+tr:nth-child(even) {
+    background-color: #F9F9F9;
+}
+
+input[type="text"], input[type="file"] {
+    padding: 5px;
+    border: 1px solid #CCC;
+    border-radius: 3px;
+    width: 100%;
+}
+
+label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+#manifestContent {
+    background-color: #FFF;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#fileInput {
+    display: none;
+}
+
+/* Style for the tooltip container */
+.info-tooltip {
+    position: relative;
+    display: inline-block;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    background-color: #888;
+    color: #FFF;
+    text-align: center;
+    line-height: 20px;
+    cursor: help;  /* changes the mouse cursor when hovered over the tooltip */
+    margin-left: 5px; /* space between the tooltip and the adjacent content */
+}
+
+/* Hide the tooltip text by default */
+.info-tooltip .tooltip-text {
+    visibility: hidden;
+    width: 200px;  /* adjust as needed */
+    background-color: #555;
+    color: #FFF;
+    text-align: center;
+    padding: 5px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;  /* position above the tooltip */
+    left: 50%;
+    margin-left: -100px; /* center the tooltip */
+    opacity: 0;
+    transition: opacity 0.3s; /* smooth fade-in effect */
+}
+
+/* Show the tooltip text when hovering over the tooltip container */
+.info-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+input[readonly] {
+    background-color: #e9ecef; /* A light grey background */
+    cursor: not-allowed; /* Display a 'not-allowed' cursor */
+}

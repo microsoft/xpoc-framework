@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XPOC Content Verifier</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>XPOC Content Verifier</h1>
+
+    <label for="urlInput">Enter the URL of the content to verify:</label>
+    <input type="text" id="urlInput">
+    <label for="xpocUriInput">Enter the XPOC URI associated with the content (e.g., "xpoc://example.com!"):</label>
+    <input type="text" id="xpocUriInput">
+    <button onclick="verify()">Verify</button>
+
+    <div class="error" id="errorMsg"></div>
+
+    <div class="result" id="resultBox"></div>
+
+    <script src="xpoc-common.js"></script>
+    <script>
+        function showManifestInfo(manifest) {
+            resultBox.innerHTML = `
+            <p>Found a match in the manifest.</p>
+            <h2>Manifest Info</h2>
+            <table>
+                <tbody>
+                <tr>
+                    <td><label>Name:</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
+                    <td>${manifest.name}</td>
+                </tr>
+                <tr>
+                    <td><label>Manifest location:</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location</span></span></td>
+                    <td>${manifest.baseurl}</td>
+                </tr>
+                <tr>
+                    <td><label>Version:</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.1.2</span></span></td>
+                    <td>${manifest.version}</td>
+                </tr>
+                </tbody>
+            </table>
+            `;
+        }
+
+        function showAccountInfo(account) {
+            resultBox.innerHTML += `
+            <h2>Match Account Info</h2>
+            <table>
+                <tbody>
+                <tr>
+                    <td><label>Platform:</label><span class="info-tooltip">i<span class="tooltip-text">The platform hosting the account</span></span></td>
+                    <td>${account.platform}</td>
+                </tr>
+                <tr>
+                    <td><label>URL:</label><span class="info-tooltip">i<span class="tooltip-text">Location of the account page (e.g., bio or profile)</span></span></td>
+                    <td>${account.url}</td>
+                </tr>
+                <tr>
+                    <td><label>Account:</label><span class="info-tooltip">i<span class="tooltip-text">Account identifier (e.g., handle, username)</span></span></td>
+                    <td>${account.account}</td>
+                </tr>
+                </tbody>
+            </table>
+            `;
+        }
+
+        function showContentInfo(content) {
+            resultBox.innerHTML += `
+            <h2>Match Content Info</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <td><label>Description:</label><span class="info-tooltip">i<span class="tooltip-text">Short description of the content</span></span></td>
+                        <td>${content.desc}</td>
+                    </tr>
+                    <tr>
+                        <td><label>URL:</label><span class="info-tooltip">i<span class="tooltip-text">Location of the content</span></span></td>
+                        <td>${content.url}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Platform:</label><span class="info-tooltip">i<span class="tooltip-text">Platform hosting the content</span></span></td>
+                        <td>${content.platform}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Content UID:</label><span class="info-tooltip">i<span class="tooltip-text">Platform-specific Unique Identifier for the content</span></span></td>
+                        <td>${content.puid}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Account:</label><span class="info-tooltip">i<span class="tooltip-text">Platform account associated with the content</span></span></td>
+                        <td>${content.account}</td>
+                    </tr>
+                    <tr>
+                        <td><label>Timestamp:</label><span class="info-tooltip">i<span class="tooltip-text">Content creation time in UTC</span></span></td>
+                        <td>${content.timestamp}</td>
+                    </tr>
+                </tbody>
+            </table>
+            `;
+        }
+
+        async function verify() {
+            const urlInput = document.getElementById('urlInput').value.trim();
+            const xpocUriInput = document.getElementById('xpocUriInput').value.trim();
+            let resultBox = document.getElementById('resultBox');
+
+            // fetch the manifest
+            fetchXpocManifest(xpocUriInput)
+                .then(manifest => {
+                    if (manifest) {
+                        clearError();
+
+                        // check if the input URL is listed in the manifest's Accounts or Content
+                        const accountsMatch = manifest.accounts.find(account => account.url === urlInput);
+                        const contentMatch = manifest.content.find(content => content.url === urlInput);
+
+                        if (accountsMatch || contentMatch) {
+                            showManifestInfo(manifest);
+                            if (accountsMatch) {
+                                showAccountInfo(accountsMatch);
+                            }
+                            if (contentMatch) {
+                                showContentInfo(contentMatch);
+                            }
+                        } else {
+                            resultBox.innerHTML = "Can't find the content in the XPOC manifest.";
+                        }
+                    }})
+                .catch(error => {
+                    console.log('Manifest error', error);
+                    showError(`Error fetching or parsing the XPOC manifest.`);
+                });
+           }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages on www branch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+        with:
+          ref: main
+          fetch-depth: 0 # Fetch all history for all branches and tags.
+
+      - name: Setup Git User
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Copy files to www branch
+        run: |
+          git checkout www
+          
+          # Copy all changes from main to www
+          git merge main --allow-unrelated-histories --strategy-option ours -m "Merge main into www"
+          
+          # Copy the content of doc/ into docs/
+          cp -r doc/* docs/
+          
+          # Copy the content of /samples/client-side-html/public/ into docs/sample-portal
+          mkdir -p docs/sample-portal
+          cp -r samples/client-side-html/public/* docs/sample-portal/
+          
+          # Commit and push the changes to www branch
+          git add .
+          git commit -m "Update docs and sample-portal"
+          git push origin www

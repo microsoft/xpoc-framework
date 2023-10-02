@@ -15,6 +15,11 @@ jobs:
           ref: main
           fetch-depth: 0 # Fetch all history for all branches and tags.
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '19'
+
       - name: Setup Git User
         run: |
           git config user.name "GitHub Actions"
@@ -33,6 +38,12 @@ jobs:
           # Copy the content of /samples/client-side-html/public/ into docs/sample-portal
           mkdir -p docs/sample-portal
           cp -r samples/client-side-html/public/* docs/sample-portal/
+          
+          # Check if there are any changes to commit
+          if [[ -z $(git status --porcelain) ]]; then
+            echo "No changes to commit"
+            exit 0
+          fi
           
           # Commit and push the changes to www branch
           git add .

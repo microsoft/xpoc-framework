@@ -1,0 +1,9 @@
+title: Cross-Platform Origin of Content (XPOC) framework
+description: A companion page for the Cross-Platform Origin of Content (XPOC) framework.
+url: ""
+baseurl: ""
+
+theme: minima
+
+# Build settings
+markdown: kramdown

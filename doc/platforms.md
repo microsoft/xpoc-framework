@@ -135,8 +135,8 @@ It is RECOMMENDED to only list TikTok accounts and not individual pieces of cont
     -   `account`: the owner's account name `<accountname>`
 -   `accounts` properties:
     -   `url`:
-        - for individuals `https://www.linkedin.com/in/@<accountname>/`
-        - for schools and companies: `https://www.linkedin.com/<type>/@<accountname>/about/`, where `<type>` is `school` or `company`
+        -   For individuals `https://www.linkedin.com/in/@<accountname>/`
+        -   For schools and companies: `https://www.linkedin.com/<type>/@<accountname>/about/`, where `<type>` is `school` or `company`
 -   `content` properties:
     -   `url`: `https://www.linkedin.com/<type>/<title>/...` where `<type>` is `posts`, `events`, `pulse` or `learning`.
     -   `puid`: n/a
@@ -144,7 +144,7 @@ It is RECOMMENDED to only list TikTok accounts and not individual pieces of cont
 
 ### XPOC URI placement
 
--    On the account page:
-    - For individuals: in the account page's About field
-    - For schools and companies: in the account page's Overview section. 
--    For a post: in a post's text field.
+-   On the account page:
+    -   For individuals: in the account page's About field
+    -   For schools and companies: in the account page's Overview section. 
+-   For a post: in a post's text field.

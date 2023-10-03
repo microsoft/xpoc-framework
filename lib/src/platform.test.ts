@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, LinkedIn, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
+import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, LinkedIn, Threads, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';
@@ -18,6 +18,8 @@ interface PlatformTestData {
     sampleAccountData: PlatformAccountData | undefined;
     sampleContentData: PlatformContentData | undefined;
 }
+
+// TODO: add more tests for each platforms: query params for all account and content URLs, vary domain case, etc.
 
 const platformTestDataArray: PlatformTestData[] = [
     // YouTube test data
@@ -497,7 +499,59 @@ const platformTestDataArray: PlatformTestData[] = [
         ],
         sampleAccountData: undefined,
         sampleContentData: undefined
+    },
+
+    // Threads test data
+    {
+        platform: new Threads(),
+        accountNames: [
+            'microsoft',
+            '@microsoft',
+            ' microsoft ',
+            ' @microsoft '
+        ],
+        validAccountUrls: [
+            'https://www.threads.net/@microsoft',
+            'https://www.threads.net/@microsoft/',
+            'https://www.threads.net/microsoft',
+            'https://threads.net/@microsoft'
+        ],
+        validContentUrls: [
+            'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-',
+            'https://threads.net/@microsoft/post/Cx3OmEtRKw-',
+            'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-/',
+            'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-/?utm_source=share&utm_medium=member_desktop'
+        ],
+        invalidAccountUrls: [
+            'https://www.threads.net',
+            'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-',
+            'https://www.notthreads.net/@microsoft'
+        ],
+        invalidContentUrls: [
+            'https://www.threads.net',
+            'https://www.threads.net/@microsoft',
+            'https://www.notthreads.net/@microsoft/post/Cx3OmEtRKw-'
+        ],
+        canonicalAccountData: new Array(4).fill(
+            // canonicalized version of validAccountUrls (representing all the same account)
+            {
+                url: 'https://www.threads.net/@microsoft',
+                account: 'microsoft'
+            }
+        ),
+        canonicalContentData: new Array(4).fill(
+            // canonicalized version of validContentUrls (representing all the same content)
+            {
+                url: 'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-',
+                account: 'microsoft',
+                puid: 'Cx3OmEtRKw-',
+                type: 'post'
+            }
+        ),
+        sampleAccountData: undefined,
+        sampleContentData: undefined
     }
+
 ];
 
 
@@ -608,6 +662,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedAccountUrl('https://www.tiktok.com/@accountname')).toBe(true);
         // LinkedIn
         expect(Platforms.isSupportedAccountUrl('https://www.linkedin.com/in/accountname/')).toBe(true);
+        // Threads
+        expect(Platforms.isSupportedAccountUrl('https://www.threads.net/@accountname')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -627,6 +683,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedContentUrl('https://www.tiktok.com/@accountname/video/1234567890123456789')).toBe(true);
         // LinkedIn
         expect(Platforms.isSupportedContentUrl('https://www.linkedin.com/posts/title')).toBe(true);
+        // Threads
+        expect(Platforms.isSupportedContentUrl('https://www.threads.net/@accountname/post/ABCD1234')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });
@@ -667,6 +725,11 @@ describe('platform operations', () => {
 
         // LinkedIn test (no public access, expect a not supported exception)
         url = 'https://www.linkedin.com/company/microsoft/';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
+        await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
+
+        // Threads test (no public access, expect a not supported exception)
+        url = 'https://www.threads.net/@microsoft';
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
         await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
 
@@ -717,6 +780,11 @@ describe('platform operations', () => {
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
         
+        // Threads test (no public access, expect a not supported exception)
+        url = 'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+
         // unsupported platform
         url = 'https://www.notaplatform.com/abc123';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);

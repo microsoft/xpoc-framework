@@ -71,7 +71,7 @@ It is RECOMMENDED to only list Instagram accounts and not individual pieces of c
 
 -   properties shared by `accounts` and `content`:
     -   `platform`: "Instagram"
-    -   `account`: the owner's account name `<accountname>`
+    -   `account`: the owner's account name `<accountname>` (without the `@`)
 -   `accounts` properties:
     -   `url`: `https://www.instagram.com/<accountname>/`
 -   `content` properties:
@@ -113,7 +113,7 @@ It is RECOMMENDED to only list TikTok accounts and not individual pieces of cont
 
 -   properties shared by `accounts` and `content`:
     -   `platform`: "TikTok"
-    -   `account`: the owner's account name `<accountname>`
+    -   `account`: the owner's account name `<accountname>` (without the `@`)
 -   `accounts` properties:
     -   `url`: `https://www.tiktok.com/@<accountname>`
 -   `content` properties:
@@ -132,7 +132,7 @@ It is RECOMMENDED to only list TikTok accounts and not individual pieces of cont
 
 -   properties shared by `accounts` and `content`:
     -   `platform`: "LinkedIn"
-    -   `account`: the owner's account name `<accountname>`
+    -   `account`: the owner's account name `<accountname>` (without the `@`)
 -   `accounts` properties:
     -   `url`:
         -   For individuals `https://www.linkedin.com/in/@<accountname>/`
@@ -148,3 +148,24 @@ It is RECOMMENDED to only list TikTok accounts and not individual pieces of cont
     -   For individuals: in the account page's About field
     -   For schools and companies: in the account page's Overview section. 
 -   For a post: in a post's text field.
+
+## Threads
+
+It is RECOMMENDED to only list Threads accounts and not individual pieces of content (posts) in the XPOC manifest.
+
+### Manifest content
+
+-   properties shared by `accounts` and `content`:
+    -   `platform`: "Threads"
+    -   `account`: the owner's account name `<accountname>` (without the `@`)
+-   `accounts` properties:
+    -   `url`: `https://www.threads.net/@<accountname>`
+-   `content` properties:
+    -   `url`: `https://www.threads.net/@<accountname>/post/<id>`
+    -   `puid`: the `<id>` from the `url`
+    -   `timestamp`: exact creation time in  ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
+
+### XPOC URI placement
+
+-    On the account page: in the account page's Bio field.
+-    For a post: in a post's field.

@@ -28,6 +28,7 @@ export interface CanonicalizedContentData extends CanonicalizedAccountData {
     type: ContentType
 }
 
+// TODO: add canonicalization functions implementations; a lot of duplicated patterns in the subclasses
 export abstract class Platform {
     // the platform's display name
     public DisplayName: string;
@@ -726,6 +727,67 @@ export class LinkedIn extends Platform {
     // TODO: implement getAccountData and getContentData
 }
 
+// Threads platform implementation. This implementation does not fetch account
+// and content URLs; this requires API access.
+export class Threads extends Platform {
+
+    constructor() {
+        super('Threads', 'https://www.threads.net', false, false,
+        // matches Threads URLs, with or without a www. subdomain
+        "^https?://(?:www\\.)?threads\\.net",
+        // matches Threads account URLs, with an optional '@' prefix (gets added by redirect)
+        "/@?(?<accountName>[^/]{1,30})\/?(?:\\?.*)?$",
+        // matches Threads content URLs with a status path and a status ID path
+        "/@?(?<accountName>[^/]{1,30})/post/(?<id>[a-zA-Z0-9-_]+)\/?(?:\\?.*)?$"
+        );
+    }
+
+    canonicalizeAccountName = trimAndRemoveAtPrefix;
+
+    canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
+        if (!this.isValidAccountUrl(url)) {
+            throw new Error('Malformed Threads account URL');
+        }
+        // extract the account name from the Threads account URL
+        const accountRegex = new RegExp(this.accountRegexString);
+        const match = accountRegex.exec(url);
+        if (match && match.groups) {
+            const accountName = match.groups.accountName;
+            return {
+                url: `${this.CanonicalHostname}/@${accountName}`,
+                account: accountName
+            }
+        } else {
+            const errMsg = `Malformed Threads account URL: can't extract account name`;
+            console.error(`canonicalizeAccountUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+
+    canonicalizeContentUrl(url: string): CanonicalizedContentData {
+        if (!this.isValidContentUrl(url)) {
+            throw new Error('Malformed Threads content URL');
+        }
+        // extract the ID from the Threads content URL
+        const contentRegex = new RegExp(this.contentRegexString);
+        const match = contentRegex.exec(url);
+        if (match && match.groups) {
+            const accountName = match.groups.accountName;
+            const id = match.groups.id;
+            return {
+                account: accountName,
+                puid: id,
+                type: 'post',
+                url: `${this.CanonicalHostname}/@${accountName}/post/${id}`
+            }
+        } else {
+            const errMsg = `Malformed Threads content URL: can't extract post ID`;
+            console.error(`canonicalizeContentUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+}
+
 // supported platforms
 export const Platforms = {
 
@@ -736,7 +798,8 @@ export const Platforms = {
         new Instagram(),
         new Medium(),
         new TikTok(),
-        new LinkedIn()
+        new LinkedIn(),
+        new Threads()
     ],
 
     /**

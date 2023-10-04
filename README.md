@@ -69,6 +69,7 @@ This can be done by submitting PRs with the following changes:
 -    `doc/platforms.md`: add a section for the new platform,
 -    `lib/src/platform.ts`: add a class for the new platform, and add it to the `Platforms` object's `platforms` array, and
 -    `lib/src/platform.test.ts`: add the platform to the `import` statement, and add platform test data to the `platformTestDataArray` array and the `platform operations` tests.
+-    `testdata/testmanifest.json`: add a test platform account and content object in the respective array.
 
 ## Trademarks
 

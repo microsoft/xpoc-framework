@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XPOC Manifest</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>XPOC Manifest Creator</h1>
+    <p>
+        This page allows the creation of a XPOC manifest by adding the owner's accounts of popular platforms. Simply
+        enter the accounts you own and click the "Create manifest" button.
+    </p>
+    <p>
+        To add additional platforms or specific content items, use the <a href="xpoc-editor.html">XPOC editor</a> instead.
+    </p>
+
+    <div class="error" id="errorMsg"></div>
+
+    <div id="manifestData">
+        <h2>Manifest Info</h2>
+        <table id="manifestInfoTable">
+            <tbody>
+                <tr>
+                    <td><label for="manifestName">Name:</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
+                    <td><input type="text" id="manifestName" onchange="validateAndUpdateName(this.value, this)"></td>
+                </tr>
+                <tr>
+                    <td><label for="manifestBaseUrl">Base URL:</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
+                    <td><input type="text" id="manifestBaseUrl" onchange="validateAndUpdateURL(this.value, this)"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Accounts</h2>
+        <table id="accountsTable">
+            <tbody>
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>Account name</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>Facebook</td>
+                    <td><input type="text" id="facebookAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
+                </tr>
+                <tr>
+                    <td>X (formerly Twitter)</td>
+                    <td><input type="text" id="xAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
+                </tr>
+                <tr>
+                    <td>Instagram</td>
+                    <td><input type="text" id="instagramAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
+                </tr>
+                <tr>
+                    <td>YouTube</td>
+                    <td><input type="text" id="youtubeAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
+                </tr>
+                <tr>
+                    <td>TikTok</td>
+                    <td><input type="text" id="tiktokAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
+                </tr>
+                <tr>
+                    <td>LinkedIn</td>
+                    <td><input type="text" id="linkedinAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <br><br>
+    <button id="saveButton" onclick="saveToFile()">Create manifest</button>
+
+    <script>
+        const currentVersion = "0.1.2";
+
+        let manifest = {
+            name: "",
+            baseurl: "",
+            version: currentVersion,
+            accounts: [],
+            content: []
+        };
+
+        function showError(errMsg) {
+            errMsgElem = document.getElementById('errorMsg');
+            errMsgElem.textContent = errMsg;
+            errMsgElem.style.display = 'block';
+        }
+
+        function clearError() {
+            errMsgElem = document.getElementById('errorMsg');
+            errMsgElem.textContent = '';
+            errMsgElem.style.display = 'none';
+        }
+
+        function setAccounts() {
+            let count = 0;
+            if (facebookAccount.value) {
+                let account = facebookAccount.value;
+                manifest.accounts.push({
+                    "account": account,
+                    "platform": "Facebook",
+                    "url": `https://www.facebook.com/${account}`
+		        })
+                count++;
+            }
+            if (xAccount.value) {
+                let account = xAccount.value;
+                manifest.accounts.push({
+                    "account": account,
+                    "platform": "X",
+                    "url": `https://twitter.com/${account}`
+                })
+                count++;
+            }
+            if (instagramAccount.value) {
+                let account = instagramAccount.value;
+                manifest.accounts.push({
+                    "account": account,
+                    "platform": "Instagram",
+                    "url": `https://www.instagram.com/${account}/`
+                })
+                count++;
+            }
+            if (youtubeAccount.value) {
+                let account = youtubeAccount.value;
+                manifest.accounts.push({
+                    "account": account,
+                    "platform": "YouTube",
+                    "url": `https://www.youtube.com/@${account}/about`
+                })
+                count++;
+            }
+            if (tiktokAccount.value) {
+                let account = tiktokAccount.value;
+                manifest.accounts.push({
+                    "account": account,
+                    "platform": "TikTok",
+                    "url": `https://www.tiktok.com/@${account}`
+                })
+                count++;
+            }
+            if (linkedinAccount.value) {
+                let account = linkedinAccount.value;
+                manifest.accounts.push({
+                    "account": account,
+                    "platform": "LinkedIn",
+                    "url": `https://www.linkedin.com/in/${account}`
+                })
+                count++;
+            }
+            return count;
+        }
+
+        function validateAndUpdateName(inputValue, inputElement) {
+            clearError();
+            inputValue = inputValue.trim();
+            manifest.name = inputValue;
+            // update value in the input field
+            inputElement.value = inputValue;
+        }
+
+        // TODO: move to xpoc-common.js
+        function validateAndUpdateURL(inputValue, inputElement) {
+            clearError();
+            inputValue = inputValue.trim();
+            validatedURL = inputValue;
+            // if it doesn't start with 'http://' or 'https://', prepend 'https://'
+            if (!/^https?:\/\//i.test(inputValue)) {
+                validatedURL = 'https://' + inputValue;
+            }
+
+            const validURLPattern = /^https:\/\/[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})(\/[\w.-\/]*)?$/i;
+            if (!validURLPattern.test(validatedURL)) {
+                showError("Please enter a valid base URL for the owner's website.");
+                return;
+            }
+
+            manifest.baseurl = validatedURL;
+            // update value in the input field
+            inputElement.value = validatedURL;
+        }
+
+        function validateAndUpdateAccount(inputValue, inputElement) {
+            clearError();
+            inputValue = inputValue.trim();
+            // remove leading '@' if present
+            if (inputValue.startsWith('@')) {
+                inputValue = inputValue.substring(1);
+            }
+            // update value in the input field
+            inputElement.value = inputValue;
+        }
+
+        function saveToFile() {
+            if (!manifest.name) {
+                showError("Please enter a name for the manifest owner.");
+                return;
+            }
+            if (!manifest.baseurl) {
+                showError("Please enter a base URL for the owner's website.");
+                return;
+            }
+            let count = setAccounts();
+            if (count == 0) {
+                showError("Please enter at least one account.");
+                return;
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(manifest, null, 4));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "xpoc-manifest.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+    </script>
+</body>
+
+</html>

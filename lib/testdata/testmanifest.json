@@ -11,12 +11,12 @@
         {
 			"account": "a_fb_test_account",
 			"platform": "Facebook",
-			"url": "https://facebook.com/a_test_account"
+			"url": "https://www.facebook.com/a_test_account"
 		},
         {
 			"account": "a_yt_test_account",
 			"platform": "YouTube",
-			"url": "https://youtube.com/@a_yt_test_account/about"
+			"url": "https://www.youtube.com/@a_yt_test_account/about"
 		},
 		{
 			"account": "a_ig_test_account",

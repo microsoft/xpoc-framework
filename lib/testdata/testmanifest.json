@@ -44,6 +44,11 @@
 			"url": "https://www.threads.net/@a_th_test_account"
 		},
 		{
+			"account": "a-gs-ACCOUNT",
+			"platform": "GoogleScholar",
+			"url": "https://scholar.google.com/citations?user=a-gs-ACCOUNT"
+		},
+		{
 			"account": "a_us_test_account",
 			"platform": "Unsupported",
 			"url": "https://unsupported.platform/a_us_test_account"

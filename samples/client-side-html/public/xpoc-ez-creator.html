@@ -35,39 +35,9 @@
             </tbody>
         </table>
         <h2>Accounts</h2>
+        Show all supported platforms <label class="switch"><input type="checkbox" id="toggleSwitch"><span class="slider round"></span></label>
         <table id="accountsTable">
-            <tbody>
-                <thead>
-                    <tr>
-                        <th>Platform</th>
-                        <th>Account name</th>
-                    </tr>
-                </thead>
-                <tr>
-                    <td>Facebook</td>
-                    <td><input type="text" id="facebookAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
-                </tr>
-                <tr>
-                    <td>X (formerly Twitter)</td>
-                    <td><input type="text" id="xAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
-                </tr>
-                <tr>
-                    <td>Instagram</td>
-                    <td><input type="text" id="instagramAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
-                </tr>
-                <tr>
-                    <td>YouTube</td>
-                    <td><input type="text" id="youtubeAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
-                </tr>
-                <tr>
-                    <td>TikTok</td>
-                    <td><input type="text" id="tiktokAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
-                </tr>
-                <tr>
-                    <td>LinkedIn</td>
-                    <td><input type="text" id="linkedinAccount" onchange="validateAndUpdateAccount(this.value, this)"></td>
-                </tr>
-            </tbody>
+            <!-- Dynamic content will be inserted here -->
         </table>
     </div>
 
@@ -86,62 +56,114 @@
             content: []
         };
 
+        let accountReplaceString = "^ACCOUNT^";
+
+        let platforms = [
+            {
+                show: true,
+                displayName: "Facebook",
+                name: "Facebook",
+                url: `https://www.facebook.com/${accountReplaceString}`,
+            },
+            {
+                show: true,
+                displayName: "X (Twitter)",
+                name: "X",
+                url: `https://twitter.com/${accountReplaceString}`,
+            },
+            {
+                show: true,
+                displayName: "Instagram",
+                name: "Instagram",
+                url: `https://www.instagram.com/${accountReplaceString}/`,
+            },
+            {
+                show: true,
+                displayName: "YouTube",
+                name: "YouTube",
+                url: `https://www.youtube.com/@${accountReplaceString}/about`,
+            },
+            {
+                show: true,
+                displayName: "TikTok",
+                name: "TikTok",
+                url: `https://www.tiktok.com/@${accountReplaceString}`,
+            },
+            {
+                show: true,
+                displayName: "LinkedIn",
+                name: "LinkedIn",
+                url: `https://www.linkedin.com/in/${accountReplaceString}`,
+            },
+            {
+                show: false,
+                displayName: "Medium",
+                name: "Medium",
+                url: `https://${accountReplaceString}.medium.com`,
+            },
+            {
+                show: false,
+                displayName: "Threads",
+                name: "Threads",
+                url: `https://www.threads.net/@${accountReplaceString}`,
+            },
+            {
+                show: false,
+                displayName: "Google Scholar",
+                name: "GoogleScholar",
+                url: `https://scholar.google.com/citations?user=${accountReplaceString}`,
+            }
+        ]
+
+        let showAllPlatforms = false; // modified by toggle switch
+        document.getElementById('toggleSwitch').addEventListener('change', function() {
+            showAllPlatforms = this.checked;
+            console.log('Show All Platforms:', showAllPlatforms);
+            updateAccountsTable();
+        });
+
+        function updateAccountsTable() {
+            let html = `
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>Account name</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+
+            platforms.forEach((platform) => {
+                if (platform.show || showAllPlatforms) {
+                    html += `
+                        <tr>
+                            <td>${platform.displayName}</td>
+                            <td><input type="text" id="${platform.name}Account" onchange="validateAndUpdateAccount(this.value, this)"></td>
+                        </tr>
+                    `;
+                }
+            });
+
+            html += `</tbody>`;
+            document.getElementById('accountsTable').innerHTML = html;
+        }
+
+
         function setAccounts() {
             let count = 0;
-            if (facebookAccount.value) {
-                let account = facebookAccount.value;
-                manifest.accounts.push({
-                    "account": account,
-                    "platform": "Facebook",
-                    "url": `https://www.facebook.com/${account}`
-		        })
-                count++;
-            }
-            if (xAccount.value) {
-                let account = xAccount.value;
-                manifest.accounts.push({
-                    "account": account,
-                    "platform": "X",
-                    "url": `https://twitter.com/${account}`
-                })
-                count++;
-            }
-            if (instagramAccount.value) {
-                let account = instagramAccount.value;
-                manifest.accounts.push({
-                    "account": account,
-                    "platform": "Instagram",
-                    "url": `https://www.instagram.com/${account}/`
-                })
-                count++;
-            }
-            if (youtubeAccount.value) {
-                let account = youtubeAccount.value;
-                manifest.accounts.push({
-                    "account": account,
-                    "platform": "YouTube",
-                    "url": `https://www.youtube.com/@${account}/about`
-                })
-                count++;
-            }
-            if (tiktokAccount.value) {
-                let account = tiktokAccount.value;
-                manifest.accounts.push({
-                    "account": account,
-                    "platform": "TikTok",
-                    "url": `https://www.tiktok.com/@${account}`
-                })
-                count++;
-            }
-            if (linkedinAccount.value) {
-                let account = linkedinAccount.value;
-                manifest.accounts.push({
-                    "account": account,
-                    "platform": "LinkedIn",
-                    "url": `https://www.linkedin.com/in/${account}`
-                })
-                count++;
-            }
+            platforms.forEach((platform) => {
+                if (platform.show || showAllPlatforms) {
+                    let account = document.getElementById(`${platform.name}Account`).value;
+                    if (account) {
+                        manifest.accounts.push({
+                            "account": account,
+                            "platform": platform.name,
+                            "url": platform.url.replace(accountReplaceString, account)
+                        })
+                        count++;
+                    }
+                }
+            });
             return count;
         }
 
@@ -206,6 +228,8 @@
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
         }
+
+        updateAccountsTable();
     </script>
 </body>
 

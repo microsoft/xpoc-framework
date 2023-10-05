@@ -40,8 +40,8 @@ A XPOC manifest is a JSON file with the following schema:
             account: string
             platform: string,
             url: string,
-        }
-    ]
+        }, ...
+    ],
     content: [
         {
             account: string,
@@ -111,7 +111,10 @@ Alex adds their Facebook account name `alex.example` and their X/Twitter account
     "account": "alex.example",
     "platform": "Facebook",
     "url": "https://facebook.com/alex.example"
-},
+}
+```
+
+```json
 {
     "account": "ExAlex",
     "platform": "X",
@@ -126,12 +129,14 @@ Alex's conference video is posted on YouTube at `https://www.youtube.com/watch?v
 Alex then adds the following JSON object to their manifest's `content` array:
 
 ```json
+{
     "account": "@CoolConf",
     "platform": "YouTube",
     "url": "https://www.youtube.com/watch?v=abcdef12345",
     "desc": "My panel at the Cool conference",
     "puid": "abcde12345",
     "timestamp": "2023-08-24T08:45:00Z"
+}
 ```
 
 ### Account validation

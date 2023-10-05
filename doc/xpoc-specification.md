@@ -1,6 +1,6 @@
 # Cross-Platform Origin of Content (XPOC) Framework Specification
 
-This document specifies the Cross-Platform Origin of Content (XPOC) framework, to enable interoperable implementation. The current version of the specification is 0.1.2.
+This document specifies the Cross-Platform Origin of Content (XPOC) framework, to enable interoperable implementation. The current version of the specification is 0.2.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC2119](https://www.rfc-editor.org/rfc/rfc2119).
 
@@ -59,7 +59,7 @@ where:
 
 -   `name` is the human-readable name of the Owner,
 -   `baseurl` is the base url of the Owner's website, i.e., the hostname (domain) followed by an optional path, without the protocol header (e.g., `example.com` or `example.com/some/path`),
--   `version` is the version number of the specification used to generate the manifest; currently `0.1.2`.
+-   `version` is the version number of the specification used to generate the manifest; currently `0.2`.
 -   `accounts` is an array of the Owner's platform accounts, JSON objects with the following properties:
     -   `account` is the platform-specific account name,
     -   `platform` is the name of the hosting platform, and
@@ -96,7 +96,7 @@ Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-
 {
     "name": "Alex Example",
     "baseurl": "alexexample.com",
-    "version": "0.1.2",
+    "version": "0.2",
     "accounts": [],
     "content": []
 }

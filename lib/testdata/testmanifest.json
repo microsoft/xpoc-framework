@@ -1,7 +1,7 @@
 {
     "name": "A test name",
     "url": "https://example.com",
-	"version": "0.1.2",
+	"version": "0.2",
 	"accounts": [
 		{
 			"account": "a_X_test_account",

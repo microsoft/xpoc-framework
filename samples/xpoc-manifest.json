@@ -1,7 +1,7 @@
 {
     "name": "XPOC framework sample",
     "url": "https://raw.githubusercontent.com/microsoft/xpoc-framework/main/samples",
-	"version": "0.1.2",
+	"version": "0.2",
 	"accounts": [
 		{
 			"platform": "X",
@@ -16,7 +16,7 @@
 			"url": "https://www.youtube.com/watch?v=hDd3t7y1asU",
 			"platform": "YouTube",
 			"puid": "hDd3t7y1asU",
-			"account": "@christianpaquinmsr"
+			"account": "christianpaquinmsr"
 		}
     ]
 }

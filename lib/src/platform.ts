@@ -788,6 +788,54 @@ export class Threads extends Platform {
     }
 }
 
+// GoogleScholar platform implementation. This platform only supports account listing.
+export class GoogleScholar extends Platform {
+
+    constructor() {
+        super('Google Scholar', 'https://scholar.google.com',
+        false, // access is public, but Google Scholar doesn't allow custom content, so nothing to retrieve
+        false, // n/a
+        // matches GoogleScholar URLs
+        '^https?://scholar\\.google\\.com',
+        // matches GoogleScholar account URLs
+        '/citations\\?(?:[^&]*&)*user=(?<userID>[a-zA-Z0-9-_]+)(?:&[^ ]*)?$',
+        // no content URL for Google Scholar 
+        ``
+        );
+    }
+
+    // overwrite base class's implementation
+    isValidContentUrl(url: string): boolean {
+        return false; // Google Scholar does not support content URLs
+    }
+
+    canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
+        if (!this.isValidAccountUrl(url)) {
+            throw new Error('Malformed Google Scholar account URL');
+        }
+        // extract the account name from the LinkedIn account URL
+        const accountRegex = new RegExp(this.accountRegexString);
+        const match = accountRegex.exec(url);
+        if (match && match.groups) {
+            const userID = match.groups.userID;
+            let url = `${this.CanonicalHostname}/citations?user=${userID}`;
+            return {
+                url: url,
+                account: userID
+            }
+        } else {
+            const errMsg = `Malformed Google Scholar account URL: can't extract account name`;
+            console.error(`canonicalizeAccountUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+
+    canonicalizeContentUrl(url: string): CanonicalizedContentData {
+        throw new Error('Google Scholar does not support content URLs'); // TODO: is that the right thing to do?
+    }
+}
+
+
 // supported platforms
 export const Platforms = {
 
@@ -799,7 +847,8 @@ export const Platforms = {
         new Medium(),
         new TikTok(),
         new LinkedIn(),
-        new Threads()
+        new Threads(),
+        new GoogleScholar()
     ],
 
     /**

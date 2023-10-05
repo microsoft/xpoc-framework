@@ -86,7 +86,8 @@
             { name: "Medium" },
             { name: "TikTok" },
             { name: "LinkedIn" },
-            { name: "Threads" }
+            { name: "Threads" },
+            { name: "GoogleScholar" }
         ]
 
         let manifest = {
@@ -158,12 +159,12 @@
             clearError();
             inputValue= inputValue.trim();
             let platform = inputValue;
-            let lcPlatform = platform.toLowerCase();
+            let lowerCaseNoSpacePlatform = platform.toLowerCase().replace(/\s+/g, '');
             for (let p of supportedPlatforms) {
-                if (p.name.toLowerCase() === lcPlatform) {
+                if (p.name.toLowerCase() === lowerCaseNoSpacePlatform) {
                     platform = p.name;
                     break;
-                } else if (p.alias && p.alias.toLowerCase() === lcPlatform) {
+                } else if (p.alias && p.alias.toLowerCase() === lowerCaseNoSpacePlatform) {
                     platform = p.name;
                     break;
                 }

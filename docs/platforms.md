@@ -169,3 +169,20 @@ It is RECOMMENDED to only list Threads accounts and not individual pieces of con
 
 -    On the account page: in the account page's Bio field.
 -    For a post: in a post's field.
+
+## Google Scholar
+
+Google Scholar only supports account listing.
+
+### Manifest content
+
+-   `accounts` properties:
+    -   `platform`: "GoogleScholar"
+    -   `account`: the owner's user identifier `<userid>`
+    -   `url`: `https://scholar.google.com/citations?user=<userid>`
+
+Google Scholar does not support adding specific pieces of content.
+
+### XPOC URI placement
+
+Google Scholar does not support adding XPOC URI on the account page.

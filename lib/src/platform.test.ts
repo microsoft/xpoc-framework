@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, LinkedIn, Threads, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
+import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, LinkedIn, Threads, GoogleScholar, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';
@@ -550,11 +550,44 @@ const platformTestDataArray: PlatformTestData[] = [
         ),
         sampleAccountData: undefined,
         sampleContentData: undefined
+    },
+
+    // Google Scholar test data
+    {
+        platform: new GoogleScholar(),
+        accountNames: [
+            'IBaguvsAAAAJ',
+            ' IBaguvsAAAAJ '
+        ],
+        validAccountUrls: [
+            'https://scholar.google.com/citations?user=IBaguvsAAAAJ',
+            'https://scholar.google.com/citations?user=IBaguvsAAAAJ&hl=en',
+            'https://scholar.google.com/citations?hl=en&user=IBaguvsAAAAJ'
+        ],
+        validContentUrls: [
+            // n/a
+        ],
+        invalidAccountUrls: [
+            'https://scholar.google.com',
+            'https://notscholar.google.com/citations?user=IBaguvsAAAAJ',
+        ],
+        invalidContentUrls: [
+            // n/a
+        ],
+        canonicalAccountData: new Array(3).fill(
+            // canonicalized version of validAccountUrls (representing all the same account)
+            {
+                url: 'https://scholar.google.com/citations?user=IBaguvsAAAAJ',
+                account: 'IBaguvsAAAAJ'
+            }
+        ),
+        canonicalContentData: [
+            // n/a
+        ],
+        sampleAccountData: undefined,
+        sampleContentData: undefined
     }
-
 ];
-
-
 
 const hasValue = (s: string | undefined): boolean => s !== undefined && s !== '';
 
@@ -581,14 +614,16 @@ for (const platformTestData of platformTestDataArray) {
             }
         });
 
-        test(`${platformName} content URL validation`, () => {
-            for (const url of platformTestData.validContentUrls) {
-                expect(platform.isValidContentUrl(url)).toBe(true);
-            }
-            for (const url of platformTestData.invalidContentUrls) {
-                expect(platform.isValidContentUrl(url)).toBe(false);
-            }
-        });
+        if (platformTestData.validContentUrls.length > 0) {
+            test(`${platformName} content URL validation`, () => {
+                for (const url of platformTestData.validContentUrls) {
+                    expect(platform.isValidContentUrl(url)).toBe(true);
+                }
+                for (const url of platformTestData.invalidContentUrls) {
+                    expect(platform.isValidContentUrl(url)).toBe(false);
+                }
+            });
+        }
 
         test(`${platformName} account URL canonicalization`, () => {
             for (let i = 0; i < platformTestData.validAccountUrls.length; i++) {
@@ -600,17 +635,19 @@ for (const platformTestData of platformTestDataArray) {
             }
         });
 
-        test(`${platformName} content URL canonicalization`, () => {
-            for (let i = 0; i < platformTestData.validContentUrls.length; i++) {
-                const url = platformTestData.validContentUrls[i];
-                const canonicalData = platform.canonicalizeContentUrl(url);
-                const expectedCanonicalData = platformTestData.canonicalContentData[i];
-                if (hasValue(expectedCanonicalData.url)) expect(canonicalData.url).toBe(expectedCanonicalData.url);
-                if (hasValue(expectedCanonicalData.account)) expect(canonicalData.account).toBe(expectedCanonicalData.account);
-                if (hasValue(expectedCanonicalData.puid)) expect(canonicalData.puid).toBe(expectedCanonicalData.puid);
-                if (hasValue(expectedCanonicalData.type)) expect(canonicalData.type).toBe(expectedCanonicalData.type);
-            }
-        });
+        if (platformTestData.validContentUrls.length > 0) {
+            test(`${platformName} content URL canonicalization`, () => {
+                for (let i = 0; i < platformTestData.validContentUrls.length; i++) {
+                    const url = platformTestData.validContentUrls[i];
+                    const canonicalData = platform.canonicalizeContentUrl(url);
+                    const expectedCanonicalData = platformTestData.canonicalContentData[i];
+                    if (hasValue(expectedCanonicalData.url)) expect(canonicalData.url).toBe(expectedCanonicalData.url);
+                    if (hasValue(expectedCanonicalData.account)) expect(canonicalData.account).toBe(expectedCanonicalData.account);
+                    if (hasValue(expectedCanonicalData.puid)) expect(canonicalData.puid).toBe(expectedCanonicalData.puid);
+                    if (hasValue(expectedCanonicalData.type)) expect(canonicalData.type).toBe(expectedCanonicalData.type);
+                }
+            });
+        }
 
         if (platform.CanFetchAccountData) {
             test(`${platformName} account fetch test`, async () => {
@@ -664,6 +701,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedAccountUrl('https://www.linkedin.com/in/accountname/')).toBe(true);
         // Threads
         expect(Platforms.isSupportedAccountUrl('https://www.threads.net/@accountname')).toBe(true);
+        // Google Scholar
+        expect(Platforms.isSupportedAccountUrl('https://scholar.google.com/citations?user=userid')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -685,6 +724,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedContentUrl('https://www.linkedin.com/posts/title')).toBe(true);
         // Threads
         expect(Platforms.isSupportedContentUrl('https://www.threads.net/@accountname/post/ABCD1234')).toBe(true);
+        // Google Scholar (no supported content)
+        expect(Platforms.isSupportedContentUrl('https://scholar.google.com/citations?user=userid')).toBe(false);
         // unsupported platform
         expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });
@@ -730,6 +771,11 @@ describe('platform operations', () => {
 
         // Threads test (no public access, expect a not supported exception)
         url = 'https://www.threads.net/@microsoft';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
+        await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
+
+        // Google Scholar test (nothing to retrieve, expect a not supported exception)
+        url = 'https://scholar.google.com/citations?user=IBaguvsAAAAJ';
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
         await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
 
@@ -785,6 +831,11 @@ describe('platform operations', () => {
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 
+        // Google Scholar test (no content URL, expect a not supported exception)
+        url = 'https://scholar.google.com/citations?user=IBaguvsAAAAJ';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+        
         // unsupported platform
         url = 'https://www.notaplatform.com/abc123';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);

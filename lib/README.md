@@ -29,6 +29,6 @@ Include this in your html file with a script tag:
 You can then access the XPOC library through the global `xpoc` variable.
 ```html
 <script>
-    const platform = new xpoc.YouTube()
+    const platform = new xpoc.Manifest()
 </script>
 ```

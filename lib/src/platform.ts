@@ -796,7 +796,7 @@ export class GoogleScholar extends Platform {
         false, // access is public, but Google Scholar doesn't allow custom content, so nothing to retrieve
         false, // n/a
         // matches GoogleScholar URLs
-        "^https?://scholar\.google\.com",
+        '^https?://scholar\\.google\\.com',
         // matches GoogleScholar account URLs
         '/citations\\?(?:[^&]*&)*user=(?<userID>[a-zA-Z0-9-_]+)(?:&[^ ]*)?$',
         // no content URL for Google Scholar 

@@ -7,7 +7,6 @@
 
     The editor performs minimal input validation. Here is a list of usability and validation improvements that can be made:
     - Validate the manifest against the XPOC manifest schema
-    - Validate URLs more robustly (using regex)
     - Implement better error handling and reporting (highlight erroneous fields, tooltips, etc.)
     - Add auto-fill based on URL (by fetching the target page and deducing content fields); would require CORS support
 -->
@@ -42,15 +41,15 @@
         <table id="manifestInfoTable">
             <tbody>
                 <tr>
-                    <td><label for="manifestName">Name:</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
+                    <td><label for="manifestName">Name *</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
                     <td><input type="text" id="manifestName" onchange="manifest.name = this.value"></td>
                 </tr>
                 <tr>
-                    <td><label for="manifestBaseUrl">Base URL:</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
+                    <td><label for="manifestBaseUrl">Base URL *</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
                     <td><input type="text" id="manifestBaseUrl" onchange="validateAndUpdateURL('info', 0, this.value, this)"></td>
                 </tr>
                 <tr>
-                    <td><label for="manifestVersion">Version:</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.1.2</span></span></td>
+                    <td><label for="manifestVersion">Version</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.1.2</span></span></td>
                     <td><input type="text" id="manifestVersion" value="0.1.2" readonly></td>
                 </tr>
             </tbody>
@@ -154,18 +153,9 @@
             updateContentTable();
         }
 
-        function isValidURL(string) {
-            // TODO: more robust validation (e.g., https://bogus is currently valid)
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
-            }
-        }
-
         function validateAndUpdatePlatform(contentType, index, inputValue, inputElement) {
-            // TODO: use library for this
+            // TODO: use library bundle for this
+            clearError();
             inputValue= inputValue.trim();
             let platform = inputValue;
             let lcPlatform = platform.toLowerCase();
@@ -188,14 +178,24 @@
         }
     
         function validateAndUpdateURL(contentType, index, inputValue, inputElement) {
+            clearError();
             inputValue = inputValue.trim();
             validatedURL = inputValue;
             // If it doesn't start with 'http://', or 'https://', prepend 'https://'
             if (!/^https?:\/\//i.test(inputValue)) {
                 validatedURL = 'https://' + inputValue;
             }
-            if (!isValidURL(validatedURL)) {
-                alert('Please enter a valid URL.');
+            const validURLPattern = /^https:\/\/[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})(\/[\w.-\/]*)?$/i;
+            if (!validURLPattern.test(validatedURL)) {
+                let urlField;
+                if (contentType === 'info') {
+                    urlField = "owner's website";
+                } else if (contentType === 'content') {
+                    urlField = "content URL";
+                } else if (contentType === 'account') {
+                    urlField = "platform URL";
+                }
+                showError(`Please enter a valid base URL for the ${urlField}.`);
                 return;
             }
             if (contentType === 'info') {
@@ -210,6 +210,7 @@
         }
 
         function validateAndUpdateAccount(contentType, index, inputValue, inputElement) {
+            clearError();
             inputValue = inputValue.trim();
             accountName = inputValue;
             // remove '@' prefix (if present)
@@ -259,9 +260,9 @@
             let html = `
                 <thead>
                     <tr>
-                        <th>Platform<span class="info-tooltip">i<span class="tooltip-text">The platform hosting the account (e.g., YouTube, X, Facebook)</span></span></th>
-                        <th>URL<span class="info-tooltip">i<span class="tooltip-text">Location of the account page (e.g., bio or profile)</span></span></th>
-                        <th>Account<span class="info-tooltip">i<span class="tooltip-text">Account identifier (e.g., handle, username)</span></span></th>
+                        <th>Platform *<span class="info-tooltip">i<span class="tooltip-text">The platform hosting the account (e.g., YouTube, X, Facebook)</span></span></th>
+                        <th>URL *<span class="info-tooltip">i<span class="tooltip-text">Location of the account page (e.g., bio or profile)</span></span></th>
+                        <th>Account *<span class="info-tooltip">i<span class="tooltip-text">Account identifier (e.g., handle, username)</span></span></th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -287,12 +288,12 @@
             let html = `
                 <thead>
                     <tr>
-                        <th>Description<span class="info-tooltip">i<span class="tooltip-text">Short description of the content</span></span></th>
-                        <th>URL<span class="info-tooltip">i<span class="tooltip-text">Location of the content</span></span></th>
-                        <th>Platform<span class="info-tooltip">i<span class="tooltip-text">Platform hosting the content (e.g., YouTube, X, Facebook)</span></span></th>
-                        <th>PUID<span class="info-tooltip">i<span class="tooltip-text">Platform-specific Unique Identifier for the content</span></span></th>
-                        <th>Account<span class="info-tooltip">i<span class="tooltip-text">Platform account associated with the content</span></span></th>
-                        <th>Timestamp<span class="info-tooltip">i<span class="tooltip-text">Content creation time in ISO format (e.g., (YYYY-MM-DDTHH:MM:SSZ))</span></span></th>
+                        <th>Description<span class="info-tooltip">i<span class="tooltip-text">(Optional) Short description of the content</span></span></th>
+                        <th>URL *<span class="info-tooltip">i<span class="tooltip-text">Location of the content</span></span></th>
+                        <th>Platform *<span class="info-tooltip">i<span class="tooltip-text">Platform hosting the content (e.g., YouTube, X, Facebook)</span></span></th>
+                        <th>PUID<span class="info-tooltip">i<span class="tooltip-text">(Optional) Platform-specific Unique Identifier for the content</span></span></th>
+                        <th>Account *<span class="info-tooltip">i<span class="tooltip-text">Platform account associated with the content</span></span></th>
+                        <th>Timestamp<span class="info-tooltip">i<span class="tooltip-text">(Optional) Content creation time in ISO format (e.g., (YYYY-MM-DDTHH:MM:SSZ))</span></span></th>
                         <th>Action</th>
                     </tr>
                 </thead>

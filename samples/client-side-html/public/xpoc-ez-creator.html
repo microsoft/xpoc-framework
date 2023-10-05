@@ -11,7 +11,7 @@
 <body>
     <h1>XPOC Manifest Creator</h1>
     <p>
-        This page allows the creation of a XPOC manifest by adding the owner's accounts of popular platforms. Simply
+        This page allows the creation of a XPOC manifest by adding the owner's accounts on popular platforms. Simply
         enter the accounts you own and click the "Create manifest" button.
     </p>
     <p>
@@ -25,16 +25,15 @@
         <table id="manifestInfoTable">
             <tbody>
                 <tr>
-                    <td><label for="manifestName">Name:</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
+                    <td><label for="manifestName">Name *</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
                     <td><input type="text" id="manifestName" onchange="validateAndUpdateName(this.value, this)"></td>
                 </tr>
                 <tr>
-                    <td><label for="manifestBaseUrl">Base URL:</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
+                    <td><label for="manifestBaseUrl">Base URL *</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
                     <td><input type="text" id="manifestBaseUrl" onchange="validateAndUpdateURL(this.value, this)"></td>
                 </tr>
             </tbody>
         </table>
-
         <h2>Accounts</h2>
         <table id="accountsTable">
             <tbody>
@@ -75,6 +74,7 @@
     <br><br>
     <button id="saveButton" onclick="saveToFile()">Create manifest</button>
 
+    <script src="xpoc-common.js"></script>
     <script>
         const currentVersion = "0.1.2";
 
@@ -85,18 +85,6 @@
             accounts: [],
             content: []
         };
-
-        function showError(errMsg) {
-            errMsgElem = document.getElementById('errorMsg');
-            errMsgElem.textContent = errMsg;
-            errMsgElem.style.display = 'block';
-        }
-
-        function clearError() {
-            errMsgElem = document.getElementById('errorMsg');
-            errMsgElem.textContent = '';
-            errMsgElem.style.display = 'none';
-        }
 
         function setAccounts() {
             let count = 0;
@@ -165,7 +153,6 @@
             inputElement.value = inputValue;
         }
 
-        // TODO: move to xpoc-common.js
         function validateAndUpdateURL(inputValue, inputElement) {
             clearError();
             inputValue = inputValue.trim();

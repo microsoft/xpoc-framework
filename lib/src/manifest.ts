@@ -69,7 +69,7 @@ const areResourcesEqual = (url1: string, url2: string): boolean => {
  */
 export class ManifestBase {
     manifest: XPOCManifest;
-    static LatestVersion = '0.1.2';
+    static LatestVersion = '0.2';
 
     constructor(manifest: XPOCManifest) {
         this.manifest = manifest;

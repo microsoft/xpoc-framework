@@ -49,6 +49,11 @@
 			"url": "https://scholar.google.com/citations?user=a-gs-ACCOUNT"
 		},
 		{
+			"account": "a_gh_test_account",
+			"platform": "GitHub",
+			"url": "https://github.com/a_gh_test_account"
+		},
+		{
 			"account": "a_us_test_account",
 			"platform": "Unsupported",
 			"url": "https://unsupported.platform/a_us_test_account"

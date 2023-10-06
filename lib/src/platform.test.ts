@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, LinkedIn, Threads, GoogleScholar, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
+import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, LinkedIn, Threads, GoogleScholar, GitHub, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';
@@ -586,7 +586,51 @@ const platformTestDataArray: PlatformTestData[] = [
         ],
         sampleAccountData: undefined,
         sampleContentData: undefined
+    },
+
+    // GitHub test data
+    {
+        platform: new GitHub(),
+        accountNames: [
+            'christianpaquin',
+            ' christianpaquin '
+        ],
+        validAccountUrls: [
+            'https://github.com/christianpaquin',
+            'https://github.com/christianpaquin/',
+            'https://www.github.com/christianpaquin',
+            'https://github.com/christianpaquin?utm_source=bing&utm_content=textlink'
+        ],
+        validContentUrls: [
+            // n/a
+        ],
+        invalidAccountUrls: [
+            'https://github.com',
+            'https://notgithub.com/christianpaquin',
+        ],
+        invalidContentUrls: [
+            // n/a
+        ],
+        canonicalAccountData: new Array(4).fill(
+            // canonicalized version of validAccountUrls (representing all the same account)
+            {
+                url: 'https://github.com/christianpaquin',
+                account: 'christianpaquin'
+            }
+        ),
+        canonicalContentData: [
+            // n/a
+        ],
+        sampleAccountData: {
+            xpocUri: expectedXpocUri,
+            platform: "GitHub",
+            url: "https://github.com/christianpaquin",   
+            account: "christianpaquin",
+        },
+
+        sampleContentData: undefined
     }
+    
 ];
 
 const hasValue = (s: string | undefined): boolean => s !== undefined && s !== '';
@@ -670,7 +714,10 @@ for (const platformTestData of platformTestDataArray) {
                 if (sampleContent) {
                     const contentData = await platform.getContentData(sampleContent.url);
                     expect(contentData.xpocUri).toBe(sampleContent.xpocUri);
-                    expect(contentData.timestamp).toBe(sampleContent.timestamp);
+                    // we only compare the date part of the timestamp in the tests; some platforms
+                    // inconsistently return the time part of the timestamp
+                    const dateLength = "YYYY-MM-DD".length;
+                    expect(contentData.timestamp.substring(0,dateLength)).toBe(sampleContent.timestamp.substring(0,dateLength));
                     expect(contentData.url).toBe(sampleContent.url);
                     expect(contentData.platform).toBe(sampleContent.platform);
                     expect(contentData.puid).toBe(sampleContent.puid);
@@ -703,6 +750,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedAccountUrl('https://www.threads.net/@accountname')).toBe(true);
         // Google Scholar
         expect(Platforms.isSupportedAccountUrl('https://scholar.google.com/citations?user=userid')).toBe(true);
+        // GitHub
+        expect(Platforms.isSupportedAccountUrl('https://github.com/christianpaquin')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -726,6 +775,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedContentUrl('https://www.threads.net/@accountname/post/ABCD1234')).toBe(true);
         // Google Scholar (no supported content)
         expect(Platforms.isSupportedContentUrl('https://scholar.google.com/citations?user=userid')).toBe(false);
+        // GitHub (no supported content)
+        expect(Platforms.isSupportedContentUrl('https://github.com/christianpaquin')).toBe(false);
         // unsupported platform
         expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });
@@ -734,7 +785,7 @@ describe('platform operations', () => {
         // YouTube test
         let url = 'https://www.youtube.com/@christianpaquinmsr';
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(true);
-        const accountData = await Platforms.getAccountFromUrl(url);
+        let accountData = await Platforms.getAccountFromUrl(url);
         expect(accountData.platform).toBe('YouTube');
         expect(accountData.account).toBe('christianpaquinmsr');
         expect(accountData.url).toBe('https://www.youtube.com/@christianpaquinmsr/about');
@@ -779,6 +830,14 @@ describe('platform operations', () => {
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
         await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
 
+        // GitHub test
+        url = 'https://github.com/christianpaquin';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(true);
+        accountData = await Platforms.getAccountFromUrl(url);
+        expect(accountData.platform).toBe('GitHub');
+        expect(accountData.account).toBe('christianpaquin');
+        expect(accountData.url).toBe('https://github.com/christianpaquin');
+
         // unsupported platform
         url = 'https://www.notaplatform.com/accountname';
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
@@ -794,7 +853,8 @@ describe('platform operations', () => {
         expect(contentData.puid).toBe('hDd3t7y1asU');
         expect(contentData.url).toBe('https://www.youtube.com/watch?v=hDd3t7y1asU');
         expect(contentData.account).toBe('christianpaquinmsr');
-        expect(contentData.timestamp).toBe('2023-07-10T00:00:00Z');
+        // YouTube inconsistently return the time part of the timestamp, we only check the date here
+        expect(contentData.timestamp.substring(0, "YYYY-MM-DD".length)).toBe('2023-07-10');
 
         // X/Twitter test (no public access, expect a not supported exception)
         url = 'https://twitter.com/chpaquin/status/1694698274618319246';
@@ -836,6 +896,11 @@ describe('platform operations', () => {
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
         
+        // GitHub test (no content URL, expect a not supported exception)
+        url = 'https://github.com/christianpaquin';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+
         // unsupported platform
         url = 'https://www.notaplatform.com/abc123';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);

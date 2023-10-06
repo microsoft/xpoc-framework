@@ -23,6 +23,11 @@ button:hover {
     background-color: #0056b3;
 }
 
+button:disabled {
+    background-color: #CCCCCC;
+    cursor: not-allowed;
+}
+
 .error {
     color: red;
     margin-top: 10px;
@@ -181,4 +186,28 @@ input:checked + .slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+.xpoc-ez-creator td:first-child {
+    white-space: nowrap;
+    padding-right: 20px;
+    width: 30px;
+}
+
+.xpoc-ez-creator td input[type="text"] {
+    max-width: 500px;
+}
+
+.xpoc-ez-creator table, .xpoc-ez-creator th, .xpoc-ez-creator td {
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+#manifestTextArea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 400px; 
+    overflow-y: auto;
 }

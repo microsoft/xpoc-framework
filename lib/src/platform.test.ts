@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, LinkedIn, Threads, GoogleScholar, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
+import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, LinkedIn, Threads, GoogleScholar, Rumble, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';
@@ -62,8 +62,8 @@ const platformTestDataArray: PlatformTestData[] = [
         canonicalAccountData: new Array(6).fill(
             // canonicalized version of validAccountUrls (representing all the same account)
             {
-            url: 'https://www.youtube.com/@christianpaquinmsr/about',
-            account: 'christianpaquinmsr'
+                url: 'https://www.youtube.com/@christianpaquinmsr/about',
+                account: 'christianpaquinmsr'
             }
         ),
         canonicalContentData: new Array(8).fill(
@@ -78,15 +78,15 @@ const platformTestDataArray: PlatformTestData[] = [
         sampleAccountData: {
             xpocUri: expectedXpocUri,
             platform: "YouTube",
-            url: "https://www.youtube.com/@christianpaquinmsr/about",   
+            url: "https://www.youtube.com/@christianpaquinmsr/about",
             account: "christianpaquinmsr",
         },
         sampleContentData: {
             xpocUri: expectedXpocUri,
             platform: "YouTube",
-            url: "https://www.youtube.com/watch?v=hDd3t7y1asU",   
+            url: "https://www.youtube.com/watch?v=hDd3t7y1asU",
             account: "christianpaquinmsr",
-            timestamp: "2023-07-10T00:00:00Z",
+            timestamp: "2023-07-10T17:10:28Z",
             puid: "hDd3t7y1asU"
         }
     },
@@ -284,7 +284,7 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://medium.com/@chpaquin/',
             'https://www.medium.com/@chpaquin',
             'https://medium.com/@chpaquin?utm_source=bing&utm_content=textlink',
-            'https://medium.com/@chpaquin/about',                
+            'https://medium.com/@chpaquin/about',
             'https://medium.com/@chpaquin/about/',
             // subdomain form
             'https://christianpaquin.medium.com',
@@ -359,7 +359,7 @@ const platformTestDataArray: PlatformTestData[] = [
                     puid: '4fecf28be9a8',
                     type: 'post'
                 }
-            )                
+            )
         ],
         sampleAccountData: undefined,
         sampleContentData: undefined
@@ -586,7 +586,82 @@ const platformTestDataArray: PlatformTestData[] = [
         ],
         sampleAccountData: undefined,
         sampleContentData: undefined
-    }
+    },
+
+    // Rumble test data
+    {
+        platform: new Rumble(),
+        accountNames: [
+            'c-4908074',
+            ' c-4908074 ',
+            '/c/c-4908074',
+            'c/c-4908074',
+        ],
+        validAccountUrls: [
+            'https://rumble.com/c/c-4908074/',
+            'https://rumble.com/c/c-4908074',
+            'https://rumble.com/c-4908074/',
+            'https://rumble.com/c-4908074',
+            'https://rumble.com/c/abcd1234/',
+            'https://rumble.com/c/abcd1234',
+            'https://rumble.com/abcd1234/',
+            'https://rumble.com/abcd1234'
+        ],
+        validContentUrls: [
+            'https://rumble.com/v3lvq1f-crossette.html',
+            'https://rumble.com/v3lvq1f-crossette',
+            'https://rumble.com/v3lvq1f-crossette.html/',
+            'https://rumble.com/v3lvq1f-crossette/'
+        ],
+        invalidAccountUrls: [
+            'https://rumble.com/c-49080740', // 8 digits instead of 7
+            'https://rumble.com/c/c-49080740', // 8 digits instead of 7
+            'https://rumble.com/a/c-4908074'
+        ],
+        invalidContentUrls: [
+            'https://rumble.com/c/v3lvq1f-crossette.html',
+            'https://rumble.com/c/v3lvq1f-crossette'
+        ],
+        canonicalAccountData: [
+
+            ...new Array(4).fill(
+                {
+                    url: 'https://rumble.com/c/c-4908074',
+                    account: 'c-4908074'
+                }
+            ),
+            ...new Array(4).fill(
+                {
+                    url: 'https://rumble.com/c/abcd1234',
+                    account: 'abcd1234'
+                }
+            )
+        ],
+        canonicalContentData: [
+            ...new Array(4).fill(
+                {
+                    url: 'https://rumble.com/v3lvq1f-crossette.html',
+                    account: '',
+                    puid: 'v3lvq1f-crossette',
+                    type: 'video'
+                }
+            )
+        ],
+        sampleAccountData: {
+            xpocUri: expectedXpocUri,
+            platform: "Rumble",
+            url: "https://rumble.com/c/c-4908074",
+            account: "c-4908074",
+        },
+        sampleContentData: {
+            xpocUri: expectedXpocUri,
+            platform: "Rumble",
+            url: "https://rumble.com/v3lvq1f-crossette.html",
+            account: "c-4908074",
+            timestamp: "2023-09-29T07:00:00Z",
+            puid: "v3lvq1f-crossette"
+        }
+    },
 ];
 
 const hasValue = (s: string | undefined): boolean => s !== undefined && s !== '';
@@ -597,7 +672,7 @@ for (const platformTestData of platformTestDataArray) {
     const platformName = platform.DisplayName;
 
     describe(`${platformName} platform test`, () => {
-    
+
         test(`${platformName} account name canonicalization`, () => {
             for (const account of platformTestData.accountNames) {
                 const expected = platformTestData.accountNames[0];
@@ -794,7 +869,7 @@ describe('platform operations', () => {
         expect(contentData.puid).toBe('hDd3t7y1asU');
         expect(contentData.url).toBe('https://www.youtube.com/watch?v=hDd3t7y1asU');
         expect(contentData.account).toBe('christianpaquinmsr');
-        expect(contentData.timestamp).toBe('2023-07-10T00:00:00Z');
+        expect(["2023-07-10T00:00:00Z", "2023-07-10T17:10:28Z"]).toContain(contentData.timestamp);
 
         // X/Twitter test (no public access, expect a not supported exception)
         url = 'https://twitter.com/chpaquin/status/1694698274618319246';
@@ -825,7 +900,7 @@ describe('platform operations', () => {
         url = 'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880/';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
-        
+
         // Threads test (no public access, expect a not supported exception)
         url = 'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
@@ -835,7 +910,7 @@ describe('platform operations', () => {
         url = 'https://scholar.google.com/citations?user=IBaguvsAAAAJ';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
-        
+
         // unsupported platform
         url = 'https://www.notaplatform.com/abc123';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);

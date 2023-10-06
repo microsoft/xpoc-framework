@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import axios from 'axios';
-import {load} from 'cheerio';
+import { query } from "./htmlParser.node.js";
 
 export type ContentType = 'post' | 'photo' | 'video' | 'reel' | 'event' | 'misc';
 
@@ -54,7 +53,7 @@ export abstract class Platform {
     protected contentRegexString: string;
 
     constructor(displayName: string, canonicalHostname: string, canFetchAccountData: boolean, canFetchContentData: boolean,
-                regexHostnameString: string, accountRegexStringSuffix: string, contentRegexStringSuffix: string) {
+        regexHostnameString: string, accountRegexStringSuffix: string, contentRegexStringSuffix: string) {
         this.DisplayName = displayName;
         this.CanonicalHostname = canonicalHostname;
         this.CanFetchAccountData = canFetchAccountData;
@@ -101,7 +100,7 @@ export abstract class Platform {
 }
 
 // extracts a XPOC URI from a string
-const findXpocUri = (text:string | undefined) => {
+const findXpocUri = (text: string | undefined) => {
     if (!text) { throw new Error("Invalid content; can't search for XPOC URI"); }
     // XPOC URI regex, to capture the manifest URL
     const xpocRegex = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/g;
@@ -113,9 +112,17 @@ const findXpocUri = (text:string | undefined) => {
     }
 }
 
-const trimAndRemoveAtPrefix = (str:string) => {
-    return str.trim().replace('@','');
+const trimAndRemoveAtPrefix = (str: string) => {
+    return str.trim().replace('@', '');
 }
+
+// converts data-time strings to UTC strings
+const toUTCString = (dateString: string): string => {
+    const utcString = dateString ? (new Date(dateString)).toISOString().slice(0, -5) + 'Z' : ''
+    console.debug(`toUTCString: ${dateString} -> ${utcString}`);
+    return utcString;
+}
+
 
 // TODO: make sure all regex ignore the case of the hostname
 
@@ -181,9 +188,7 @@ export class YouTube extends Platform {
     async getAccountData(url: string): Promise<PlatformAccountData> {
         const accountData = this.canonicalizeAccountUrl(url);
         try {
-            const response = await axios.get(accountData.url);
-            const $ = load(response.data);
-            const description = $('meta[name="description"]').attr('content');
+            const description = await query(accountData.url, 'meta[name="description"]', 'content') as string;
             const xpocUri = findXpocUri(description);
             return {
                 xpocUri: xpocUri,
@@ -200,19 +205,17 @@ export class YouTube extends Platform {
     async getContentData(url: string): Promise<PlatformContentData> {
         const contentData = this.canonicalizeContentUrl(url);
         try {
-            const response = await axios.get(contentData.url);
-            const $ = load(response.data);
-            const channelUrl = $('span[itemprop="author"] link[itemprop="url"]').attr('href');
+            const channelUrl = await query(contentData.url, 'span[itemprop="author"] link[itemprop="url"]', 'href') as string;
             const account = channelUrl?.split('/').pop()?.replace('@', '') || '';
-            const postTime = $('meta[itemprop="datePublished"]').attr('content') || '';
-            const videoDescription = $('meta[name="description"]').attr('content');
+            const postTime = await query(contentData.url, 'meta[itemprop="datePublished"]', 'content') as string;
+            const videoDescription = await query(contentData.url, 'meta[name="description"]', 'content') as string;
             const xpocUri = findXpocUri(videoDescription);
             return {
                 xpocUri: xpocUri,
                 platform: this.DisplayName,
                 url: contentData.url,
                 account: account,
-                timestamp: postTime ? postTime+"T00:00:00Z" : '',
+                timestamp: toUTCString(postTime),
                 puid: contentData.puid
             };
         } catch (err) {
@@ -227,12 +230,12 @@ export class XTwitter extends Platform {
 
     constructor() {
         super('X', 'https://twitter.com', false, false, // TODO: "X" name will not match "Twitter" (make more robust)
-        // matches X/Twitter URLs, with or without a www. subdomain (TODO: is the www. subdomain ever used?)
-        "^https?://(?:www\\.)?(twitter\\.com|x\\.com)",
-        // matches X/Twitter account URLs, with an optional '@' prefix (gets removed by redirect)
-        `/@?(?<accountName>[a-zA-Z0-9_]{1,15})$`,
-        // matches X/Twitter content URLs with a status path and a status ID path
-        `/@?(?<accountName>[a-zA-Z0-9_]{1,15})/status/(?<statusID>\\d{1,19})$`
+            // matches X/Twitter URLs, with or without a www. subdomain (TODO: is the www. subdomain ever used?)
+            "^https?://(?:www\\.)?(twitter\\.com|x\\.com)",
+            // matches X/Twitter account URLs, with an optional '@' prefix (gets removed by redirect)
+            `/@?(?<accountName>[a-zA-Z0-9_]{1,15})$`,
+            // matches X/Twitter content URLs with a status path and a status ID path
+            `/@?(?<accountName>[a-zA-Z0-9_]{1,15})/status/(?<statusID>\\d{1,19})$`
         );
     }
 
@@ -288,13 +291,13 @@ export class Facebook extends Platform {
 
     constructor() {
         super('Facebook', 'https://www.facebook.com', false, false,
-        // matches Facebook URLs, with or without www. or m. subdomains
-        `^https?://(?:www\\.|m\\.)?(facebook\\.com|fb\\.com)`,
-        // matches Facebook account URLs, with an optional 'about/' path
-        `/(?<accountName>[^/]+)(/about)?/?$`, // TODO: ignore query parameters and anchors
-        // matches Facebook content URLs (posts/photos/videos/reels), either with a account name path of a fbid query parameter
-        // TODO: Facebook has many types of valid content URLs, this could be improved 
-        `/(?:(?<accountName>\\w+)/(?:(?<contentType>posts|photos|videos|reels)/)|(?<contentType2>post|photo|video|reel)\\?.*?fbid=(?<fbid>\\d+))`
+            // matches Facebook URLs, with or without www. or m. subdomains
+            `^https?://(?:www\\.|m\\.)?(facebook\\.com|fb\\.com)`,
+            // matches Facebook account URLs, with an optional 'about/' path
+            `/(?<accountName>[^/]+)(/about)?/?$`, // TODO: ignore query parameters and anchors
+            // matches Facebook content URLs (posts/photos/videos/reels), either with a account name path of a fbid query parameter
+            // TODO: Facebook has many types of valid content URLs, this could be improved 
+            `/(?:(?<accountName>\\w+)/(?:(?<contentType>posts|photos|videos|reels)/)|(?<contentType2>post|photo|video|reel)\\?.*?fbid=(?<fbid>\\d+))`
         );
     }
 
@@ -321,7 +324,7 @@ export class Facebook extends Platform {
     fbContentTypesToContentType(fbContentTypes: string): ContentType {
         switch (fbContentTypes) {
             case 'posts':
-            case 'post' :
+            case 'post':
                 return 'post';
             case 'photos':
             case 'photo':
@@ -373,12 +376,12 @@ export class Facebook extends Platform {
 export class Instagram extends Platform {
     constructor() {
         super('Instagram', 'https://www.instagram.com', false, false,
-        // matches Instagram URLs, with or without www. or m. subdomains
-        `^https?://(?:www\\.|m\\.)?(instagram\\.com)`,
-        // matches Instagram account URLs
-        `/(?<accountName>[^/]+)/?$`, // TODO: ignore query parameters and anchors
-        // matches Instagram content URLs (a post or reel)
-        `/(?<contentType>p|reel)/(?<id>[a-zA-Z0-9_-]+)/?(?:\\?.*?)?$`
+            // matches Instagram URLs, with or without www. or m. subdomains
+            `^https?://(?:www\\.|m\\.)?(instagram\\.com)`,
+            // matches Instagram account URLs
+            `/(?<accountName>[^/]+)/?$`, // TODO: ignore query parameters and anchors
+            // matches Instagram content URLs (a post or reel)
+            `/(?<contentType>p|reel)/(?<id>[a-zA-Z0-9_-]+)/?(?:\\?.*?)?$`
         );
     }
 
@@ -437,7 +440,7 @@ export class Instagram extends Platform {
             console.error(`canonicalizeContentUrl: ${errMsg}`);
             throw new Error(errMsg);
         }
-    }    
+    }
 }
 
 // Medium platform implementation.
@@ -498,7 +501,7 @@ export class Medium extends Platform {
         // url doesn't match any content form
         return false;
     }
-    
+
     canonicalizeAccountName = trimAndRemoveAtPrefix;
 
     canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
@@ -507,7 +510,7 @@ export class Medium extends Platform {
         }
 
         // extract the account name from the Medium account URL
-       
+
         // test the default form
         let accountRegex = new RegExp(this.defaultAccountRegexString);
         let match = accountRegex.exec(url);
@@ -576,7 +579,7 @@ export class Medium extends Platform {
                 url: `${this.CanonicalHostname}/p/${match.groups.storyID}`
             }
         }
-        
+
         // url doesn't match any content form
         const errMsg = `Malformed Medium content URL`;
         console.error(`canonicalizeContentUrl: ${errMsg}`);
@@ -591,12 +594,12 @@ export class TikTok extends Platform {
 
     constructor() {
         super('TikTok', 'https://www.tiktok.com', false, false,
-        // matches TikTok URLs, with or without a www. subdomain
-        "^https?://(?:www\\.)?(tiktok\\.com)",
-        // matches TikTok account URLs with a '@' prefix
-        `/@(?<accountName>[a-zA-Z0-9\\._]{1,24})\/?(?:\\?.*)?$`,
-        // matches TikTok content URLs with a status path and a status ID path
-        `/@?(?<accountName>[a-zA-Z0-9_]{1,15})/video/(?<id>\\d{1,19})\/?(?:\\?.*)?$`
+            // matches TikTok URLs, with or without a www. subdomain
+            "^https?://(?:www\\.)?(tiktok\\.com)",
+            // matches TikTok account URLs with a '@' prefix
+            `/@(?<accountName>[a-zA-Z0-9\\._]{1,24})\/?(?:\\?.*)?$`,
+            // matches TikTok content URLs with a status path and a status ID path
+            `/@?(?<accountName>[a-zA-Z0-9_]{1,15})/video/(?<id>\\d{1,19})\/?(?:\\?.*)?$`
         );
     }
 
@@ -654,12 +657,12 @@ export class LinkedIn extends Platform {
 
     constructor() {
         super('LinkedIn', 'https://www.linkedin.com', false, false,
-        // matches LinkedIn URLs, with or without a subdomain
-        "^https?://(?:[a-zA-Z0-9-]+\\.)?(linkedin\\.com)",
-        // matches LinkedIn account URLs (either in/, company/, or school/ subpaths)
-        '/(?<type>in|company|school)/(?<accountName>[^/]+)(?:\/about)?\/?(?:\\?.*)?$',
-        // matches LinkedIn content URLs  
-        `/(?!in/|school/|company/)(?<type>[a-zA-Z0-9-]+)/(?<title>[a-zA-Z0-9-_]+)?\/?(?:/|\\?.*)?$`
+            // matches LinkedIn URLs, with or without a subdomain
+            "^https?://(?:[a-zA-Z0-9-]+\\.)?(linkedin\\.com)",
+            // matches LinkedIn account URLs (either in/, company/, or school/ subpaths)
+            '/(?<type>in|company|school)/(?<accountName>[^/]+)(?:\/about)?\/?(?:\\?.*)?$',
+            // matches LinkedIn content URLs  
+            `/(?!in/|school/|company/)(?<type>[a-zA-Z0-9-]+)/(?<title>[a-zA-Z0-9-_]+)?\/?(?:/|\\?.*)?$`
         );
     }
 
@@ -733,12 +736,12 @@ export class Threads extends Platform {
 
     constructor() {
         super('Threads', 'https://www.threads.net', false, false,
-        // matches Threads URLs, with or without a www. subdomain
-        "^https?://(?:www\\.)?threads\\.net",
-        // matches Threads account URLs, with an optional '@' prefix (gets added by redirect)
-        "/@?(?<accountName>[^/]{1,30})\/?(?:\\?.*)?$",
-        // matches Threads content URLs with a status path and a status ID path
-        "/@?(?<accountName>[^/]{1,30})/post/(?<id>[a-zA-Z0-9-_]+)\/?(?:\\?.*)?$"
+            // matches Threads URLs, with or without a www. subdomain
+            "^https?://(?:www\\.)?threads\\.net",
+            // matches Threads account URLs, with an optional '@' prefix (gets added by redirect)
+            "/@?(?<accountName>[^/]{1,30})\/?(?:\\?.*)?$",
+            // matches Threads content URLs with a status path and a status ID path
+            "/@?(?<accountName>[^/]{1,30})/post/(?<id>[a-zA-Z0-9-_]+)\/?(?:\\?.*)?$"
         );
     }
 
@@ -793,14 +796,14 @@ export class GoogleScholar extends Platform {
 
     constructor() {
         super('Google Scholar', 'https://scholar.google.com',
-        false, // access is public, but Google Scholar doesn't allow custom content, so nothing to retrieve
-        false, // n/a
-        // matches GoogleScholar URLs
-        '^https?://scholar\\.google\\.com',
-        // matches GoogleScholar account URLs
-        '/citations\\?(?:[^&]*&)*user=(?<userID>[a-zA-Z0-9-_]+)(?:&[^ ]*)?$',
-        // no content URL for Google Scholar 
-        ``
+            false, // access is public, but Google Scholar doesn't allow custom content, so nothing to retrieve
+            false, // n/a
+            // matches GoogleScholar URLs
+            '^https?://scholar\\.google\\.com',
+            // matches GoogleScholar account URLs
+            '/citations\\?(?:[^&]*&)*user=(?<userID>[a-zA-Z0-9-_]+)(?:&[^ ]*)?$',
+            // no content URL for Google Scholar 
+            ``
         );
     }
 
@@ -832,6 +835,117 @@ export class GoogleScholar extends Platform {
 
     canonicalizeContentUrl(url: string): CanonicalizedContentData {
         throw new Error('Google Scholar does not support content URLs'); // TODO: is that the right thing to do?
+    }
+}
+
+// Rumble platform implementation.
+export class Rumble extends Platform {
+    constructor() {
+        super('Rumble', 'https://rumble.com/', true, true,
+            // matches Rumble URLs, with or without www. subdomain
+            "^https?://(?:www\\.)?(rumble\\.com)",
+            // matches Rumble channel URLs  /c is optional.
+            '(?<accountName>\/?(c\/)?(c-\\d{7}|(?<!c-)\\w+))\/?$',
+            // matches Rumble content URLs
+            '/(?<id>[a-zA-Z0-9-_]+)(\\.html)?\/?$'
+        );
+    }
+
+    canonicalizeAccountName = (url: string): string => {
+        return trimAndRemoveAtPrefix(url).replace(/\/?(c\/)?/, '')
+    };
+
+    canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
+        if (!this.isValidAccountUrl(url)) {
+            throw new Error('Malformed Rumble account URL');
+        }
+        // extract the account name from the Rumble account URL
+        const accountRegex = new RegExp(this.accountRegexString);
+        const match = accountRegex.exec(url);
+        if (match && match.groups) {
+            const accountName = match.groups.accountName.replace(/^\/?(c\/)?/, '');
+            return {
+                url: `${this.CanonicalHostname}c/${accountName}`, // IG always redirects to URL terminating with a slash
+                account: accountName
+            }
+        } else {
+            const errMsg = `Malformed Rumble account URL: can't extract account name`;
+            console.error(`canonicalizeAccountUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+
+    igContentTypesToContentType(igContentTypes: string): ContentType {
+        switch (igContentTypes) {
+            case 'p':
+                return 'post';
+            case 'reel':
+                return 'reel';
+            default:
+                return 'misc';
+        }
+    }
+
+    canonicalizeContentUrl(url: string): CanonicalizedContentData {
+        if (!this.isValidContentUrl(url)) {
+            throw new Error('Malformed Rumble content URL');
+        }
+        // extract what we can from the Rumble content URL
+        const contentRegex = new RegExp(this.contentRegexString);
+        const match = contentRegex.exec(url);
+        if (match && match.groups) {
+            const id = match.groups.id;
+            let canonicalUrl = `${this.CanonicalHostname}${id}.html`;
+            return {
+                account: '',
+                puid: id,
+                type: 'video',
+                url: canonicalUrl
+            }
+        } else {
+            const errMsg = `Malformed Rumble content URL`;
+            console.error(`canonicalizeContentUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+
+    async getAccountData(url: string): Promise<PlatformAccountData> {
+        const accountData = this.canonicalizeAccountUrl(url);
+        try {
+            const description = await query(`${accountData.url}/about`, 'div.channel-about-description-socials') as string;
+            const xpocUri = findXpocUri(description);
+            return {
+                xpocUri: xpocUri,
+                platform: this.DisplayName,
+                url: accountData.url,
+                account: accountData.account
+            };
+
+        } catch (err) {
+            throw new Error('Failed to fetch Rumble data');
+        }
+    }
+
+    async getContentData(url: string): Promise<PlatformContentData> {
+        const contentData = this.canonicalizeContentUrl(url);
+        try {
+            const channelUrl = await query(contentData.url, 'meta[property="og:url"]', 'content') as string;
+            const account = (await query(contentData.url, 'a.media-by--a', 'href') as string)?.replace('/c/', '');
+            const postTime = await query(contentData.url, '.media-description-info-tag > div', 'title') as string;
+            const videoTag = await query(contentData.url, 'meta[property="og:video:tag"]', 'content') as string;
+
+            const xpocUri = findXpocUri(videoTag);
+            return {
+                xpocUri: xpocUri,
+                platform: this.DisplayName,
+                url: contentData.url,
+                account: account,
+                timestamp: toUTCString(postTime),
+                puid: contentData.puid
+            };
+        } catch (err) {
+            throw new Error('Failed to fetch Rumble data');
+        }
     }
 }
 
@@ -976,6 +1090,6 @@ export const Platforms = {
             }
         }
         throw new Error(`Unsupported platform: ${url}`);
-    }    
-    
+    }
+
 }

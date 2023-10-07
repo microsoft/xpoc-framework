@@ -2,6 +2,19 @@
 
 The Cross-Platform Origin of Content (XPOC) framework is platform agnostic. In order to improve interoperability however, it is RECOMMENDED to follow these guidelines when creating entries in a manifest or adding XPOC URIs on the following platforms. 
 
+List of platforms:
+-   [YouTube](#youtube)
+-   [X/Twitter](#xtwitter)
+-   [Facebook](#facebook)
+-   [Instagram](#instagram)
+-   [Medium](#medium)
+-   [TikTok](#tiktok)
+-   [LinkedIn](#linkedin)
+-   [Threads](#threads)
+-   [Google Scholar](#google-scholar)
+-   [Rumble](#rumble)
+-   [GitHub](#github)
+
 ## YouTube
 
 ### Manifest content
@@ -205,3 +218,20 @@ Google Scholar does not support adding XPOC URI on the account page.
 
 - For individuals: in the user's channel description field (per channel)
 - For a post: in a video's tag field.
+
+## GitHub
+
+GitHub only supports account listing.
+
+### Manifest content
+
+-   `accounts` properties:
+    -   `platform`: "GitHub"
+    -   `account`: the owner's account name `<accountname>`
+    -   `url`: `https://github.com/<accountname>`
+
+GitHub does not support adding specific pieces of content.
+
+### XPOC URI placement
+
+-    On the account page: in the account page's Bio field.

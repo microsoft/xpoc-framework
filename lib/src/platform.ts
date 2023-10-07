@@ -954,6 +954,71 @@ export class Rumble extends Platform {
     }
 }
 
+// GitHub platform implementation. This platform only supports account listing.
+export class GitHub extends Platform {
+
+    constructor() {
+        super('GitHub', 'https://github.com',
+        true,
+        false, // n/a
+        // matches GitHub URLs
+        '^https?://(?:www\\.)?(github\\.com)',
+        // matches GitHub account URLs
+        "/(?<accountName>[a-zA-Z0-9-_]{1,39})\/?(?:\\?.*)?$",
+        // no content URL for GitHub 
+        ``
+        );
+    }
+
+    // overwrite base class's implementation
+    isValidContentUrl(url: string): boolean {
+        return false; // GitHub does not support content URLs
+    }
+
+    canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
+        if (!this.isValidAccountUrl(url)) {
+            throw new Error('Malformed GitHub account URL');
+        }
+        // extract the account name from the GitHub account URL
+        const accountRegex = new RegExp(this.accountRegexString);
+        const match = accountRegex.exec(url);
+        if (match && match.groups) {
+            const accountName = match.groups.accountName;
+            let url = `${this.CanonicalHostname}/${accountName}`;
+            return {
+                url: url,
+                account: accountName
+            }
+        } else {
+            const errMsg = `Malformed GitHub account URL: can't extract account name`;
+            console.error(`canonicalizeAccountUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+
+    canonicalizeContentUrl(url: string): CanonicalizedContentData {
+        throw new Error('GitHub does not support content URLs');
+    }
+
+    async getAccountData(url: string): Promise<PlatformAccountData> {
+        // TODO: same implementation as YouTube's; refactor
+        const accountData = this.canonicalizeAccountUrl(url);
+        try {
+            const description = await query(accountData.url, 'meta[name="description"]', 'content') as string;
+            const xpocUri = findXpocUri(description);
+            return {
+                xpocUri: xpocUri,
+                platform: this.DisplayName,
+                url: accountData.url,
+                account: accountData.account
+            };
+
+        } catch (err) {
+            throw new Error('Failed to fetch GitHub data');
+        }
+    }
+}
+
 
 // supported platforms
 export const Platforms = {
@@ -967,7 +1032,9 @@ export const Platforms = {
         new TikTok(),
         new LinkedIn(),
         new Threads(),
-        new GoogleScholar()
+        new GoogleScholar(),
+        new Rumble(),
+        new GitHub()
     ],
 
     /**

@@ -117,12 +117,17 @@ const trimAndRemoveAtPrefix = (str: string) => {
 }
 
 // converts data-time strings to UTC strings
-const toUTCString = (dateString: string): string => {
-    const utcString = dateString ? (new Date(dateString)).toISOString().slice(0, -5) + 'Z' : ''
-    console.debug(`toUTCString: ${dateString} -> ${utcString}`);
-    return utcString;
+const toUTCString = (dateStr: string): string => {
+    if (!dateStr) { return ''; }
+    // Check if the string contains a time component
+    const hasTime = /(\d{1,2}:\d{2}(:\d{2})?)/.test(dateStr);
+    // If it does, convert it to UTC
+    // If not, append T00:00:00Z to the UTC date
+    // Date() will convert the date to the local timezone and we get different results 
+    // depending on the timezone of the machine
+    const dt = new Date(dateStr).toISOString();
+    return hasTime ? dt : dt.replace(/T.*/, 'T00:00:00Z');
 }
-
 
 // TODO: make sure all regex ignore the case of the hostname
 

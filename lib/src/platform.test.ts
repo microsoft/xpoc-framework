@@ -658,7 +658,7 @@ const platformTestDataArray: PlatformTestData[] = [
             platform: "Rumble",
             url: "https://rumble.com/v3lvq1f-crossette.html",
             account: "c-4908074",
-            timestamp: "2023-09-29T07:00:00Z",
+            timestamp: "2023-09-29T00:00:00Z",
             puid: "v3lvq1f-crossette"
         }
     },

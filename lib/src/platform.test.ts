@@ -988,7 +988,7 @@ describe('platform operations', () => {
         expect(Platforms.canFetchContentFromUrl(url)).toBe(true);
         contentData = await Platforms.getContentFromUrl(url);
         expect(contentData.platform).toBe('Rumble');
-        expect(contentData.puid).toBe('v3lvq1f');
+        expect(contentData.puid).toBe('v3lvq1f-crossette');
         expect(contentData.url).toBe('https://rumble.com/v3lvq1f-crossette.html');
         expect(contentData.account).toBe('c-4908074');
 

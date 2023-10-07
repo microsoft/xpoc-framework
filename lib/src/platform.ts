@@ -880,17 +880,6 @@ export class Rumble extends Platform {
         }
     }
 
-    igContentTypesToContentType(igContentTypes: string): ContentType {
-        switch (igContentTypes) {
-            case 'p':
-                return 'post';
-            case 'reel':
-                return 'reel';
-            default:
-                return 'misc';
-        }
-    }
-
     canonicalizeContentUrl(url: string): CanonicalizedContentData {
         if (!this.isValidContentUrl(url)) {
             throw new Error('Malformed Rumble content URL');

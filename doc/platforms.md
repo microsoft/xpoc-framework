@@ -186,3 +186,20 @@ Google Scholar does not support adding specific pieces of content.
 ### XPOC URI placement
 
 Google Scholar does not support adding XPOC URI on the account page.
+
+## GitHub
+
+GitHub only supports account listing.
+
+### Manifest content
+
+-   `accounts` properties:
+    -   `platform`: "GitHub"
+    -   `account`: the owner's account name `<accountname>`
+    -   `url`: `https://github.com/<accountname>`
+
+GitHub does not support adding specific pieces of content.
+
+### XPOC URI placement
+
+-    On the account page: in the account page's Bio field.

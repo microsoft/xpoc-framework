@@ -204,7 +204,10 @@ export class YouTube extends Platform {
             const $ = load(response.data);
             const channelUrl = $('span[itemprop="author"] link[itemprop="url"]').attr('href');
             const account = channelUrl?.split('/').pop()?.replace('@', '') || '';
-            const postTime = $('meta[itemprop="datePublished"]').attr('content') || '';
+            let postTime = $('meta[itemprop="datePublished"]').attr('content') || '';
+            if (postTime && !postTime.includes('T')) {
+                postTime = postTime+"T00:00:00Z";
+            }
             const videoDescription = $('meta[name="description"]').attr('content');
             const xpocUri = findXpocUri(videoDescription);
             return {
@@ -212,7 +215,7 @@ export class YouTube extends Platform {
                 platform: this.DisplayName,
                 url: contentData.url,
                 account: account,
-                timestamp: postTime ? postTime+"T00:00:00Z" : '',
+                timestamp: postTime,
                 puid: contentData.puid
             };
         } catch (err) {
@@ -831,10 +834,77 @@ export class GoogleScholar extends Platform {
     }
 
     canonicalizeContentUrl(url: string): CanonicalizedContentData {
-        throw new Error('Google Scholar does not support content URLs'); // TODO: is that the right thing to do?
+        throw new Error('Google Scholar does not support content URLs');
     }
 }
 
+// GitHub platform implementation. This platform only supports account listing.
+export class GitHub extends Platform {
+
+    constructor() {
+        super('GitHub', 'https://github.com',
+        true,
+        false, // n/a
+        // matches GitHub URLs
+        '^https?://(?:www\\.)?(github\\.com)',
+        // matches GitHub account URLs
+        "/(?<accountName>[a-zA-Z0-9-_]{1,39})\/?(?:\\?.*)?$",
+        // no content URL for GitHub 
+        ``
+        );
+    }
+
+    // overwrite base class's implementation
+    isValidContentUrl(url: string): boolean {
+        return false; // GitHub does not support content URLs
+    }
+
+    canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
+        if (!this.isValidAccountUrl(url)) {
+            throw new Error('Malformed GitHub account URL');
+        }
+        // extract the account name from the GitHub account URL
+        const accountRegex = new RegExp(this.accountRegexString);
+        const match = accountRegex.exec(url);
+        if (match && match.groups) {
+            const accountName = match.groups.accountName;
+            let url = `${this.CanonicalHostname}/${accountName}`;
+            return {
+                url: url,
+                account: accountName
+            }
+        } else {
+            const errMsg = `Malformed GitHub account URL: can't extract account name`;
+            console.error(`canonicalizeAccountUrl: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+    }
+
+    canonicalizeContentUrl(url: string): CanonicalizedContentData {
+        throw new Error('GitHub does not support content URLs');
+    }
+
+    async getAccountData(url: string): Promise<PlatformAccountData> {
+        // TODO: same implementation as YouTube's; refactor
+        const accountData = this.canonicalizeAccountUrl(url);
+        try {
+            const response = await axios.get(accountData.url);
+            const $ = load(response.data);
+            const description = $('meta[name="description"]').attr('content');
+            const xpocUri = findXpocUri(description);
+            return {
+                xpocUri: xpocUri,
+                platform: this.DisplayName,
+                url: accountData.url,
+                account: accountData.account
+            };
+
+        } catch (err) {
+            throw new Error('Failed to fetch GitHub data');
+        }
+    }
+
+}
 
 // supported platforms
 export const Platforms = {
@@ -848,7 +918,8 @@ export const Platforms = {
         new TikTok(),
         new LinkedIn(),
         new Threads(),
-        new GoogleScholar()
+        new GoogleScholar(),
+        new GitHub()
     ],
 
     /**

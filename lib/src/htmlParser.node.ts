@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { type CheerioAPI, load } from "cheerio";
-import { Platforms } from "./platform";
+import { Platforms } from "./platform.js";
 
 const cache = new Map<string, CheerioAPI>();
 const allowedHosts : RegExp[] = []

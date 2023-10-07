@@ -12,7 +12,7 @@ List of platforms:
 -   [LinkedIn](#linkedin)
 -   [Threads](#threads)
 -   [Google Scholar](#google-scholar)
--   [GitHum](#github)
+-   [GitHub](#github)
 
 ## YouTube
 

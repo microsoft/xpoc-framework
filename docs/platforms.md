@@ -2,6 +2,18 @@
 
 The Cross-Platform Origin of Content (XPOC) framework is platform agnostic. In order to improve interoperability however, it is RECOMMENDED to follow these guidelines when creating entries in a manifest or adding XPOC URIs on the following platforms. 
 
+List of platforms:
+-   [YouTube](#youtube)
+-   [X/Twitter](#xtwitter)
+-   [Facebook](#facebook)
+-   [Instagram](#instagram)
+-   [Medium](#medium)
+-   [TikTok](#tiktok)
+-   [LinkedIn](#linkedin)
+-   [Threads](#threads)
+-   [Google Scholar](#google-scholar)
+-   [GitHum](#github)
+
 ## YouTube
 
 ### Manifest content

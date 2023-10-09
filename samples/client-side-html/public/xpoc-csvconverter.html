@@ -7,30 +7,48 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>XPOC Manifest CSV Converter</h1>
-    <p>This page converts accounts and content data stored in comma-separated-value files (.cvs) into a XPOC manifest. See the <a href="accounts.csv">accounts.csv</a> and <a href="content.csv">content.csv</a> templates containing the right header row.</p>
-    <p>Enter the XPOC manifest owner information, select an accounts or a content file (or both), and click the generation button to create the manifest.</p>
-    <h4>Enter XPOC owner details</h4>
-    Name: <input type="text" id="nameInput" placeholder="Enter name">
-    <br><br>
-    Website: <input type="text" id="baseURLInput" placeholder="Enter website">
-    <br><br>
+    <div class="xpoc-clean-form">
 
-    <h4>Select accounts file to convert (CSV format <span class="info-tooltip">i<span class="tooltip-text">The .cvs file must contain a header line with the following fields: account, platform, url</span></span>)</h4>
-    <input type="file" id="accountsCsvFile" />
-    
-    <h4>Select content file to convert (CSV format<span class="info-tooltip">i<span class="tooltip-text">The .cvs file must contain a header line with the following fields: account, platform, url, desc, puid, timestamp</span></span>)</h4>
-    <input type="file" id="contentCsvFile" />
-    
-    <br><br>
-    
-    <button onclick="convertToJSON()">Generate manifest</button>
-    <a id="downloadLink" style="display:none; margin-left: 20px;" download="manifest.json">Download JSON</a>
-    <pre id="output"></pre>
+        <h1>XPOC Manifest CSV Converter</h1>
+        <p>This page converts accounts and content data stored in comma-separated-value files (.cvs) into a XPOC manifest. See the <a href="accounts.csv">accounts.csv</a> and <a href="content.csv">content.csv</a> templates containing the right header row.</p>
+        <p>Enter the XPOC manifest owner information, select an accounts or a content file (or both), and click the generation button to create the manifest. You can then "Copy" or "Save" the manifest file.</p>
 
+        <div class="error" id="errorMsg"></div>
+
+        <h4>Enter XPOC owner details</h4>
+        <table id="manifestInfoTable">
+            <tbody>
+                <tr>
+                    <td><label for="manifestName">Name *</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
+                    <td><input type="text" id="manifestName" onchange="validateAndUpdateName(this.value, this)"></td>
+                </tr>
+                <tr>
+                    <td><label for="manifestBaseUrl">Base URL *</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
+                    <td><input type="text" id="manifestBaseUrl" onchange="validateAndUpdateURL(this.value, this)"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>Select accounts file to convert (CSV format <span class="info-tooltip">i<span class="tooltip-text">The .cvs file must contain a header line with the following fields: account, platform, url</span></span>)</h4>
+        <input type="file" id="accountsCsvFile" onchange="clearError()"/>
+        
+        <h4>Select content file to convert (CSV format<span class="info-tooltip">i<span class="tooltip-text">The .cvs file must contain a header line with the following fields: account, platform, url, desc, puid, timestamp</span></span>)</h4>
+        <input type="file" id="contentCsvFile" onchange="clearError()"/>
+        
+        <br><br>
+        
+        <button onclick="convertToJSON()">Generate manifest</button>
+        <button id="saveButton" onclick="saveManifest()" disabled>Save</button>
+        <button id="copyButton" onclick="copyToClipboard()" disabled>Copy</button>
+        <a id="downloadLink" style="display:none; margin-left: 20px;" download="manifest.json">Download JSON</a>
+        <br><br>
+        <textarea id="manifestTextArea" rows="20" cols="100" readonly style="display: none;"></textarea>
+        </div>
     <!-- Include PapaParse library to parse CSV file -->
+    <script src="xpoc-common-editor.js"></script>
     <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js" integrity="sha384-D/t0ZMqQW31H3az8ktEiNb39wyKnS82iFY52QPACM+IjKW3jDUhyIgh2PApRqJZs" crossorigin="anonymous"></script>    
     <script>
+
         function parseCSV(file, callback) {
             Papa.parse(file, {
                 skipEmptyLines: true,
@@ -40,14 +58,21 @@
         }
 
         function convertToJSON() {
-            const name = document.getElementById('nameInput').value || "";
-            const baseurl = document.getElementById('baseURLInput').value || "";
-
+            const name = document.getElementById('manifestName').value || "";
+            const baseurl = document.getElementById('manifestBaseUrl').value || "";
             const accountsFile = document.getElementById('accountsCsvFile').files[0];
             const contentFile = document.getElementById('contentCsvFile').files[0];
 
+            if (!manifest.name) {
+                showError("Please enter a name for the manifest owner.");
+                return;
+            }
+            if (!manifest.baseurl) {
+                showError("Please enter a base URL for the owner's website.");
+                return;
+            }
             if (!accountsFile && !contentFile) {
-                alert("Please provide at least one CSV files.");
+                showError   ("Please provide at least one CSV files.");
                 return;
             }
 
@@ -73,17 +98,9 @@
         }
 
         function finalizeConversion(name, baseurl, accountsData, contentData) {
-            const jsonData = {
-                name: name,
-                baseurl: baseurl,
-                version: "0.2",
-                accounts: [],
-                content: []
-            };
-
             if (accountsData) {
                 accountsData.forEach(row => {
-                    jsonData.accounts.push({
+                    manifest.accounts.push({
                         platform: row.platform || "",
                         url: row.url  || "",
                         account: row.account  || ""
@@ -102,19 +119,11 @@
                     if (row.desc) contentData.desc = row.desc;
                     if (row.puid) contentData.puid = row.puid;
                     if (row.timestamp) contentData.timestamp = row.timestamp;
-                    jsonData.content.push(contentData);
+                    manifest.content.push(contentData);
                 });
             }
 
-            const jsonOutput = JSON.stringify(jsonData, null, 4);
-            document.getElementById('output').textContent = jsonOutput;
-            
-            // Provide download link
-            const blob = new Blob([jsonOutput], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const downloadLink = document.getElementById('downloadLink');
-            downloadLink.href = url;
-            downloadLink.style.display = 'inline';  // make the download link visible
+            displayManifest();
         }
     </script>
 </body>

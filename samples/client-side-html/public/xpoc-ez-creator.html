@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div class="xpoc-ez-creator">
+    <div class="xpoc-clean-form">
         <h1>XPOC Manifest Creator</h1>
         <p>
             This page allows the creation of a XPOC manifest by adding your accounts on popular platforms. Simply
@@ -51,18 +51,8 @@
         </div>
     </div>
 
-    <script src="xpoc-common.js"></script>
+    <script src="xpoc-common-editor.js"></script>
     <script>
-        const currentVersion = "0.2";
-
-        let manifest = {
-            name: "",
-            baseurl: "",
-            version: currentVersion,
-            accounts: [],
-            content: []
-        };
-
         let accountReplaceString = "^ACCOUNT^";
 
         let platforms = [
@@ -155,7 +145,6 @@
             document.getElementById('accountsTable').innerHTML = html;
         }
 
-
         function setAccounts() {
             let count = 0;
             platforms.forEach((platform) => {
@@ -174,45 +163,6 @@
             return count;
         }
 
-        function validateAndUpdateName(inputValue, inputElement) {
-            clearError();
-            inputValue = inputValue.trim();
-            manifest.name = inputValue;
-            // update value in the input field
-            inputElement.value = inputValue;
-        }
-
-        function validateAndUpdateURL(inputValue, inputElement) {
-            clearError();
-            inputValue = inputValue.trim();
-            validatedURL = inputValue;
-            // if it doesn't start with 'http://' or 'https://', prepend 'https://'
-            if (!/^https?:\/\//i.test(inputValue)) {
-                validatedURL = 'https://' + inputValue;
-            }
-
-            const validURLPattern = /^https:\/\/[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})(\/[\w.-\/]*)?$/i;
-            if (!validURLPattern.test(validatedURL)) {
-                showError("Please enter a valid base URL for the owner's website.");
-                return;
-            }
-
-            manifest.baseurl = validatedURL;
-            // update value in the input field
-            inputElement.value = validatedURL;
-        }
-
-        function validateAndUpdateAccount(inputValue, inputElement) {
-            clearError();
-            inputValue = inputValue.trim();
-            // remove leading '@' if present
-            if (inputValue.startsWith('@')) {
-                inputValue = inputValue.substring(1);
-            }
-            // update value in the input field
-            inputElement.value = inputValue;
-        }
-
         function createManifest() {
             if (!manifest.name) {
                 showError("Please enter a name for the manifest owner.");
@@ -228,31 +178,7 @@
                 return;
             }
 
-            // Populate the textarea with the generated manifest and make it visible
-            const manifestTextArea = document.getElementById('manifestTextArea');
-            manifestTextArea.value = JSON.stringify(manifest, null, 2);
-            manifestTextArea.style.display = 'block';
-
-            // Enable the Save and Copy buttons
-            document.getElementById('saveButton').disabled = false;
-            document.getElementById('copyButton').disabled = false;
-        }
-
-        function saveManifest() {
-            const manifestJson = document.getElementById('manifestTextArea').value;
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(manifestJson);
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "xpoc-manifest.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-        }
-
-        function copyToClipboard() {
-            const textarea = document.getElementById('manifestTextArea');
-            textarea.select();
-            document.execCommand('copy');
+            displayManifest();
         }
 
         // update the accounts table on page load

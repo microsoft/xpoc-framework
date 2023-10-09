@@ -42,7 +42,7 @@
             <tbody>
                 <tr>
                     <td><label for="manifestName">Name *</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
-                    <td><input type="text" id="manifestName" onchange="manifest.name = this.value"></td>
+                    <td><input type="text" id="manifestName" onchange="validateAndUpdateName(this.value, this)"></td>
                 </tr>
                 <tr>
                     <td><label for="manifestBaseUrl">Base URL *</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
@@ -73,10 +73,8 @@
         <button id="saveButton" onclick="saveToFile()">Save</button>
     </div>
 
-    <script src="xpoc-common.js"></script>
+    <script src="xpoc-common-editor.js"></script>
     <script>
-        const currentVersion = "0.2";
-
         const supportedPlatforms = [
             // {name: platform name, alias: other names for the platform}
             { name: "YouTube" },
@@ -91,14 +89,6 @@
             { name: "GitHub" }
         ]
 
-        let manifest = {
-            name: "",
-            baseurl: "",
-            version: currentVersion,
-            accounts: [],
-            content: []
-        };
-
         function initializeManifestInfo() {
             clearError();
             document.getElementById('manifestName').value = manifest.name || '';
@@ -107,14 +97,6 @@
         }
 
         function createNewManifest() {
-            manifest = {
-                name: "",
-                baseurl: "",
-                version: currentVersion,
-                accounts: [],
-                content: []
-            };
-            
             // Display the initialized manifest info and clear tables
             initializeManifestInfo();
             updateAccountsTable();

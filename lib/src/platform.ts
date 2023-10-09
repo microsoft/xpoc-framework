@@ -44,7 +44,7 @@ export abstract class Platform {
     public CanFetchContentData: boolean;
 
     // regex strings used to validate and canonicalize hostname URLs
-    protected regexHostnameString: string;
+    public regexHostnameString: string;
 
     // regex strings used to validate and canonicalize account URLs
     protected accountRegexString: string;

@@ -1,25 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Platforms } from "./platform.js";
-
 const cache = new Map<string, Document>();
-const allowedHosts: RegExp[] = []
-
-export function isAllowedHost(url: string): boolean {
-    for (const host of allowedHosts) {
-        if (host.test(url)) return true
-    }
-    return false
-}
 
 export async function query(url: string, nodeQuery: string, attribute: string): Promise<string | undefined | Error> {
-    // Initialize allowed hosts if not already done
-    if (allowedHosts.length === 0) {
-        for (const platform of Platforms.platforms) {
-            allowedHosts.push(new RegExp(platform.regexHostnameString))
-        }
-    }
     const htmlOrError = await fetch(url).then((res: Response) => res.text()).catch((err: Error) => err);
     if (htmlOrError instanceof Error) return htmlOrError;
     const html: string = htmlOrError;

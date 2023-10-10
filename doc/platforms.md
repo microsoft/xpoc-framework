@@ -208,7 +208,7 @@ Google Scholar does not support adding XPOC URI on the account page.
     -   `platform`: "Rumble"
     -   `account`: the owner's channel name `<accountname>`
 -   `accounts` properties:
-    -   `url`: `https://rumble.com/c/<accountname>/`
+    -   `url`: `https://rumble.com/c/<accountname>`
 -   `content` properties:
     -   `url`: `https://rumble.com/<id>-<title>.html` where `<id>` is a 7-character alphanumeric string.
     -   `puid`: <id>

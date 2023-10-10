@@ -78,7 +78,7 @@ describe('manifest file operations', () => {
         expect(testManifest?.manifest.name).toBe('A test name');
         expect(testManifest?.manifest.version).toBe(Manifest.LatestVersion);
         expect(testManifest?.manifest.accounts.length).toBe(12);
-        expect(testManifest?.manifest.content.length).toBe(9);
+        expect(testManifest?.manifest.content.length).toBe(10);
     });
     
     (testManifest ? test : test.skip)('match accounts', () => {

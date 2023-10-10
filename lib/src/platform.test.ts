@@ -826,9 +826,9 @@ describe('platform operations', () => {
         // Google Scholar
         expect(Platforms.isSupportedAccountUrl('https://scholar.google.com/citations?user=userid')).toBe(true);
         // Rumble
-        expect(Platforms.isSupportedAccountUrl('https://rumble.com/c/c-1234567')).toBe(true);
+        expect(Platforms.isSupportedAccountUrl('https://rumble.com/c/accountname')).toBe(true);
         // GitHub
-        expect(Platforms.isSupportedAccountUrl('https://github.com/christianpaquin')).toBe(true);
+        expect(Platforms.isSupportedAccountUrl('https://github.com/accountname')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -855,7 +855,7 @@ describe('platform operations', () => {
         // Rumble
         expect(Platforms.isSupportedContentUrl('https://rumble.com/abcefgh-content.html')).toBe(true);
         // GitHub (no supported content)
-        expect(Platforms.isSupportedContentUrl('https://github.com/christianpaquin')).toBe(false);
+        expect(Platforms.isSupportedContentUrl('https://github.com/accountname')).toBe(false);
         // unsupported platform
         expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });

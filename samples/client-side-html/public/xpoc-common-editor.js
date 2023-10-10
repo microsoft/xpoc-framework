@@ -40,14 +40,14 @@ function validateAndUpdateURL(inputValue, inputElement, contentType = 'info', in
         validatedURL = 'https://' + inputValue;
     }
     // account and content URLs can have query params and anchor
-    const fullPath = contentType !== 'info';
-    const fullPathPattern = fullPath ? "(\\?[a-zA-Z0-9%=&-]*)?(#[a-zA-Z0-9_-]*)?" : "";
-    const validURLPattern = new RegExp(
-        `^https:\\/\\/` + // https protocol
-        `[a-zA-Z0-9.-]+` + // (sub)domain name
-        `(\\.[a-zA-Z]{2,})` + // top level domain
-        `(\\/[\\w.-]+(\\/[\\w.-]+)*)?\\/??` + // path
-        `${fullPathPattern}$`, "i"); // query params and anchor
+    const nonDomainChars = "a-zA-Z0-9-_.!~*'();:@&=+$,";
+    const fullUrl = contentType !== 'info';
+    const fullUrlPattern = fullUrl ? `(\\?[${nonDomainChars}/%]+)?(#[a-zA-Z0-9-_.!~*'();:@&=+$,/%]+)?` : "";
+    const validURLPattern = new RegExp(`^https:\\/\\/` + // https protocol
+                                   `[a-zA-Z0-9.-]+` + // (sub)domain name
+                                   `(\\.[a-zA-Z]{2,})` + // top level domain
+                                   `(\\/[${nonDomainChars}]+(\\/[${nonDomainChars}]+)*)?\\/??` + // path
+                                   `${fullUrlPattern}$`, "i"); // query params and anchor
     if (!validURLPattern.test(validatedURL)) {
         let urlField;
         if (contentType === 'info') {

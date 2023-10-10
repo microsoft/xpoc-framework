@@ -31,35 +31,61 @@ function validateAndUpdateName(inputValue, inputElement) {
     inputElement.value = inputValue;
 }
 
-function validateAndUpdateURL(inputValue, inputElement) {
+function validateAndUpdateURL(inputValue, inputElement, contentType = 'info', index = 0) {
     clearError();
     inputValue = inputValue.trim();
     validatedURL = inputValue;
-    // if it doesn't start with 'http://' or 'https://', prepend 'https://'
+    // prepend 'https://' if missing
     if (!/^https?:\/\//i.test(inputValue)) {
         validatedURL = 'https://' + inputValue;
     }
-
-    const validURLPattern = /^https:\/\/[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})(\/[\w.-\/]*)?$/i;
+    // account and content URLs can have query params and anchor
+    const fullPath = contentType !== 'info';
+    const fullPathPattern = fullPath ? "(\\?[a-zA-Z0-9%=&-]*)?(#[a-zA-Z0-9_-]*)?" : "";
+    const validURLPattern = new RegExp(
+        `^https:\\/\\/` + // https protocol
+        `[a-zA-Z0-9.-]+` + // (sub)domain name
+        `(\\.[a-zA-Z]{2,})` + // top level domain
+        `(\\/[\\w.-]+(\\/[\\w.-]+)*)?\\/??` + // path
+        `${fullPathPattern}$`, "i"); // query params and anchor
     if (!validURLPattern.test(validatedURL)) {
-        showError("Please enter a valid base URL for the owner's website.");
+        let urlField;
+        if (contentType === 'info') {
+            urlField = "owner's website";
+        } else if (contentType === 'content') {
+            urlField = "content URL";
+        } else if (contentType === 'account') {
+            urlField = "platform URL";
+        }
+        showError(`Please enter a valid base URL for the ${urlField}.`);
         return;
     }
-
-    manifest.baseurl = validatedURL;
+    if (contentType === 'info') {
+        manifest.baseurl = validatedURL;
+    } else if (contentType === 'content') {
+        manifest.content[index].url = validatedURL;
+    } else if (contentType === 'account') {
+        manifest.accounts[index].url = validatedURL;
+    }
     // update value in the input field
     inputElement.value = validatedURL;
 }
 
-function validateAndUpdateAccount(inputValue, inputElement) {
+function validateAndUpdateAccount(inputValue, inputElement, contentType = undefined, index = 0) {
     clearError();
     inputValue = inputValue.trim();
-    // remove leading '@' if present
-    if (inputValue.startsWith('@')) {
-        inputValue = inputValue.substring(1);
+    let accountName = inputValue;
+    // remove '@' prefix (if present)
+    accountName = accountName.replace(/^@/, '');
+    if (contentType === 'content') {
+        manifest.content[index].account = accountName;
+    } else if (contentType === 'account') {
+        manifest.accounts[index].account = accountName;
+    } else {
+        // nothing to do
     }
     // update value in the input field
-    inputElement.value = inputValue;
+    inputElement.value = accountName;
 }
 
 function displayManifest() {

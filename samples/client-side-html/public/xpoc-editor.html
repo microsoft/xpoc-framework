@@ -46,7 +46,7 @@
                 </tr>
                 <tr>
                     <td><label for="manifestBaseUrl">Base URL *</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
-                    <td><input type="text" id="manifestBaseUrl" onchange="validateAndUpdateURL('info', 0, this.value, this)"></td>
+                    <td><input type="text" id="manifestBaseUrl" onchange="validateAndUpdateURL(this.value, this, 'info', 0)"></td>
                 </tr>
                 <tr>
                     <td><label for="manifestVersion">Version</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.2</span></span></td>
@@ -137,7 +137,7 @@
             updateContentTable();
         }
 
-        function validateAndUpdatePlatform(contentType, index, inputValue, inputElement) {
+        function validateAndUpdatePlatform(inputValue, inputElement, contentType, index) {
             // TODO: use library bundle for this
             clearError();
             inputValue= inputValue.trim();
@@ -161,53 +161,6 @@
             inputElement.value = platform;
         }
     
-        function validateAndUpdateURL(contentType, index, inputValue, inputElement) {
-            clearError();
-            inputValue = inputValue.trim();
-            validatedURL = inputValue;
-            // If it doesn't start with 'http://', or 'https://', prepend 'https://'
-            if (!/^https?:\/\//i.test(inputValue)) {
-                validatedURL = 'https://' + inputValue;
-            }
-            const validURLPattern = /^https:\/\/[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})(\/[\w.-\/]*)?$/i;
-            if (!validURLPattern.test(validatedURL)) {
-                let urlField;
-                if (contentType === 'info') {
-                    urlField = "owner's website";
-                } else if (contentType === 'content') {
-                    urlField = "content URL";
-                } else if (contentType === 'account') {
-                    urlField = "platform URL";
-                }
-                showError(`Please enter a valid base URL for the ${urlField}.`);
-                return;
-            }
-            if (contentType === 'info') {
-                manifest.baseurl = validatedURL;
-            } else if (contentType === 'content') {
-                manifest.content[index].url = validatedURL;
-            } else if (contentType === 'account') {
-                manifest.accounts[index].url = validatedURL;
-            }
-            // update value in the input field
-            inputElement.value = validatedURL;
-        }
-
-        function validateAndUpdateAccount(contentType, index, inputValue, inputElement) {
-            clearError();
-            inputValue = inputValue.trim();
-            accountName = inputValue;
-            // remove '@' prefix (if present)
-            accountName = accountName.replace(/^@/, '');
-            if (contentType === 'content') {
-                manifest.content[index].account = accountName;
-            } else if (contentType === 'account') {
-                manifest.accounts[index].account = accountName;
-            }
-            // update value in the input field
-            inputElement.value = accountName;
-        }
-
         function validateAndUpdateTimestamp(index, inputValue, inputElement) {
             let date = null;
             if (inputValue) {
@@ -256,9 +209,9 @@
             manifest.accounts.forEach((account, index) => {
                 html += `
                     <tr>
-                        <td><input type="text" value="${account.platform}" onchange="validateAndUpdatePlatform('account', ${index}, this.value, this)"></td>
-                        <td><input type="text" value="${account.url}" onchange="validateAndUpdateURL('account', ${index}, this.value, this)"></td>
-                        <td><input type="text" value="${account.account}" onchange="validateAndUpdateAccount('account', ${index}, this.value, this)"></td>
+                        <td><input type="text" value="${account.platform}" onchange="validateAndUpdatePlatform(this.value, this, 'account', ${index})"></td>
+                        <td><input type="text" value="${account.url}" onchange="validateAndUpdateURL(this.value, this, 'account', ${index})"></td>
+                        <td><input type="text" value="${account.account}" onchange="validateAndUpdateAccount(this.value, this, 'account', ${index})"></td>
                         <td><button onclick="deleteAccount(${index})">Delete</button></td>
                     </tr>
                 `;
@@ -288,10 +241,10 @@
                 html += `
                     <tr>
                         <td><input type="text" value="${content.desc || ''}" placeholder="Optional" onchange="manifest.content[${index}].desc = this.value"></td>
-                        <td><input type="text" value="${content.url}" onchange="validateAndUpdateURL('content', ${index}, this.value, this)"></td>
-                        <td><input type="text" value="${content.platform}" onchange="validateAndUpdatePlatform('content', ${index}, this.value, this)"></td>
+                        <td><input type="text" value="${content.url}" onchange="validateAndUpdateURL(this.value, this, 'content', ${index})"></td>
+                        <td><input type="text" value="${content.platform}" onchange="validateAndUpdatePlatform(this.value, this, 'content', ${index})"></td>
                         <td><input type="text" value="${content.puid || ''}" placeholder="Optional" onchange="manifest.content[${index}].puid = this.value"></td>
-                        <td><input type="text" value="${content.account}" onchange="validateAndUpdateAccount('content', ${index}, this.value, this)"></td>
+                        <td><input type="text" value="${content.account}" onchange="validateAndUpdateAccount(this.value, this, 'content', ${index})"></td>
                         <td><input type="datetime-local" value="${convertIsoToDatetimeLocal(content.timestamp) || ''}" placeholder="Optional" onchange="validateAndUpdateTimestamp(${index}, this.value, this)"></td>
                         <td><button onclick="deleteContent(${index})">Delete</button></td>
                     </tr>

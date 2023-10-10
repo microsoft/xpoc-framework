@@ -49,6 +49,11 @@
 			"url": "https://scholar.google.com/citations?user=a-gs-ACCOUNT"
 		},
 		{
+			"account": "a_rb_test_account",
+			"platform": "Rumble",
+			"url": "https://rumble.com/c/a_rb_test_account"
+		},
+		{
 			"account": "a_gh_test_account",
 			"platform": "GitHub",
 			"url": "https://github.com/a_gh_test_account"
@@ -124,6 +129,13 @@
 			"puid": "ABCDEF12345",
 			"timestamp": "2023-07-17T00:00:00Z"
 		},
+		{
+			"account": "a_rb_test_account",
+			"platform": "Rumble",
+			"url": "https://rumble.com/abc1234-title.html/",
+			"desc": "a test video",
+			"puid": "abc1234",
+			"timestamp": "2023-07-18T00:00:00Z"		},
 		{
 			"account": "a_us_test_account",
 			"platform": "Unsupported",

@@ -12,6 +12,7 @@ List of platforms:
 -   [LinkedIn](#linkedin)
 -   [Threads](#threads)
 -   [Google Scholar](#google-scholar)
+-   [Rumble](#rumble)
 -   [GitHub](#github)
 
 ## YouTube
@@ -198,6 +199,25 @@ Google Scholar does not support adding specific pieces of content.
 ### XPOC URI placement
 
 Google Scholar does not support adding XPOC URI on the account page.
+
+## Rumble
+
+### Manifest content
+
+-   properties shared by `accounts` and `content`:
+    -   `platform`: "Rumble"
+    -   `account`: the owner's channel name `<accountname>`
+-   `accounts` properties:
+    -   `url`: `https://rumble.com/c/<accountname>`
+-   `content` properties:
+    -   `url`: `https://rumble.com/<id>-<title>.html` where `<id>` is a 7-character alphanumeric string.
+    -   `puid`: <id>
+    -   `timestamp`: exact creation time in ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
+
+### XPOC URI placement
+
+- For individuals: in the user's channel description field (per channel)
+- For a post: in a video's tag field.
 
 ## GitHub
 

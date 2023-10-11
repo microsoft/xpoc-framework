@@ -55,6 +55,7 @@
     <script>
         let accountReplaceString = "^ACCOUNT^";
 
+        // supported platforms in alphabetical order
         let platforms = [
             {
                 show: true,
@@ -64,21 +65,15 @@
             },
             {
                 show: true,
-                displayName: "X (Twitter)",
-                name: "X",
-                url: `https://twitter.com/${accountReplaceString}`,
-            },
-            {
-                show: true,
                 displayName: "Instagram",
                 name: "Instagram",
                 url: `https://www.instagram.com/${accountReplaceString}/`,
             },
             {
                 show: true,
-                displayName: "YouTube",
-                name: "YouTube",
-                url: `https://www.youtube.com/@${accountReplaceString}/about`,
+                displayName: "LinkedIn",
+                name: "LinkedIn",
+                url: `https://www.linkedin.com/in/${accountReplaceString}`,
             },
             {
                 show: true,
@@ -88,28 +83,17 @@
             },
             {
                 show: true,
-                displayName: "LinkedIn",
-                name: "LinkedIn",
-                url: `https://www.linkedin.com/in/${accountReplaceString}`,
+                displayName: "X (Twitter)",
+                name: "X",
+                url: `https://twitter.com/${accountReplaceString}`,
             },
             {
-                show: false,
-                displayName: "Medium",
-                name: "Medium",
-                url: `https://${accountReplaceString}.medium.com`,
+                show: true,
+                displayName: "YouTube",
+                name: "YouTube",
+                url: `https://www.youtube.com/@${accountReplaceString}/about`,
             },
-            {
-                show: false,
-                displayName: "Threads",
-                name: "Threads",
-                url: `https://www.threads.net/@${accountReplaceString}`,
-            },
-            {
-                show: false,
-                displayName: "Rumble",
-                name: "Rumble",
-                url: `https://rumble.com/c/${accountReplaceString}`,
-            },
+            // optional platforms (in alphabetical order)
             {
                 show: false,
                 displayName: "GitHub",
@@ -121,6 +105,24 @@
                 displayName: "Google Scholar",
                 name: "GoogleScholar",
                 url: `https://scholar.google.com/citations?user=${accountReplaceString}`,
+            },
+            {
+                show: false,
+                displayName: "Medium",
+                name: "Medium",
+                url: `https://${accountReplaceString}.medium.com`,
+            },
+            {
+                show: false,
+                displayName: "Rumble",
+                name: "Rumble",
+                url: `https://rumble.com/c/${accountReplaceString}`,
+            },
+            {
+                show: false,
+                displayName: "Threads",
+                name: "Threads",
+                url: `https://www.threads.net/@${accountReplaceString}`,
             }
         ]
 

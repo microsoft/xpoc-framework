@@ -69,9 +69,7 @@ jobs:
 
       - name: Build (only for server-backend)
         if: matrix.sample == 'server-backend'
-        # TODO: build lib here because the lib/dist is not available. Why not?
         run: | 
-          cd lib && npm install && npm run build && cd ..
           cd samples/server-backend && npm run build
 
       - name: Start Server and Check

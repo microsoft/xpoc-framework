@@ -80,13 +80,13 @@ describe('manifest file operations', () => {
         expect(testManifest?.manifest.accounts.length).toBe(12);
         expect(testManifest?.manifest.content.length).toBe(10);
     });
-    
+
     (testManifest ? test : test.skip)('match accounts', () => {
         // search using each parameter (values will be canonicalized)
         const searchValues: AccountMatchValues[] = [
-            {account: "@a_ig_test_account "},
-            {platform: "instagram"},
-            {url: "https://www.instagram.com/a_ig_test_account"}
+            { account: "@a_ig_test_account " },
+            { platform: "instagram" },
+            { url: "https://www.instagram.com/a_ig_test_account" }
         ]
         for (const searchValue of searchValues) {
             const accounts = testManifest?.matchAccount(searchValue);
@@ -103,10 +103,10 @@ describe('manifest file operations', () => {
     (testManifest ? test : test.skip)('match content', () => {
         // search using each parameter (values will be canonicalized)
         const searchValues: ContentMatchValues[] = [
-            {account: "@a_ig_test_account "},
-            {platform: "instagram"},
-            {url: "https://www.instagram.com/p/ABCDE12345/"},
-            {puid: "ABCDE12345"}
+            { account: "@a_ig_test_account " },
+            { platform: "instagram" },
+            { url: "https://www.instagram.com/p/ABCDE12345/" },
+            { puid: "ABCDE12345" }
         ]
         for (const searchValue of searchValues) {
             const contents = testManifest?.matchContent(searchValue);
@@ -134,6 +134,59 @@ describe('manifest file operations', () => {
 
         const fileExists = await fs.access(tmpFilePath, fs.constants.F_OK);
         expect(fileExists).toBeUndefined(); // access does not return anything if the file exists, but throws an error if not
+    });
+
+    // clean up
+    afterAll(async () => {
+        try {
+            await fs.unlink(tmpFilePath); // delete the file
+            await fs.rmdir(tmpDir);
+        } catch (err) {
+            // ignore errors
+        }
+    });
+});
+
+describe('manifest validation', () => {
+    // Path to our temporary directory and file
+    const tmpDir = join(tmpdir(), 'xpoc_tmp');
+    const tmpFilePath = join(tmpDir, 'testmanifest.json');
+
+    //
+    // TODO: create additional test manifests with invalid values
+    //
+
+    // Before all tests, ensure the directory exists
+    beforeAll(async () => {
+        try {
+            await fs.access(tmpDir, fs.constants.F_OK);
+        } catch (err) {
+            // Directory does not exist, create it
+            await fs.mkdir(tmpDir);
+        }
+    });
+
+    let testManifest = Manifest.loadFromFile('./testdata/testmanifest.json');
+
+    test('validate schema: valid', () => {
+        const validation = Manifest.validate(testManifest.manifest);
+        expect(validation.valid).toBe(true);
+    });
+
+    test('validate schema: missing version', () => {
+        const clonedManifest = { ...testManifest.manifest }
+        delete (clonedManifest as Partial<XPOCManifest>).version;
+        const validation = Manifest.validate(clonedManifest);
+        expect(validation.valid).toBe(false);
+        expect(validation.errors?.[0]).toContain("must have required property 'version'");
+    });
+
+    test('validate schema: bad account url', () => {
+        const clonedManifest = { ...testManifest.manifest }
+        clonedManifest.accounts[0].url = clonedManifest.accounts[0].url.replace('https://', 'http://');
+        const validation = Manifest.validate(clonedManifest);
+        expect(validation.valid).toBe(false);
+        expect(validation.errors?.[0]).toContain('must match pattern "^https://"');
     });
 
     // clean up

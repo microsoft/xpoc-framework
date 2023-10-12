@@ -3,6 +3,7 @@
 
 import fs from 'fs';
 import { Platforms } from './platform.js';
+import { validateManifest } from './schema.js';
 
 /**
  * A platform account.
@@ -105,7 +106,7 @@ export class ManifestBase {
                     if (Platforms.isSupportedPlatform(account.platform)) {
                         const platform = Platforms.getPlatform(account.platform);
                         if (platform) {
-                            canonicalAccountName = platform.canonicalizeAccountName(amv.account);   
+                            canonicalAccountName = platform.canonicalizeAccountName(amv.account);
                         }
                     }
                     if (account.account === canonicalAccountName) {
@@ -153,7 +154,7 @@ export class ManifestBase {
                     if (Platforms.isSupportedPlatform(content.platform)) {
                         const platform = Platforms.getPlatform(content.platform);
                         if (platform) {
-                            canonicalAccountName = platform.canonicalizeAccountName(cmv.account);   
+                            canonicalAccountName = platform.canonicalizeAccountName(cmv.account);
                         }
                     }
                     if (content.account === canonicalAccountName) {
@@ -191,6 +192,10 @@ export class ManifestBase {
             }
         }
         return result;
+    }
+
+    static validate(manifest: XPOCManifest) : { valid: boolean, errors?: string[] } {
+        return validateManifest(manifest);
     }
 }
 

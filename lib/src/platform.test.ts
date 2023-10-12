@@ -1,7 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Facebook, Instagram, YouTube, XTwitter, Medium, TikTok, LinkedIn, Threads, GoogleScholar, Rumble, GitHub, Platform, PlatformAccountData, PlatformContentData, CanonicalizedAccountData, CanonicalizedContentData, Platforms } from './platform';
+import {
+    CanonicalizedAccountData, CanonicalizedContentData, Platform, Platforms, PlatformAccountData, PlatformContentData,
+    // platforms
+    Facebook, GitHub, GoogleScholar, Instagram, LinkedIn, Medium, Rumble, Threads, TikTok, XTwitter, YouTube
+} from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';

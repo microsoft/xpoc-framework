@@ -6,6 +6,10 @@ Frequently asked questions about the Cross-Platform Origin of Content (XPOC) pla
 
 It stands for Cross-Platform Origin of Content.
 
+## Is XPOC free?
+
+Yes, the Cross-Platform Origin of Content (XPOC) framework is an open specification with a companion open source reference implementation, both released under a [MIT License](../LICENSE).
+
 ## How can I deploy XPOC on my website?
 
 Deploying XPOC on your website is as simple as creating a `xpoc-manifest.json` in your website's root folder, listing your associated account names (e.g., user names, social handles, etc.) and content items (e.g., posts, videos, etc.). See the [specification](./xpoc-specification.md) for the manifest format.
@@ -36,6 +40,12 @@ Yes. A piece of content (e.g., a video, a podcast) could be posted by a 3rd part
 ## What's the difference with C2PA?
 
 The [Coalition for Content Provenance and Authenticity (C2PA)](https://c2pa.org/) specifies how to attest to the origin and integrity of various media content types (e.g., pictures, videos) by attaching manifest containing cryptographic signatures (for data creation and updates) to the media files. To provide these strong guarantees, C2PA requires the deployment of a PKI to validate the identity of the content creators and editors. XPOC on the other hand simply links external platform accounts and contents to an origin website, using transport layer security (i.e., control of a web domain). One would need the collaboration of the hosting platforms to verify a C2PA manifest (e.g., an end user doesn't see the signature of a YouTube video, YouTube itself would need to validate it); in contrast XPOC can be self hosted and used without the collaboration of content platforms.
+
+## Can someone link to _my_ accounts and content in _their_ manifest?
+
+Yes, nothing prevents someone from including accounts they don't own and content they did not create in their manifest, just like they could in the HTML of their website. Digital authentication of content would be required to prevent this; this is out-of-scope for the XPOC framework, but is addressed for example by the [Coalition for Content Provenance and Authenticity (C2PA)](https://c2pa.org/).
+
+XPOC aims at solving the opposite problem: preventing someone from maliciously attributing accounts and content to you.
 
 ## Can implementers contribute to the XPOC framework?
 

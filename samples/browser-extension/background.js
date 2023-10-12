@@ -37,6 +37,16 @@ function getBaseURL(url) {
     return baseURL;
 }
 
+// compare two URLs for fuzzy equality
+function fuzzyCompareUrl(url1, url2) {
+    // remove trailing "/" and "/about" from URLs (some platforms account have 
+    // an "about" page where XPOC URI could live)
+    // TODO: could ignore case for part of the URL (some platforms have case-sensitive PUIDs)
+    // and other well-known query params
+    const cleanUrl = (url) => url.replace(/\/$/, "").replace(/\/about$/, "");
+    return cleanUrl(url1) == cleanUrl(url2);
+}
+
 // listen for context menu clicks
 chrome.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === 'verifyXpocUri') {
@@ -61,7 +71,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 console.log('url', url);
                 // check if the current tab's URL is listed in the manifest's account
                 const matchingAccount = manifest.accounts.find(
-                    (account) => getBaseURL(account.url).toLowerCase() === url,
+                    (account) => fuzzyCompareUrl(getBaseURL(account.url), url)
                 );
                 if (matchingAccount) {
                     console.log('Content found in manifest', matchingAccount);
@@ -79,8 +89,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 } else {
                     // if not, check if the current tab's URL is listed in the manifest's content
                     const matchingContent = manifest.content.find(
-                        (content) =>
-                            getBaseURL(content.url).toLowerCase() === url,
+                        (content) => fuzzyCompareUrl(getBaseURL(content.url), url)
                     );
                     if (matchingContent) {
                         console.log(

@@ -102,6 +102,16 @@
             `;
         }
 
+        // compare two URLs for fuzzy equality
+        fuzzycompareUrl = (url1, url2) => {
+            // remove trailing "/" and "/about" from URLs (some platforms account have 
+            // an "about" page where XPOC URI could live)
+            // TODO: could ignore case for part of the URL (some platforms have case-sensitive PUIDs)
+            // and other well-known query params
+            const cleanUrl = (url) => url.replace(/\/$/, "").replace(/\/about$/, "");
+            return cleanUrl(url1) == cleanUrl(url2);
+        }
+
         async function verify() {
             const urlInput = document.getElementById('urlInput').value.trim();
             const xpocUriInput = document.getElementById('xpocUriInput').value.trim();
@@ -114,8 +124,8 @@
                         clearError();
 
                         // check if the input URL is listed in the manifest's Accounts or Content
-                        const accountsMatch = manifest.accounts.find(account => account.url === urlInput);
-                        const contentMatch = manifest.content.find(content => content.url === urlInput);
+                        const accountsMatch = manifest.accounts.find(account => fuzzycompareUrl(account.url, urlInput));
+                        const contentMatch = manifest.content.find(content => fuzzycompareUrl(content.url, urlInput));
 
                         if (accountsMatch || contentMatch) {
                             showManifestInfo(manifest);

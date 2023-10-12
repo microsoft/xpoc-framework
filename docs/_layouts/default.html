@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="{{ site.lang | default: "en-US" }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+{% seo %}
+
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+    <script src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    {% include head-custom.html %}
+  </head>
+  <body>
+    <div class="wrapper" style="width: 75%;">
+      <header {% unless site.description or site.github.project_tagline %} class="without-description" {% endunless %}>
+        <h1>{{ site.title | default: site.github.repository_name }}</h1>
+        {% if site.description or site.github.project_tagline %}
+          <p>{{ site.description | default: site.github.project_tagline }}</p>
+        {% endif %}
+        <p class="view"><a href="{{ site.github.repository_url }}">View the Project on GitHub <small>{{ github_name }}</small></a></p>
+        <ul>
+          <li><a href="{{ site.github.repository_url }}">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+
+      {{ content }}
+
+      </section>
+    </div>
+    <footer style="width: 70%; display: flex; justify-content: space-between; align-items: center;">
+        <div class="footer-links">
+            <a href="{{ site.github.repository_url }}/blob/main/SUPPORT.md">Contact Us</a> |
+            <a href="https://privacy.microsoft.com/en-us/privacystatement/">Privacy & Cookies</a> |
+            <a href="https://www.microsoft.com/en-us/legal/intellectualproperty/copyright">Terms of use</a> |
+            <a href="{{ site.github.repository_url }}/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a> |
+            <a href="{{ site.github.repository_url }}/blob/main/README.md#trademarks">Trademarks</a> |
+            <a href="{{ site.github.repository_url }}/blob/main/LICENSE">License</a>
+        </div>
+        <div class="copyright-logo" style="display: flex; align-items: center;">
+          © 2023 Microsoft
+          <a href="https://microsoft.com"><img src="{{ '/assets/images/microsoft-logo.svg' | relative_url }}" alt="Microsoft" style="height: 1.5em;"></a>
+        </div>
+      </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+  </body>
+</html>

@@ -263,7 +263,7 @@ export class XTwitter extends Platform {
     constructor() {
         super('X', 'https://twitter.com',
             `${ACCOUNT_STR}`, `${ACCOUNT_STR}/status/${PUID_STR}`, 
-            false, false, // TODO: "X" name will not match "Twitter" (make more robust)
+            false, false,
             // matches X/Twitter URLs, with or without a www. subdomain
             "^https?://(?:www\\.)?(twitter\\.com|x\\.com)",
             // matches X/Twitter account URLs, with an optional '@' prefix (gets removed by redirect)
@@ -635,7 +635,7 @@ export class Rumble extends Platform {
             // matches Rumble URLs, with or without www. subdomain
             "^https?://(?:www\\.)?(rumble\\.com)",
             // matches Rumble channel URLs  /c is optional.
-            //'(?<accountName>\/?(c\/)?(c-\\d{7}|(?<!c-)\\w+))\/?$', // TODO remove old
+
             '/(c\/)?(?<accountName>(c-\\d{7}|(?<!c-)\\w+))(?:\/about)?\/?$',
             // matches Rumble content URLs
             '/(?<puid>[a-zA-Z0-9-_]+)(\\.html)?\/?$'
@@ -693,7 +693,7 @@ export class GitHub extends Platform {
 
     constructor() {
         super('GitHub', 'https://github.com',
-        `${ACCOUNT_STR}`, `TODO`,
+        `${ACCOUNT_STR}`, ``, // no content URL for GitHub
         true,
         false, // n/a
         // matches GitHub URLs

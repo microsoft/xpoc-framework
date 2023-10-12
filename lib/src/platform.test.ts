@@ -39,9 +39,9 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://www.youtube.com/@christianpaquinmsr',
             'https://www.youtube.com/@christianpaquinmsr/',
             'https://www.youtube.com/@christianpaquinmsr/about',
-            'https://youtube.com/@christianpaquinmsr/about',
-            'https://m.youtube.com/@christianpaquinmsr/about',
-            'https://youtu.be/@christianpaquinmsr/about'
+            'https://youtube.com/@christianpaquinmsr',
+            'https://m.youtube.com/@christianpaquinmsr',
+            'https://youtu.be/@christianpaquinmsr'
         ],
         validContentUrls: [
             'https://www.youtube.com/watch?v=hDd3t7y1asU',
@@ -56,7 +56,7 @@ const platformTestDataArray: PlatformTestData[] = [
         invalidAccountUrls: [
             'https://www.youtube.com/',
             'https://www.youtube.com/watch?v=hDd3t7y1asU',
-            'https://www.notyoutube.com/@christianpaquinmsr/about'
+            'https://www.notyoutube.com/@christianpaquinmsr'
         ],
         invalidContentUrls: [
             'https://www.youtube.com',
@@ -66,7 +66,7 @@ const platformTestDataArray: PlatformTestData[] = [
         canonicalAccountData: new Array(6).fill(
             // canonicalized version of validAccountUrls (representing all the same account)
             {
-                url: 'https://www.youtube.com/@christianpaquinmsr/about',
+                url: 'https://www.youtube.com/@christianpaquinmsr',
                 account: 'christianpaquinmsr'
             }
         ),
@@ -82,7 +82,7 @@ const platformTestDataArray: PlatformTestData[] = [
         sampleAccountData: {
             xpocUri: expectedXpocUri,
             platform: "YouTube",
-            url: "https://www.youtube.com/@christianpaquinmsr/about",
+            url: "https://www.youtube.com/@christianpaquinmsr",
             account: "christianpaquinmsr",
         },
         sampleContentData: {
@@ -436,12 +436,15 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://www.linkedin.com/in/paquinchristian/',
             'https://www.linkedin.com/in/paquinchristian',
             'https://linkedin.com/in/paquinchristian/',
+            'https://www.linkedin.com/in/paquinchristian/about/',
             'https://www.linkedin.com/company/microsoft/',
             'https://www.linkedin.com/company/microsoft',
             'https://linkedin.com/company/microsoft/',
+            'https://www.linkedin.com/company/microsoft/about/',
             'https://www.linkedin.com/school/universite-de-montreal/',
             'https://www.linkedin.com/school/universite-de-montreal',
-            'https://ca.linkedin.com/school/universite-de-montreal'
+            'https://ca.linkedin.com/school/universite-de-montreal',
+            'https://www.linkedin.com/school/universite-de-montreal/about/'
         ],
         validContentUrls: [
             'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880/',
@@ -462,22 +465,22 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://www.notlinkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx'
         ],
         canonicalAccountData: [
-            // canonicalized version of validAccountUrls (1st, 2nd, 3rd group of 3 are the same)
-            ...new Array(3).fill(
+            // canonicalized version of validAccountUrls (1st, 2nd, 3rd group of 4 are the same)
+            ...new Array(4).fill(
                 {
                     url: 'https://www.linkedin.com/in/paquinchristian/',
                     account: 'paquinchristian'
                 },
             ),
-            ...new Array(3).fill(
+            ...new Array(4).fill(
                 {
-                    url: 'https://www.linkedin.com/company/microsoft/about/',
+                    url: 'https://www.linkedin.com/company/microsoft/',
                     account: 'microsoft'
                 },
             ),
-            ...new Array(3).fill(
+            ...new Array(4).fill(
                 {
-                    url: 'https://www.linkedin.com/school/universite-de-montreal/about/',
+                    url: 'https://www.linkedin.com/school/universite-de-montreal/',
                     account: 'universite-de-montreal'
                 },
             )
@@ -606,6 +609,8 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://rumble.com/c/c-4908074',
             'https://rumble.com/c-4908074/',
             'https://rumble.com/c-4908074',
+            'https://www.rumble.com/c/c-4908074',
+            'https://rumble.com/c/c-4908074/about',
             'https://rumble.com/c/abcd1234/',
             'https://rumble.com/c/abcd1234',
             'https://rumble.com/abcd1234/',
@@ -614,21 +619,27 @@ const platformTestDataArray: PlatformTestData[] = [
         validContentUrls: [
             'https://rumble.com/v3lvq1f-crossette.html',
             'https://rumble.com/v3lvq1f-crossette',
+            'https://www.rumble.com/v3lvq1f-crossette.html',
             'https://rumble.com/v3lvq1f-crossette.html/',
             'https://rumble.com/v3lvq1f-crossette/'
         ],
         invalidAccountUrls: [
+            'https://rumble.com',
             'https://rumble.com/c-49080740', // 8 digits instead of 7
             'https://rumble.com/c/c-49080740', // 8 digits instead of 7
-            'https://rumble.com/a/c-4908074'
+            'https://rumble.com/a/c-4908074',
+            'https://notrumble.com/c/c-4908074/'
         ],
-        invalidContentUrls: [
+        invalidContentUrls: [ // TODO: add query params
+            'https://rumble.com',
+            'https://rumble.com/c/c-4908074/',
             'https://rumble.com/c/v3lvq1f-crossette.html',
-            'https://rumble.com/c/v3lvq1f-crossette'
+            'https://rumble.com/c/v3lvq1f-crossette',
+            'https://notrumble.com/v3lvq1f-crossette.html',
         ],
         canonicalAccountData: [
 
-            ...new Array(4).fill(
+            ...new Array(6).fill(
                 {
                     url: 'https://rumble.com/c/c-4908074',
                     account: 'c-4908074'
@@ -642,7 +653,7 @@ const platformTestDataArray: PlatformTestData[] = [
             )
         ],
         canonicalContentData: [
-            ...new Array(4).fill(
+            ...new Array(5).fill(
                 {
                     url: 'https://rumble.com/v3lvq1f-crossette.html',
                     account: '',
@@ -812,7 +823,7 @@ for (const platformTestData of platformTestDataArray) {
 describe('platform operations', () => {
     test('platform account URL validation', () => {
         // YouTube test
-        expect(Platforms.isSupportedAccountUrl('https://www.youtube.com/@accountname/about')).toBe(true);
+        expect(Platforms.isSupportedAccountUrl('https://www.youtube.com/@accountname')).toBe(true);
         // X/Twitter test
         expect(Platforms.isSupportedAccountUrl('https://twitter.com/accountname')).toBe(true);
         // Facebook test
@@ -871,7 +882,7 @@ describe('platform operations', () => {
         let accountData = await Platforms.getAccountFromUrl(url);
         expect(accountData.platform).toBe('YouTube');
         expect(accountData.account).toBe('christianpaquinmsr');
-        expect(accountData.url).toBe('https://www.youtube.com/@christianpaquinmsr/about');
+        expect(accountData.url).toBe('https://www.youtube.com/@christianpaquinmsr');
 
         // X/Twitter test (no public access, expect a not supported exception)
         url = 'https://twitter.com/chpaquin';

@@ -79,6 +79,6 @@ const validate = ajv.compile(manifestSchema);
 export function validateManifest(manifest: XPOCManifest): { valid: boolean, errors?: string[] } {
     const valid = validate(manifest);
     if (valid) return { valid: true };
-    const errors: string[] = validate.errors?.map((err) => err.message ?? '') ?? [];
+    const errors: string[] = validate.errors?.map((err) => `${err.instancePath}: ${err.message}` ?? '') ?? [];
     return { valid: false, errors };
 }

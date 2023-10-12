@@ -73,10 +73,6 @@ export class ManifestBase {
     static LatestVersion = '0.2';
 
     constructor(manifest: XPOCManifest) {
-        const validation = ManifestBase.validate(manifest);
-        if(!validation.valid) {
-            throw new Error(`Invalid manifest:\n${validation.errors?.join('\n')}`);
-        }
         this.manifest = manifest;
     }
 

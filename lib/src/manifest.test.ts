@@ -80,13 +80,13 @@ describe('manifest file operations', () => {
         expect(testManifest?.manifest.accounts.length).toBe(12);
         expect(testManifest?.manifest.content.length).toBe(10);
     });
-    
+
     (testManifest ? test : test.skip)('match accounts', () => {
         // search using each parameter (values will be canonicalized)
         const searchValues: AccountMatchValues[] = [
-            {account: "@a_ig_test_account "},
-            {platform: "instagram"},
-            {url: "https://www.instagram.com/a_ig_test_account"}
+            { account: "@a_ig_test_account " },
+            { platform: "instagram" },
+            { url: "https://www.instagram.com/a_ig_test_account" }
         ]
         for (const searchValue of searchValues) {
             const accounts = testManifest?.matchAccount(searchValue);
@@ -103,10 +103,10 @@ describe('manifest file operations', () => {
     (testManifest ? test : test.skip)('match content', () => {
         // search using each parameter (values will be canonicalized)
         const searchValues: ContentMatchValues[] = [
-            {account: "@a_ig_test_account "},
-            {platform: "instagram"},
-            {url: "https://www.instagram.com/p/ABCDE12345/"},
-            {puid: "ABCDE12345"}
+            { account: "@a_ig_test_account " },
+            { platform: "instagram" },
+            { url: "https://www.instagram.com/p/ABCDE12345/" },
+            { puid: "ABCDE12345" }
         ]
         for (const searchValue of searchValues) {
             const contents = testManifest?.matchContent(searchValue);
@@ -152,6 +152,10 @@ describe('manifest validation', () => {
     const tmpDir = join(tmpdir(), 'xpoc_tmp');
     const tmpFilePath = join(tmpDir, 'testmanifest.json');
 
+    //
+    // TODO: create additional test manifests with invalid values
+    //
+
     // Before all tests, ensure the directory exists
     beforeAll(async () => {
         try {
@@ -162,27 +166,25 @@ describe('manifest validation', () => {
         }
     });
 
-    let manifest = Manifest.loadFromFile('./testdata/testmanifest.json').manifest;
+    let testManifest = Manifest.loadFromFile('./testdata/testmanifest.json');
 
     test('validate schema: valid', () => {
-        const validation = Manifest.validate(manifest);
+        const validation = Manifest.validate(testManifest.manifest);
         expect(validation.valid).toBe(true);
     });
 
     test('validate schema: missing version', () => {
-        const save = manifest.version;
-        (delete (manifest as Partial<XPOCManifest>).version);
-        const validation = Manifest.validate(manifest);
-        manifest.version = save
+        const clonedManifest = { ...testManifest.manifest }
+        delete (clonedManifest as Partial<XPOCManifest>).version;
+        const validation = Manifest.validate(clonedManifest);
         expect(validation.valid).toBe(false);
         expect(validation.errors?.[0]).toContain("must have required property 'version'");
     });
 
     test('validate schema: bad account url', () => {
-        const save = manifest.accounts[0].url
-        manifest.accounts[0].url = 'ftp://www.instagram.com/a_ig_test_account';
-        const validation = Manifest.validate(manifest);
-        manifest.accounts[0].url = save;
+        const clonedManifest = { ...testManifest.manifest }
+        clonedManifest.accounts[0].url = clonedManifest.accounts[0].url.replace('https://', 'http://');
+        const validation = Manifest.validate(clonedManifest);
         expect(validation.valid).toBe(false);
         expect(validation.errors?.[0]).toContain('must match pattern "^https://"');
     });

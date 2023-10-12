@@ -97,11 +97,9 @@ It is RECOMMENDED to only list Instagram accounts and not individual pieces of c
 
 -   properties shared by `accounts` and `content`:
     -   `platform`: "LinkedIn"
-    -   `account`: the owner's account name `<accountname>` (without the `@`)
+    -   `account`: the owner's account name `<accountname>`
 -   `accounts` properties:
-    -   `url`:
-        -   For individuals `https://www.linkedin.com/in/@<accountname>/`
-        -   For schools and companies: `https://www.linkedin.com/<type>/@<accountname>/about/`, where `<type>` is `school` or `company`
+    -   `url`: `https://www.linkedin.com/<type>/@<accountname>/`, where `<type>` is `in` (for individuals), `school` or `company`
 -   `content` properties:
     -   `url`: `https://www.linkedin.com/<type>/<title>/...` where `<type>` is `posts`, `events`, `pulse` or `learning`.
     -   `puid`: n/a
@@ -111,7 +109,7 @@ It is RECOMMENDED to only list Instagram accounts and not individual pieces of c
 
 -   On the account page:
     -   For individuals: in the account page's About field
-    -   For schools and companies: in the account page's Overview section. 
+    -   For schools and companies: in the account page's Overview section. This will appear on the About page (`<url>/about/`) of the account.
 -   For a post: in a post's text field.
 
 ## Medium
@@ -151,7 +149,7 @@ Medium accounts and specific stories can be added to a XPOC manifest.
 
 ### XPOC URI placement
 
-- For individuals: in the user's channel description field (per channel)
+- For individuals: in the user's channel Description field (per channel). This will appear on the About page (`<url>/about/`) of the account.
 - For a post: in a video's tag field.
 
 ## Threads
@@ -225,7 +223,7 @@ It is RECOMMENDED to only list X (Twitter) accounts and not individual pieces of
     -   `platform`: `YouTube`
     -   `account`: the owner's account name `<accountname>` (without the `@`)
 -   `accounts` properties:
-    -   `url`: `https://www.youtube.com/@<accountname>/about`
+    -   `url`: `https://www.youtube.com/@<accountname>`.
 -   `content` properties:
     -   `url`: `https://www.youtube.com/watch?v=<videoID>`
     -   `puid`: `<videoID>`
@@ -233,5 +231,5 @@ It is RECOMMENDED to only list X (Twitter) accounts and not individual pieces of
 
 ### XPOC URI placement
 
--    On the account page: in the About page's description.
+-    On the account page: in the About page's description. This will appear on the About page (`<url>/about/`) of the account.
 -    On a video content page: in the video's description.

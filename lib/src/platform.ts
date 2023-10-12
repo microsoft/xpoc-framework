@@ -196,7 +196,7 @@ const toUTCString = (dateStr: string): string => {
 export class YouTube extends Platform {
     constructor() {
         super('YouTube', 'https://www.youtube.com',
-            `@${ACCOUNT_STR}/about`,  `watch?v=${PUID_STR}`,
+            `@${ACCOUNT_STR}`,  `watch?v=${PUID_STR}`,
             true, true,
             // matches YouTube URLs, with or without www. or m. subdomains
             "^https?://(?:www\\.|m\\.)?(youtube\\.com|youtu\\.be)",
@@ -581,9 +581,6 @@ export class LinkedIn extends Platform {
             const accountName = match.groups.accountName;
             const type = match.groups.accountType;
             let url = `${this.CanonicalHostname}/${type}/${accountName}/`;
-            if (type === 'school' || type === 'company') {
-                url += 'about/';
-            }
             return {
                 url: url,
                 account: accountName
@@ -678,7 +675,7 @@ export class Rumble extends Platform {
             "^https?://(?:www\\.)?(rumble\\.com)",
             // matches Rumble channel URLs  /c is optional.
             //'(?<accountName>\/?(c\/)?(c-\\d{7}|(?<!c-)\\w+))\/?$', // TODO remove old
-            '/(c\/)?(?<accountName>(c-\\d{7}|(?<!c-)\\w+))\/?$',
+            '/(c\/)?(?<accountName>(c-\\d{7}|(?<!c-)\\w+))(?:\/about)?\/?$',
             // matches Rumble content URLs
             '/(?<puid>[a-zA-Z0-9-_]+)(\\.html)?\/?$'
         );

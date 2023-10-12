@@ -146,3 +146,54 @@ describe('manifest file operations', () => {
         }
     });
 });
+
+describe('manifest validation', () => {
+    // Path to our temporary directory and file
+    const tmpDir = join(tmpdir(), 'xpoc_tmp');
+    const tmpFilePath = join(tmpDir, 'testmanifest.json');
+
+    // Before all tests, ensure the directory exists
+    beforeAll(async () => {
+        try {
+            await fs.access(tmpDir, fs.constants.F_OK);
+        } catch (err) {
+            // Directory does not exist, create it
+            await fs.mkdir(tmpDir);
+        }
+    });
+
+    let manifest = Manifest.loadFromFile('./testdata/testmanifest.json').manifest;
+
+    test('validate schema: valid', () => {
+        const validation = Manifest.validate(manifest);
+        expect(validation.valid).toBe(true);
+    });
+
+    test('validate schema: missing version', () => {
+        const save = manifest.version;
+        (delete (manifest as Partial<XPOCManifest>).version);
+        const validation = Manifest.validate(manifest);
+        manifest.version = save
+        expect(validation.valid).toBe(false);
+        expect(validation.errors?.[0]).toContain("must have required property 'version'");
+    });
+
+    test('validate schema: bad account url', () => {
+        const save = manifest.accounts[0].url
+        manifest.accounts[0].url = 'ftp://www.instagram.com/a_ig_test_account';
+        const validation = Manifest.validate(manifest);
+        manifest.accounts[0].url = save;
+        expect(validation.valid).toBe(false);
+        expect(validation.errors?.[0]).toContain('must match pattern "^https://"');
+    });
+
+    // clean up
+    afterAll(async () => {
+        try {
+            await fs.unlink(tmpFilePath); // delete the file
+            await fs.rmdir(tmpDir);
+        } catch (err) {
+            // ignore errors
+        }
+    });
+});

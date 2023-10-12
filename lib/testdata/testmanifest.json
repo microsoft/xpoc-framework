@@ -1,6 +1,6 @@
 {
     "name": "A test name",
-    "url": "https://example.com",
+    "baseurl": "https://example.com",
 	"version": "0.2",
 	"accounts": [
 		{

@@ -11,8 +11,7 @@
     "build": "tsc && rollup -c",
     "bundle": "rollup -c",
     "clean": "rimraf dist browser",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose",
-    "prepare": "npm run bundle"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose"
   },
   "license": "MIT",
   "dependencies": {

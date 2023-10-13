@@ -140,10 +140,13 @@
 
             platforms.forEach((platform) => {
                 if (platform.show || showAllPlatforms) {
+                    let accountId = `${platform.name}Account`;
+                    let accountElement = document.getElementById(accountId);
+                    let value = accountElement ? accountElement.value : "";
                     html += `
                         <tr>
                             <td>${platform.displayName}</td>
-                            <td><input type="text" id="${platform.name}Account" onchange="validateAndUpdateAccount(this.value, this)"></td>
+                            <td><input type="text" value="${value}" id="${accountId}" onchange="validateAndUpdateAccount(this.value, this)"></td>
                         </tr>
                     `;
                 }
@@ -157,12 +160,18 @@
             let count = 0;
             platforms.forEach((platform) => {
                 if (platform.show || showAllPlatforms) {
-                    let account = document.getElementById(`${platform.name}Account`).value;
-                    if (account) {
+                    let accountName = document.getElementById(`${platform.name}Account`).value;
+                    if (accountName) {
+                        // this tool doesn't support more than one account per platform,
+                        // so first filter out old values if they exist
+                        manifest.accounts = manifest.accounts.filter((item) => {
+                            return item.platform != platform.name;
+                        });
+                        // update the account in the manifest
                         manifest.accounts.push({
-                            "account": account,
+                            "account": accountName,
                             "platform": platform.name,
-                            "url": platform.url.replace(accountReplaceString, account)
+                            "url": platform.url.replace(accountReplaceString, accountName)
                         })
                         count++;
                     }

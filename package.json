@@ -5,7 +5,9 @@
   "description": "Cross-Platform Origin of Content (XPOC) framework",
   "scripts": {
     "lint": "eslint './**/*.{ts,tsx,js,jsx,md}' --fix",
-    "prettier": "prettier --write './**/*.{ts,tsx,js,jsx,md}'"
+    "prettier": "prettier --write './**/*.{ts,tsx,js,jsx,md}'",
+    "prepare": "npm run build:lib",
+    "build:lib": "npm install --prefix ./lib"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.5.0",

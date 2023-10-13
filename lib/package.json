@@ -7,10 +7,12 @@
   "browser": "browser/xpoc.esm.min.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "build:clean": "npm run clean && npm run build",
     "build:tsc": "tsc",
-    "build": "tsc && rollup -c",
-    "bundle": "rollup -c",
-    "clean": "rimraf dist browser",
+    "build:bundle": "rollup -c",
+    "build:schema": "node src/compile.schema.js",
+    "build": "npm run build:schema && npm run build:tsc && npm run build:bundle",
+    "clean": "rimraf dist browser ./src/manifest.schema.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose"
   },
   "license": "MIT",
@@ -24,6 +26,7 @@
     "@rollup/plugin-commonjs": "^25.0.4",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.2.1",
+    "@rollup/plugin-replace": "^5.0.3",
     "@rollup/plugin-terser": "^0.4.3",
     "@types/jest": "^29.5.4",
     "@types/node": "^20.8.2",
@@ -43,6 +46,7 @@
     "testMatch": [
       "**/*.test.js"
     ],
+    "testEnvironment": "node",
     "coverageReporters": [
       "json-summary"
     ]

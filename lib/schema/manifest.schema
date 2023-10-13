@@ -1,0 +1,81 @@
+{
+    "$id": "#/definitions/Manifest",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "baseurl": {
+            "type": "string"
+        },
+        "version": {
+            "type": "string"
+        },
+        "accounts": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "account": {
+                        "type": "string"
+                    },
+                    "platform": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "pattern": "^https://"
+                    }
+                },
+                "required": [
+                    "account",
+                    "platform",
+                    "url"
+                ]
+            }
+        },
+        "content": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "account": {
+                        "type": "string"
+                    },
+                    "platform": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string",
+                        "format": "uri",
+                        "pattern": "^https://"
+                    },
+                    "desc": {
+                        "type": "string"
+                    },
+                    "puid": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "account",
+                    "platform",
+                    "url"
+                ]
+            }
+        }
+    },
+    "required": [
+        "name",
+        "baseurl",
+        "version",
+        "accounts",
+        "content"
+    ]
+}

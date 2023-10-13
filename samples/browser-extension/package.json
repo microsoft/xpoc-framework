@@ -2,5 +2,38 @@
   "name": "xpoc-browser-extension",
   "version": "0.2.0",
   "description": "Cross-Platform Origin of Content Browser Extension",
-  "license": "MIT"
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "clean": "rimraf ./dist/**/*",
+    "build": "cross-env NODE_ENV=production rollup -c",
+    "build:clean": "npm run clean && npm run build:debug",
+    "build:debug": "cross-env NODE_ENV=development rollup -c",
+    "build:watch": "npm run build:debug -- -w",
+    "test": "echo \"Error: no tests\" && exit 1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-alias": "^5.0.1",
+    "@rollup/plugin-commonjs": "^25.0.4",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.2.1",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@rollup/plugin-terser": "^0.4.3",
+    "@types/chrome": "^0.0.243",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.47.0",
+    "eslint-config-standard-with-typescript": "^37.0.0",
+    "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-n": "^16.0.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "rollup": "^3.28.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-external-globals": "^0.8.0",
+    "rollup-plugin-typescript2": "^0.35.0",
+    "typescript": "^5.1.6",
+    "xpoc-ts-lib": "file:../../lib"
+  }
 }

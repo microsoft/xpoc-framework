@@ -8,6 +8,8 @@ export type ContentType = 'post' | 'photo' | 'video' | 'reel' | 'event' | 'misc'
 const ACCOUNT_STR = "^ACCOUNT^";
 const PUID_STR = "^PUID^";
 const ACCOUNT_TYPE_STR = "^ACCCOUNTTYPE^";
+const CONTENT_TYPE_STR = "^CONTENTTYPE^";
+const CONTENT_TITLE_STR = "^CONTENTTITLE^";
 
 export interface PlatformAccountData {
     xpocUri: string,
@@ -102,13 +104,15 @@ export abstract class Platform {
         const accountRegex = new RegExp(this.accountRegexString);
         const match = accountRegex.exec(url);
         if (match && match.groups) {
-            const accountName = match.groups.accountName;
+            const accountName = match.groups.accountName || '';
+            const accountType = match.groups.accountType || '';
             return {
-                url: this.CanonicalHostname + "/" + this.AccountPathUrlTemplate.replace(ACCOUNT_STR, accountName),
+                url: this.CanonicalHostname + "/" + 
+                    this.AccountPathUrlTemplate.replace(ACCOUNT_STR, accountName).replace(ACCOUNT_TYPE_STR, accountType),
                 account: accountName
             }
         } else {
-            const errMsg = `Malformed ${this.DisplayName} account URL: can't extract account name`;
+            const errMsg = `Malformed ${this.DisplayName} account URL`;
             console.error(`canonicalizeAccountUrl: ${errMsg}`);
             throw new Error(errMsg);
         }
@@ -126,15 +130,17 @@ export abstract class Platform {
             const accountName = match.groups.accountName || '';
             const puid = match.groups.puid || '';
             const type = match.groups.type || '';
+            const title = match.groups.title || '';
             return {
                 account: accountName,
                 puid: puid,
                 type: this.filterType(type),
                 url: this.CanonicalHostname + "/" +
-                     this.ContentPathUrlTemplate.replace(PUID_STR, puid).replace(ACCOUNT_STR, accountName).replace(ACCOUNT_TYPE_STR, type)
+                     this.ContentPathUrlTemplate.replace(PUID_STR, puid).replace(ACCOUNT_STR, accountName)
+                     .replace(CONTENT_TYPE_STR, type).replace(CONTENT_TITLE_STR, title)
             }
         } else {
-            const errMsg = `Malformed YouTube content URL: can't extract video ID`;
+            const errMsg = `Malformed ${this.DisplayName} content URL`;
             console.error(`canonicalizeContentUrl: ${errMsg}`);
             throw new Error(errMsg);
         }
@@ -257,7 +263,7 @@ export class XTwitter extends Platform {
     constructor() {
         super('X', 'https://twitter.com',
             `${ACCOUNT_STR}`, `${ACCOUNT_STR}/status/${PUID_STR}`, 
-            false, false, // TODO: "X" name will not match "Twitter" (make more robust)
+            false, false,
             // matches X/Twitter URLs, with or without a www. subdomain
             "^https?://(?:www\\.)?(twitter\\.com|x\\.com)",
             // matches X/Twitter account URLs, with an optional '@' prefix (gets removed by redirect)
@@ -309,6 +315,7 @@ export class Facebook extends Platform {
         }
     }
 
+    // override base class implementation to handle Facebook's many content URL forms
     canonicalizeContentUrl(url: string): CanonicalizedContentData {
         if (!this.isValidContentUrl(url)) {
             throw new Error('Malformed Facebook content URL');
@@ -345,7 +352,7 @@ export class Facebook extends Platform {
 export class Instagram extends Platform {
     constructor() {
         super('Instagram', 'https://www.instagram.com',
-            `${ACCOUNT_STR}/`, `${ACCOUNT_TYPE_STR}/${PUID_STR}/`,
+            `${ACCOUNT_STR}/`, `${CONTENT_TYPE_STR}/${PUID_STR}/`,
             false, false,
             // matches Instagram URLs, with or without www. or m. subdomains
             `^https?://(?:www\\.|m\\.)?(instagram\\.com)`,
@@ -545,7 +552,7 @@ export class LinkedIn extends Platform {
 
     constructor() {
         super('LinkedIn', 'https://www.linkedin.com',
-            '', '', // we don't use the base class implementation
+            `${ACCOUNT_TYPE_STR}/${ACCOUNT_STR}/`, `${CONTENT_TYPE_STR}/${CONTENT_TITLE_STR}/`,
             false, false,
             // matches LinkedIn URLs, with or without a subdomain
             "^https?://(?:[a-zA-Z0-9-]+\\.)?(linkedin\\.com)",
@@ -566,52 +573,6 @@ export class LinkedIn extends Platform {
             case 'pulse':
             default:
                 return 'misc';
-        }
-    }
-
-    // overwrites the base implementation (TODO: fold into base implementation? would require adding accountType handling)
-    canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
-        if (!this.isValidAccountUrl(url)) {
-            throw new Error('Malformed LinkedIn account URL');
-        }
-        // extract the account name from the LinkedIn account URL
-        const accountRegex = new RegExp(this.accountRegexString);
-        const match = accountRegex.exec(url);
-        if (match && match.groups) {
-            const accountName = match.groups.accountName;
-            const type = match.groups.accountType;
-            let url = `${this.CanonicalHostname}/${type}/${accountName}/`;
-            return {
-                url: url,
-                account: accountName
-            }
-        } else {
-            const errMsg = `Malformed LinkedIn account URL: can't extract account name`;
-            console.error(`canonicalizeAccountUrl: ${errMsg}`);
-            throw new Error(errMsg);
-        }
-    }
-
-    canonicalizeContentUrl(url: string): CanonicalizedContentData {
-        if (!this.isValidContentUrl(url)) {
-            throw new Error('Malformed LinkedIn content URL');
-        }
-        // extract the type from the LinkedIn content URL
-        const contentRegex = new RegExp(this.contentRegexString);
-        const match = contentRegex.exec(url);
-        if (match && match.groups) {
-            const type = match.groups.type;
-            const title = match.groups.title;
-            return {
-                account: '',
-                puid: '',
-                type: this.filterType(type),
-                url: `${this.CanonicalHostname}/${type}/${title}/`
-            }
-        } else {
-            const errMsg = `Malformed LinkedIn content URL`;
-            console.error(`canonicalizeContentUrl: ${errMsg}`);
-            throw new Error(errMsg);
         }
     }
 }
@@ -674,7 +635,7 @@ export class Rumble extends Platform {
             // matches Rumble URLs, with or without www. subdomain
             "^https?://(?:www\\.)?(rumble\\.com)",
             // matches Rumble channel URLs  /c is optional.
-            //'(?<accountName>\/?(c\/)?(c-\\d{7}|(?<!c-)\\w+))\/?$', // TODO remove old
+
             '/(c\/)?(?<accountName>(c-\\d{7}|(?<!c-)\\w+))(?:\/about)?\/?$',
             // matches Rumble content URLs
             '/(?<puid>[a-zA-Z0-9-_]+)(\\.html)?\/?$'
@@ -732,7 +693,7 @@ export class GitHub extends Platform {
 
     constructor() {
         super('GitHub', 'https://github.com',
-        `${ACCOUNT_STR}`, `TODO`,
+        `${ACCOUNT_STR}`, ``, // no content URL for GitHub
         true,
         false, // n/a
         // matches GitHub URLs

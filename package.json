@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint './**/*.{ts,tsx,js,jsx,md}' --fix",
     "prettier": "prettier --write './**/*.{ts,tsx,js,jsx,md}'",
-    "preprepare" : "cd lib && npm install && npm pack && cp xpoc-ts-lib-0.2.0.tgz ../",
+    "preprepare" : "cd lib && npm install",
     "prepare": ""
   },
   "devDependencies": {

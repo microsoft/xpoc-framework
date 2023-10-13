@@ -3,7 +3,8 @@
 
 import fs from 'fs';
 import { Platforms } from './platform.js';
-import { validateManifest } from './schema.js';
+import { Manifest as validateManifest } from './manifest.schema.js'
+import { ValidateFunction } from 'ajv';
 
 /**
  * A platform account.
@@ -179,7 +180,7 @@ export class ManifestBase {
                             }
                         }
                     }
-                    if (areResourcesEqual(content.url,canonicalUrl)) {
+                    if (areResourcesEqual(content.url, canonicalUrl)) {
                         result.push(content);
                     }
                 }
@@ -194,8 +195,12 @@ export class ManifestBase {
         return result;
     }
 
-    static validate(manifest: XPOCManifest) : { valid: boolean, errors?: string[] } {
-        return validateManifest(manifest);
+    static validate(manifest: XPOCManifest): { valid: boolean, errors?: string[] } {
+        const validateFunction = validateManifest as ValidateFunction;
+        const valid = validateFunction(manifest)
+        if (valid) return { valid: true };
+        const errors: string[] = validateFunction.errors?.map((err) => `${err.instancePath}: ${err.message}` ?? '') ?? [];
+        return { valid: false, errors };
     }
 }
 

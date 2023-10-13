@@ -46,6 +46,7 @@
     "testMatch": [
       "**/*.test.js"
     ],
+    "testEnvironment": "node",
     "coverageReporters": [
       "json-summary"
     ]

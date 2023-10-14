@@ -4,6 +4,7 @@ This is a sample implementation of client-side HTML/JavaScript pages to view and
 
 The sample contains three pages (accessible from `public/index.html`):
 
+-   `public/xpoc-ez-creator.html`: use to create XPOC manifests listing accounts on popular platforms
 -   `public/xpoc-editor.html`: use to create and edit XPOC manifests
 -   `public/xpoc-csvconverter.html`: use to convert CSV files to XPOC manifests
 -   `public/xpoc-viewer.html`: to view a XPOC manifest hosted on a website

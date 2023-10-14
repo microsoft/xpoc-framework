@@ -1,9 +1,0 @@
-node_modules/
-testdata/
-src/
-rollup.config.js
-tsconfig.json
-package-lock.json
-dist/**/*.map
-browser/**/*.map
-

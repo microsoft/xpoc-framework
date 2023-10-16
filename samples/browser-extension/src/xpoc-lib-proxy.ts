@@ -3,9 +3,9 @@
 
 import { type lookupXpocUriResult } from "./xpoc-lib";
 
-async function createOffscreenDocument(path: string) {
+async function createOffscreenDocument(path: string) : Promise<void> {
     if (await chrome.offscreen.hasDocument()) { return; }
-    void chrome.offscreen.createDocument({
+    void await chrome.offscreen.createDocument({
         url: path,
         reasons: [chrome.offscreen.Reason.DOM_PARSER],
         justification: 'Private DOM access to parse HTML',
@@ -21,9 +21,9 @@ async function offscreenMessage<T, R>(message: T): Promise<R> {
 type lookupXpocUriMessage = {
     type: 'lookupXpocUri'
     url: string
-    tab: { url: string }
+    tabUrl: string
 }
 
 export async function lookupXpocUri(tabUrl: string, xpocUrl: string): Promise<lookupXpocUriResult> {
-    return await offscreenMessage<lookupXpocUriMessage, lookupXpocUriResult>({ type: 'lookupXpocUri', url: xpocUrl, tab: { url: tabUrl } })
+    return await offscreenMessage<lookupXpocUriMessage, lookupXpocUriResult>({ type: 'lookupXpocUri', url: xpocUrl, tabUrl: tabUrl })
 }

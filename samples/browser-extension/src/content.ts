@@ -107,7 +107,7 @@ document.addEventListener(
 /*
     This will determine if the specific word we click on, even if part of a larger string,
     matches the regex pattern.
-    We're trying to only have the context menu show up if we click on an acutal XPOC URI,
+    We're trying to only have the context menu show up if we click on an actual XPOC URI,
     and not just on a larger string that contains a XPOC URI
 */
 function getSubstringAtClick(textContent: string, regex: RegExp, event: MouseEvent) {

@@ -110,10 +110,10 @@ export async function lookupXpocUri(tabUrl: string, xpocUrl: string): Promise<lo
         (account: Account) => {
             // get the platform object for this account
             const platform = Platforms.isSupportedPlatform(account.platform) ? Platforms.getPlatform(account.platform) : undefined
-            if (platform) {
-                const canonicalizedTabUrl = platform.canonicalizeAccountName(tabUrl)
-                const canonicalizedAccountUrl = platform.canonicalizeAccountName(account.url)
-                return canonicalizedTabUrl === canonicalizedAccountUrl
+            if (platform && platform?.isValidAccountUrl(tabUrl)) {
+                const canonicalizedTabUrl = platform.canonicalizeAccountUrl(tabUrl)
+                const canonicalizedAccountUrl = platform.canonicalizeAccountUrl(account.url)
+                return canonicalizedTabUrl.account === canonicalizedAccountUrl.account
             }
             // tab url possibly matches this account but is not a supported platform
             else {
@@ -140,10 +140,10 @@ export async function lookupXpocUri(tabUrl: string, xpocUrl: string): Promise<lo
         (content: ContentItem) => {
             // get the platform object for this account
             const platform = Platforms.isSupportedPlatform(content.platform) ? Platforms.getPlatform(content.platform) : undefined
-            if (platform) {
-                const canonicalizedTabUrl = platform.canonicalizeAccountName(tabUrl)
-                const canonicalizedAccountUrl = platform.canonicalizeAccountName(content.url)
-                return canonicalizedTabUrl === canonicalizedAccountUrl
+            if (platform && platform?.isValidContentUrl(tabUrl)) {
+                const canonicalizedTabUrl = platform.canonicalizeContentUrl(tabUrl)
+                const canonicalizedManifestContentUrl = platform.canonicalizeContentUrl(content.url)
+                return canonicalizedTabUrl.url === canonicalizedManifestContentUrl.url
             }
             // tab url possibly matches this content but is not a supported platform
             else {

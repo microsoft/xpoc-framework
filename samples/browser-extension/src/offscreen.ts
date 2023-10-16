@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 
     if (request?.type === 'lookupXpocUri') {
-        lookupXpocUri(request.tab.url, request.url)
+        lookupXpocUri(request.tabUrl, request.url)
             .then((result) => {
                 sendResponse(result)
             })

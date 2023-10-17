@@ -1,6 +1,6 @@
 {
   "name": "xpoc-framework",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "Cross-Platform Origin of Content (XPOC) framework",
   "scripts": {

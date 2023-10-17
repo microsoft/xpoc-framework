@@ -1,125 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === 'displayXpocAccount') {
-        if (request.result) {
-            uwaContentPopup.show(
-                lastContextMenuTarget,
-                'XPOC Information',
-                chrome.runtime.getURL('icons/xpoc_logo.svg'),
-                [
-                    'Origin information',
-                    { label: 'Name', value: request.result.name },
-                    {
-                        label: 'Website',
-                        link: `<a href='https://${request.result.baseurl}' target='_blank'>${request.result.baseurl}<a/>`,
-                    },
-                ],
-                [
-                    'Account information',
-                    {
-                        label: 'URL',
-                        link: `<a href='${request.result.account.url}' target='_blank'>${request.result.account.url}<a/>`,
-                    },
-                    { label: 'Account', value: request.result.account.account },
-                ],
-            );
-        }
-    }
-    if (request.action === 'displayXpocContent') {
-        if (request.result) {
-            uwaContentPopup.show(
-                lastContextMenuTarget,
-                'XPOC Information',
-                chrome.runtime.getURL('icons/xpoc_logo.svg'),
-                [
-                    'Origin information',
-                    { label: 'Name', value: request.result.name },
-                    { label: 'Website', value: request.result.baseurl },
-                ],
-                [
-                    'Content information',
-                    { label: 'Description', value: request.result.content.desc },
-                    { label: 'URL', value: request.result.content.url },
-                    { label: 'PUID', value: request.result.content.puid },
-                    { label: 'Account', value: request.result.content.account },
-                    { label: 'Timestamp', value: request.result.content.timestamp},
-                ],
-            );
-        }
-    }
-    if (request.action === 'xpocNotFound') {
-        alert('Page not found in XPOC manifest');
-    }
-});
-
-/*
-    When we right-click on a node, we save a reference to it
-    When the background script responds to the context menu click,
-    we'll know what node we right-clicked on
-*/
-let lastContextMenuTarget = undefined;
-
-/*
-    Determines if specific word we right-clicked on is a valid XPOC URI
-    If so, show send a message to background.js to make the context menu visible
-
-    if we wait for the contextmenu event, then the round trip to the background script
-    will be too slow to show modify context menu in time
-
-    if we use the mousedown event, then we can't get the selected text (text we right-clicked on)
-
-    mouseup works early enough
-*/
-document.addEventListener(
-    'mouseup',
-    function (event) {
-        if (event.button === 2 /* right click */) {
-            const clickedText = getSubstringAtClick(
-                event.target.textContent,
-                PATTERN,
-                event,
-            );
-            if (clickedText) {
-                lastContextMenuTarget = event.target;
-            }
-            chrome.runtime.sendMessage({
-                action: 'showContextMenu',
-                data: clickedText,
-            });
-        }
-    },
-    true,
-);
-
-/*
-    This will determine if the specific word we click on, even if part of a larger string,
-    matches the regex pattern
-*/
-function getSubstringAtClick(textContent, regex, event) {
-    const selection = window.getSelection();
-    if (!selection.rangeCount) return undefined;
-
-    const range = selection.getRangeAt(0);
-    const clickIndex = range.startOffset;
-
-    let match = textContent.match(regex);
-
-    if (!match) return undefined;
-
-    const startIndex = match.index;
-    const endIndex = startIndex + match[0].length;
-
-    if (clickIndex >= startIndex && clickIndex <= endIndex) {
-        return match[0];
-    }
-
-    return undefined;
-}
-
 const template = document.createElement('TEMPLATE');
 template.innerHTML = `
 <style>
@@ -269,35 +150,46 @@ template.innerHTML = `
 
 </div>`;
 
-class UwaContentPopup /* extends HTMLElement */ {
-    container;
-    #shadowRoot;
-    #tableOrigin;
-    #tableAccount;
-    #icon;
-    #label;
-    #label1;
-    #label2;
-    #button;
-    #callback;
+
+interface ControlTableLine {
+    label: string;
+    value?: string;
+    link?: string;
+}
+
+type ControlTable = [string, ...ControlTableLine[]];
+
+
+export class UwaContentPopup /* extends HTMLElement */ {
+    container: HTMLElement;
+    #shadowRoot: ShadowRoot;
+    #tableOrigin: HTMLTableElement
+    #tableAccount: HTMLTableElement
+    #icon: HTMLImageElement;
+    #label: HTMLLabelElement;
+    #label1: HTMLLabelElement;
+    #label2: HTMLLabelElement;
+    #button: HTMLInputElement;
+    #callback: (() => void) | undefined
 
     constructor() {
         this.container = document.createElement('DIV');
         this.#shadowRoot = this.container.attachShadow({ mode: 'open' });
-        this.#shadowRoot.appendChild(template.cloneNode(true).content);
+        this.#shadowRoot.appendChild((template.cloneNode(true) as HTMLTemplateElement).content);
+
         this.container.style.display = 'none';
         document.body.appendChild(this.container);
-        this.#tableOrigin = this.#shadowRoot.querySelector('#table-origin');
-        this.#tableAccount = this.#shadowRoot.querySelector('#table-account');
-        this.#icon = this.#shadowRoot.querySelector('#icon');
-        this.#label = this.#shadowRoot.querySelector('#label');
-        this.#label1 = this.#shadowRoot.querySelector('#label-1');
-        this.#label2 = this.#shadowRoot.querySelector('#label-2');
-        this.#button = this.#shadowRoot.querySelector('#button');
+        this.#tableOrigin = this.#shadowRoot.querySelector('#table-origin') as HTMLTableElement;
+        this.#tableAccount = this.#shadowRoot.querySelector('#table-account') as HTMLTableElement;
+        this.#icon = this.#shadowRoot.querySelector('#icon') as HTMLImageElement;
+        this.#label = this.#shadowRoot.querySelector('#label') as HTMLLabelElement;
+        this.#label1 = this.#shadowRoot.querySelector('#label-1') as HTMLLabelElement;
+        this.#label2 = this.#shadowRoot.querySelector('#label-2') as HTMLLabelElement;
+        this.#button = this.#shadowRoot.querySelector('#button') as HTMLInputElement;
         this.hide();
     }
 
-    show(element, label, iconUrl, table1, table2, buttonLabel, callback) {
+    show(element: HTMLElement, label: string | null, iconUrl: string | null | undefined, table1: ControlTable, table2: ControlTable, buttonLabel?: string | null | undefined, callback?: (() => void) | undefined) {
         this.#label.textContent = label;
         this.#label.style.display = 'block';
         if (iconUrl != null) {
@@ -306,33 +198,35 @@ class UwaContentPopup /* extends HTMLElement */ {
         }
         table1.forEach((line, index) => {
             if (index === 0) {
-                this.#label1.textContent = line;
+                this.#label1.textContent = line as string;
                 return;
             }
             const tr = this.#tableOrigin.rows[index - 1];
             tr.style.display = 'table-row';
-            if (line.value !== undefined || line.link !== undefined) {
-                tr.cells[0].textContent = line.label;
-                if (line.value != null) {
-                    tr.cells[1].textContent = line.value;
+            const tableLine = line as ControlTableLine;
+            if (tableLine.value !== undefined || line.link !== undefined) {
+                tr.cells[0].textContent = tableLine.label;
+                if (tableLine.value != null) {
+                    tr.cells[1].textContent = tableLine.value;
                 } else if (line.link != null) {
-                    tr.cells[1].innerHTML = line.link;
+                    tr.cells[1].innerHTML = line.link as string;
                 }
             }
         });
         table2.forEach((line, index) => {
             if (index === 0) {
-                this.#label2.textContent = line;
+                this.#label2.textContent = line as string;
                 return;
             }
             const tr = this.#tableAccount.rows[index - 1];
             tr.style.display = 'table-row';
-            if (line.value !== undefined || line.link !== undefined) {
-                tr.cells[0].textContent = line.label;
-                if (line.value != null) {
-                    tr.cells[1].textContent = line.value;
+            const tableLine = line as ControlTableLine;
+            if (tableLine.value !== undefined || tableLine.link !== undefined) {
+                tr.cells[0].textContent = tableLine.label;
+                if (tableLine.value != null) {
+                    tr.cells[1].textContent = tableLine.value;
                 } else if (line.link != null) {
-                    tr.cells[1].innerHTML = line.link;
+                    tr.cells[1].innerHTML = tableLine.link as string;
                 }
             }
         });
@@ -341,7 +235,7 @@ class UwaContentPopup /* extends HTMLElement */ {
             this.#button.style.display = 'block';
             this.#button.value = buttonLabel;
             this.#callback = callback;
-            this.#button.addEventListener('click', callback);
+            this.#button.addEventListener('click', callback as () => void);
         }
         this.container.style.display = 'block';
 
@@ -358,8 +252,8 @@ class UwaContentPopup /* extends HTMLElement */ {
         }
 
         // eslint-disable-next-line no-unused-vars
-        const closeListener = (event) => {
-            const isClickInsideElement = this.container.contains(event.target);
+        const closeListener = (event: Event) => {
+            const isClickInsideElement = this.container.contains(event.target as Node);
 
             if (!isClickInsideElement) {
                 this.hide();
@@ -372,13 +266,13 @@ class UwaContentPopup /* extends HTMLElement */ {
 
     hide() {
         this.#label.textContent = '';
-        Array.from(this.#tableOrigin.rows).forEach((tr) => {
+        Array.from<HTMLTableRowElement>(this.#tableOrigin.rows).forEach((tr) => {
             Array.from(tr.cells).forEach((td) => {
                 td.textContent = '';
             });
             tr.style.display = 'none';
         });
-        Array.from(this.#tableAccount.rows).forEach((tr) => {
+        Array.from<HTMLTableRowElement>(this.#tableAccount.rows).forEach((tr) => {
             Array.from(tr.cells).forEach((td) => {
                 td.textContent = '';
             });
@@ -386,12 +280,12 @@ class UwaContentPopup /* extends HTMLElement */ {
         });
         this.#icon.style.display = 'none';
         this.#button.style.display = 'none';
-        this.#button.removeEventListener('click', this.#callback);
+        this.#callback && this.#button.removeEventListener('click', this.#callback);
         this.#callback = undefined;
         this.container.style.display = 'none';
     }
 
-    position(element) {
+    position(element: HTMLElement) {
         const boundRect = element.getBoundingClientRect();
 
         // check if the fixed element will go off the right edge of the screen
@@ -407,5 +301,3 @@ class UwaContentPopup /* extends HTMLElement */ {
                 : (this.container.style.top = `${boundRect.bottom}px`);
     }
 }
-
-const uwaContentPopup = new UwaContentPopup();

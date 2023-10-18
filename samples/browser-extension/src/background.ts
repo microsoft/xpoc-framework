@@ -21,7 +21,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         chrome.contextMenus.update(menuItemId, {
             visible: clickedText != null,
         });
+    }    
+    if (message.action === 'lookupXpocUri') {
+        const xpocUri = message.xpocUri;
+        lookupXpocUri(sender.tab?.url as string, xpocUri).then((result) => {
+            sendResponse(result);
+        })
     }
+    return true
 });
 
 // listen for context menu clicks
@@ -55,4 +62,3 @@ chrome.contextMenus.onClicked.addListener(
         }
     }
 );
-

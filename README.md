@@ -61,15 +61,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### Contributing platform implementations
-
-Contributors can help the project by implementing support for additional platforms in the reference implementation.
-This can be done by submitting PRs with the following changes:
-
--    `doc/platforms.md`: add a section for the new platform,
--    `lib/src/platform.ts`: add a class for the new platform, and add it to the `Platforms` object's `platforms` array, and
--    `lib/src/platform.test.ts`: add the platform to the `import` statement, and add platform test data to the `platformTestDataArray` array and the `platform operations` tests.
--    `testdata/testmanifest.json`: add a test platform account and content object in the respective array.
+To contribute a new platform implementation, follow the [guidelines in the wiki](https://github.com/microsoft/xpoc-framework/wiki/Adding-a-new-platform).
 
 ## Trademarks
 

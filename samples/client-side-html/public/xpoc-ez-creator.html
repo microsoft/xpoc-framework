@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div class="xpoc-clean-form">
+    <div>
         <h1>XPOC Manifest Creator</h1>
         <p>
             This page allows the creation of a XPOC manifest by adding your accounts on popular platforms. Simply
@@ -24,24 +24,27 @@
 
         <div id="manifestData">
             <h2>Manifest Info</h2>
-            <table id="manifestInfoTable">
-                <tbody>
-                    <tr>
-                        <td><label for="manifestName">Name *</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
-                        <td><input type="text" id="manifestName" onchange="validateAndUpdateName(this.value, this)"></td>
-                    </tr>
-                    <tr>
-                        <td><label for="manifestBaseUrl">Base URL *</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
-                        <td><input type="text" id="manifestBaseUrl" onchange="validateAndUpdateURL(this.value, this)"></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="form-table">
+                <table id="manifestInfoTable">
+                    <tbody>
+                        <tr>
+                            <td><label for="manifestName">Name *</label><span class="info-tooltip">i<span class="tooltip-text">Name of the XPOC manifest owner</span></span></td>
+                            <td><input type="text" id="manifestName" onchange="validateAndUpdateName(this.value, this)"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="manifestBaseUrl">Base URL *</label><span class="info-tooltip">i<span class="tooltip-text">Base URL of the XPOC manifest location (e.g., "example.com" or "example.com/path")</span></span></td>
+                            <td><input type="text" id="manifestBaseUrl" onchange="validateAndUpdateURL(this.value, this)"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <h2>Accounts</h2>
             Show all supported platforms <label class="switch"><input type="checkbox" id="toggleSwitch"><span class="slider round"></span></label>
-            <table id="accountsTable">
-                <!-- Dynamic content will be inserted here -->
-            </table>
-
+            <div class="form-table-with-logo">
+                <table id="accountsTable">
+                    <!-- Dynamic content will be inserted here -->
+                </table>
+            </div>
             <br><br>
             <button id="createButton" onclick="createManifest()">Create</button>
             <button id="saveButton" onclick="saveManifest()" disabled>Save</button>
@@ -62,36 +65,42 @@
                 displayName: "Facebook",
                 name: "Facebook",
                 url: `https://www.facebook.com/${accountReplaceString}`,
+                logo: "img/facebook-logo.svg"
             },
             {
                 show: true,
                 displayName: "Instagram",
                 name: "Instagram",
                 url: `https://www.instagram.com/${accountReplaceString}/`,
+                logo: "img/instagram-logo.svg"
             },
             {
                 show: true,
                 displayName: "LinkedIn",
                 name: "LinkedIn",
                 url: `https://www.linkedin.com/in/${accountReplaceString}`,
+                logo: "img/linkedin-logo.svg"
             },
             {
                 show: true,
                 displayName: "TikTok",
                 name: "TikTok",
                 url: `https://www.tiktok.com/@${accountReplaceString}`,
+                logo: "img/tiktok-logo.svg"
             },
             {
                 show: true,
                 displayName: "X (Twitter)",
                 name: "X",
                 url: `https://twitter.com/${accountReplaceString}`,
+                logo: "img/x-logo.svg"
             },
             {
                 show: true,
                 displayName: "YouTube",
                 name: "YouTube",
                 url: `https://www.youtube.com/@${accountReplaceString}`,
+                logo: "img/youtube-logo.svg"
             },
             // optional platforms (in alphabetical order)
             {
@@ -99,30 +108,35 @@
                 displayName: "GitHub",
                 name: "GitHub",
                 url: `https://https://github.com//${accountReplaceString}`,
+                logo: "img/github-logo.svg"
             },
             {
                 show: false,
                 displayName: "Google Scholar",
                 name: "GoogleScholar",
                 url: `https://scholar.google.com/citations?user=${accountReplaceString}`,
+                logo: "img/google-scholar-logo.svg"
             },
             {
                 show: false,
                 displayName: "Medium",
                 name: "Medium",
                 url: `https://${accountReplaceString}.medium.com`,
+                logo: "img/medium-logo.svg"
             },
             {
                 show: false,
                 displayName: "Rumble",
                 name: "Rumble",
                 url: `https://rumble.com/c/${accountReplaceString}`,
+                logo: "img/rumble-logo.svg"
             },
             {
                 show: false,
                 displayName: "Threads",
                 name: "Threads",
                 url: `https://www.threads.net/@${accountReplaceString}`,
+                logo: "img/threads-logo.svg"
             }
         ]
 
@@ -145,6 +159,7 @@
                     let value = accountElement ? accountElement.value : "";
                     html += `
                         <tr>
+                            <td><img src="${platform.logo}" alt="${platform.displayName} logo"></td>
                             <td>${platform.displayName}</td>
                             <td><input type="text" value="${value}" id="${accountId}" onchange="validateAndUpdateAccount(this.value, this)"></td>
                         </tr>

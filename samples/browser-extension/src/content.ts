@@ -151,6 +151,10 @@ const lookupXpocUri = async (xpocUri: string): Promise<lookupXpocUriResult> => {
     })
 }
 
+// returns a base URL from a XPOC URI
+const getBaseURL = (xpocUri: string): string =>
+    xpocUri.replace(/^xpoc:\/\//, 'https://').replace(/!$/, '').replace(/\/$/, '')
+
 // keep a cache of nodes we've already processed
 const cache = new WeakMap<Node, string>()
 
@@ -160,7 +164,7 @@ scanner.start(
         console.log(`add: ${node.textContent}`);
 
         // skip if the node is empty or hidden
-        // TODO: a node can be initialliy hidden, but then become visible later
+        // TODO: a node can be initially hidden, but then become visible later
         if (!cache.has(node) && (node as Text).textContent !== '' && (node.parentNode as HTMLElement).offsetWidth !== 0) {
             const match = PATTERN.exec((node as Text).textContent ?? '')
             const xpocUri = match?.[0] as string
@@ -217,7 +221,7 @@ scanner.start(
                         if (xpocResult.type === 'notFound') {
                             contentPopup.show(
                                 icon.img as HTMLElement,
-                                `Manifest/content not found at ${xpocUri}`,
+                                `This page is not listed in the manifest at ${getBaseURL(xpocUri)}`,
                                 chrome.runtime.getURL('icons/xpoc_logo.svg'),
                             );
                         }
@@ -228,7 +232,7 @@ scanner.start(
                                 chrome.runtime.getURL('icons/xpoc_logo.svg'),
                                 [
                                     'Error',
-                                    { label: 'Message', value: `Failed to download or parse manifest at ${xpocUri}` }
+                                    { label: 'Message', value: `Failed to fetch manifest from ${getBaseURL(xpocUri)}` }
                                 ],
                             );
                         }

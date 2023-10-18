@@ -44,16 +44,12 @@ table {
     margin-top: 20px;
     background-color: #FFF;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
 }
 
 table, th, td {
     border: 1px solid #DDD;
     padding: 5px;
-}
-
-table {
-    width: 100%;
-    overflow-x: auto; /* adds horizontal scroll on smaller screens */
 }
 
 th {
@@ -63,10 +59,6 @@ th {
 td input[type="text"] {
     max-width: 95%;
     box-sizing: border-box;
-}
-
-tr:nth-child(even) {
-    background-color: #F9F9F9;
 }
 
 input[type="text"], input[type="file"] {
@@ -188,17 +180,41 @@ input:checked + .slider:before {
     border-radius: 50%;
 }
 
-.xpoc-clean-form td:first-child {
+.form-table td:first-child {
     white-space: nowrap;
     padding-right: 20px;
     width: 30px;
 }
 
-.xpoc-clean-form td input[type="text"] {
+.form-table td input[type="text"] {
     max-width: 500px;
 }
 
-.xpoc-clean-form table, .xpoc-clean-form th, .xpoc-clean-form td {
+.form-table table, .form-table th, .form-table td {
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.form-table-with-logo td:nth-child(1) {
+    white-space: nowrap;
+    padding-right: 20px;
+    width: 30px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.form-table-with-logo td:nth-child(2) {
+    white-space: nowrap;
+    padding-right: 20px;
+    width: 30px;
+}
+
+.form-table-with-logo td input[type="text"] {
+    max-width: 500px;
+}
+
+.form-table-with-logo table, .form-table-with-logo th, .form-table-with-logo td {
     border: none;
     background-color: transparent;
     box-shadow: none;

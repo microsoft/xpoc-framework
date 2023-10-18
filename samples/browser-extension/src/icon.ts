@@ -35,8 +35,8 @@ export class Icon {
                 throw new Error('Unknown status')
         }
         const img = document.createElement('img')
-        img.style.height = '1em'
-        img.style.width = '1em'
+        img.style.height = '1.5em'
+        img.style.width = '1.5em'
         img.setAttribute('src', path)
         return img
     }

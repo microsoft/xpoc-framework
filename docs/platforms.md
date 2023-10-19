@@ -152,6 +152,23 @@ Medium accounts and specific stories can be added to a XPOC manifest.
 - For individuals: in the user's channel Description field (per channel). This will appear on the About page (`<url>/about/`) of the account.
 - For a post: in a video's tag field.
 
+## Telegram
+
+Public Telegram accounts and channels can be added to a XPOC manifest; both are treated as XPOC "accounts".
+
+### Manifest content
+
+-   properties shared by `accounts` and `content`:
+    -   `platform`: "Telegram"
+    -   `account`: the owner's account or channel name `<accountname>`
+    -   `url`: the canonical `https://t.me/<accountname>` url is preferred; avoid using the URLs with opaque invitation parameters 
+
+### XPOC URI placement
+
+- For accounts: in the bio field
+- For channels: in the description field.
+
+
 ## Threads
 
 It is RECOMMENDED to only list Threads accounts and not individual pieces of content (posts) in the XPOC manifest.

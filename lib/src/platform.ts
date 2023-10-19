@@ -763,7 +763,8 @@ export const Platforms = {
         new Threads(),
         new GoogleScholar(),
         new Rumble(),
-        new GitHub()
+        new GitHub(),
+        new Telegram()
     ],
 
     /**

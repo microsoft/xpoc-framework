@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { query } from "./htmlParser.node.js";
+import { query, QueryObject} from "./htmlParser.node.js";
 
 export type ContentType = 'post' | 'photo' | 'video' | 'reel' | 'event' | 'misc';
 
@@ -33,6 +33,11 @@ export interface CanonicalizedContentData extends CanonicalizedAccountData {
     type: ContentType
 }
 
+type AccountQueryData = {
+    canonicalUrlSuffix?: string;
+    queryObject: QueryObject
+};
+
 export abstract class Platform {
     // the platform's display name
     public DisplayName: string;
@@ -63,9 +68,13 @@ export abstract class Platform {
     // regex strings used to validate and canonicalize content URLs
     protected contentRegexString: string;
 
+    // query object to find the XPOC URI in the HTML from an account URL 
+    protected accountXpocUriQuery: AccountQueryData | undefined;
+
     constructor(displayName: string, canonicalHostname: string, accountUrlTemplate: string, contentUrlTemplate: string,
         canFetchAccountData: boolean, canFetchContentData: boolean,
-        regexHostnameString: string, accountRegexStringSuffix: string, contentRegexStringSuffix: string) {
+        regexHostnameString: string, accountRegexStringSuffix: string, contentRegexStringSuffix: string,
+        accountXpocUriQuery?: AccountQueryData) {
         this.DisplayName = displayName;
         this.CanonicalHostname = canonicalHostname;
         this.AccountPathUrlTemplate = accountUrlTemplate;
@@ -75,6 +84,7 @@ export abstract class Platform {
         this.regexHostnameString = regexHostnameString;
         this.accountRegexString = regexHostnameString + accountRegexStringSuffix;
         this.contentRegexString = regexHostnameString + contentRegexStringSuffix;
+        this.accountXpocUriQuery = accountXpocUriQuery;
     }
 
     // returns true if the given URL is a valid account URL on the platform
@@ -153,7 +163,24 @@ export abstract class Platform {
     // returns the account data for a given account URL on the platform
     // throws an error if not supported for the platform (if CanFetchData is false)
     async getAccountData(url: string): Promise<PlatformAccountData> {
-        throw new Error('Not supported');
+        if (!this.CanFetchAccountData || !this.accountXpocUriQuery) {
+            throw new Error('Not supported');
+        }
+        // fetch the account URL and extract the XPOC URI from the right location
+        const accountData = this.canonicalizeAccountUrl(url);
+        try {
+            const queryUrl = accountData.url + (this.accountXpocUriQuery.canonicalUrlSuffix?? '');
+            const description = (await query(queryUrl, [this.accountXpocUriQuery.queryObject]) as string[])[0];
+            const xpocUri = findXpocUri(description);
+            return {
+                xpocUri: xpocUri,
+                platform: this.DisplayName,
+                url: accountData.url,
+                account: accountData.account
+            };
+        } catch (err) {
+            throw new Error(`Failed to fetch ${this.DisplayName} data`);
+        }
     }
 
     // returns the content data for a given content URL on the platform
@@ -208,36 +235,28 @@ export class YouTube extends Platform {
             // matches YouTube account URLs, with an optional 'about/' path
             `/@(?<accountName>[^/]+)(/about)?/?$`,
             // matches YouTube content URLs with a watch path and a 'v' query parameter
-            `/watch\\?(?:[^&]*&)*v=(?<puid>[\\w-]{11})(?:&[^ ]*)?$`
+            `/watch\\?(?:[^&]*&)*v=(?<puid>[\\w-]{11})(?:&[^ ]*)?$`,
+            // fetch XPOC URI in the description of the account page
+            {queryObject: {nodeQuery: 'meta[name="description"]', attribute: 'content'}}
         );
     }
 
     canonicalizeAccountName = trimAndRemoveAtPrefix;
 
-    async getAccountData(url: string): Promise<PlatformAccountData> {
-        const accountData = this.canonicalizeAccountUrl(url);
-        try {
-            const description = await query(accountData.url, 'meta[name="description"]', 'content') as string;
-            const xpocUri = findXpocUri(description);
-            return {
-                xpocUri: xpocUri,
-                platform: this.DisplayName,
-                url: accountData.url,
-                account: accountData.account
-            };
-
-        } catch (err) {
-            throw new Error('Failed to fetch YouTube data');
-        }
-    }
+    filterType = (type: string | undefined): ContentType => 'video';
 
     async getContentData(url: string): Promise<PlatformContentData> {
         const contentData = this.canonicalizeContentUrl(url);
         try {
-            const channelUrl = await query(contentData.url, 'span[itemprop="author"] link[itemprop="url"]', 'href') as string;
+            const results = await query(contentData.url, [
+                {nodeQuery: 'span[itemprop="author"] link[itemprop="url"]', attribute: 'href'},
+                {nodeQuery: 'meta[itemprop="datePublished"]', attribute: 'content'},
+                {nodeQuery: 'meta[name="description"]', attribute: 'content'}
+            ]) as string[];
+            const channelUrl = results[0];
             const account = channelUrl?.split('/').pop()?.replace('@', '') || '';
-            const postTime = await query(contentData.url, 'meta[itemprop="datePublished"]', 'content') as string;
-            const videoDescription = await query(contentData.url, 'meta[name="description"]', 'content') as string;
+            const postTime = results[1];
+            const videoDescription = results[2];
             const xpocUri = findXpocUri(videoDescription);
             return {
                 xpocUri: xpocUri,
@@ -248,11 +267,9 @@ export class YouTube extends Platform {
                 puid: contentData.puid
             };
         } catch (err) {
-            throw new Error('Failed to fetch YouTube data');
+            throw new Error(`Failed to fetch ${this.DisplayName} data`);
         }
     }
-
-    filterType = (type: string | undefined): ContentType => 'video';
 }
 
 // X/Twitter platform implementation. This implementation does not fetch account
@@ -633,11 +650,12 @@ export class Rumble extends Platform {
             true, true,
             // matches Rumble URLs, with or without www. subdomain
             "^https?://(?:www\\.)?(rumble\\.com)",
-            // matches Rumble channel URLs  /c is optional.
-
+            // matches Rumble channel URLs  /c is optional
             '/(c\/)?(?<accountName>(c-\\d{7}|(?<!c-)\\w+))(?:\/about)?\/?$',
             // matches Rumble content URLs
-            '/(?<puid>[a-zA-Z0-9-_]+)(\\.html)?\/?$'
+            '/(?<puid>[a-zA-Z0-9-_]+)(\\.html)?\/?$',
+            // fetch XPOC URI in the description of the account page (on about page)
+            {canonicalUrlSuffix: '/about', queryObject: {nodeQuery: 'div.channel-about-description-socials'}}
         );
     }
 
@@ -647,30 +665,20 @@ export class Rumble extends Platform {
 
     filterType = (type: string | undefined): ContentType => 'video';
 
-    async getAccountData(url: string): Promise<PlatformAccountData> {
-        const accountData = this.canonicalizeAccountUrl(url);
-        try {
-            const description = await query(`${accountData.url}/about`, 'div.channel-about-description-socials') as string;
-            const xpocUri = findXpocUri(description);
-            return {
-                xpocUri: xpocUri,
-                platform: this.DisplayName,
-                url: accountData.url,
-                account: accountData.account
-            };
-
-        } catch (err) {
-            throw new Error('Failed to fetch Rumble data');
-        }
-    }
-
     async getContentData(url: string): Promise<PlatformContentData> {
         const contentData = this.canonicalizeContentUrl(url);
         try {
-            const channelUrl = await query(contentData.url, 'meta[property="og:url"]', 'content') as string;
-            const account = (await query(contentData.url, 'a.media-by--a', 'href') as string)?.replace('/c/', '');
-            const postTime = await query(contentData.url, '.media-description-info-tag > div', 'title') as string;
-            const videoTag = await query(contentData.url, 'meta[property="og:video:tag"]', 'content') as string;
+            const results = await query(contentData.url, [
+                {nodeQuery: 'meta[property="og:url"]', attribute: 'content'},
+                {nodeQuery: 'a.media-by--a', attribute: 'href'},
+                {nodeQuery: '.media-description-info-tag > div', attribute: 'title'},
+                {nodeQuery: 'meta[property="og:video:tag"]', attribute: 'content'}
+            ]) as string[];
+
+            const channelUrl = results[0];
+            const account = results[1].replace('/c/', '');
+            const postTime = results[2];
+            const videoTag = results[3];
 
             const xpocUri = findXpocUri(videoTag);
             return {
@@ -682,7 +690,7 @@ export class Rumble extends Platform {
                 puid: contentData.puid
             };
         } catch (err) {
-            throw new Error('Failed to fetch Rumble data');
+            throw new Error(`Failed to fetch ${this.DisplayName} data`);
         }
     }
 }
@@ -700,31 +708,15 @@ export class GitHub extends Platform {
         // matches GitHub account URLs
         "/(?<accountName>[a-zA-Z0-9-_]{1,39})\/?(?:\\?.*)?$",
         // no content URL for GitHub 
-        ``
+        ``,
+        // fetch XPOC URI in the description of the account page
+        {queryObject: {nodeQuery: 'meta[name="description"]', attribute: 'content'}}
         );
     }
 
     // overwrite base class's implementations (GitHub does not support content URLs)
     isValidContentUrl = (url: string): boolean => false;
     canonicalizeContentUrl = (url: string): CanonicalizedContentData => { throw new Error(`${this.DisplayName} does not support content URLs`) };
-
-    async getAccountData(url: string): Promise<PlatformAccountData> {
-        // TODO: same implementation as YouTube's; refactor
-        const accountData = this.canonicalizeAccountUrl(url);
-        try {
-            const description = await query(accountData.url, 'meta[name="description"]', 'content') as string;
-            const xpocUri = findXpocUri(description);
-            return {
-                xpocUri: xpocUri,
-                platform: this.DisplayName,
-                url: accountData.url,
-                account: accountData.account
-            };
-
-        } catch (err) {
-            throw new Error('Failed to fetch GitHub data');
-        }
-    }
 }
 
 // Telegram platform implementation. This platform only supports account listing.

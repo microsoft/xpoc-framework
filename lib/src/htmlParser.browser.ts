@@ -1,7 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-export async function query(url: string, nodeQuery: string, attribute: string): Promise<string | undefined | Error> {
+type QueryObject = {
+    nodeQuery: string;
+    attribute: string;
+};
+
+export async function query(url: string, queries: QueryObject[]): Promise<(string | undefined)[] | Error> {
     const htmlOrError = await fetch(url).then((res: Response) => res.text()).catch((err: Error) => err);
     if (htmlOrError instanceof Error) return htmlOrError;
     const html: string = htmlOrError;
@@ -15,6 +20,10 @@ export async function query(url: string, nodeQuery: string, attribute: string): 
     document.querySelectorAll('script, img').forEach(script => {
         script.parentNode?.removeChild(script);
     });
-    const node = document.querySelector(nodeQuery) ?? undefined;
-    return node?.getAttribute(attribute) ?? undefined;
+    const results: (string | undefined)[] = [];
+    for (const query of queries) {
+        const node = document.querySelector(query.nodeQuery) ?? undefined;
+        results.push(node?.getAttribute(query.attribute) ?? undefined);
+        }
+    return results;
 }   

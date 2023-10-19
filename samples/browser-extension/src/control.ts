@@ -160,7 +160,7 @@ interface ControlTableLine {
 type ControlTable = [string, ...ControlTableLine[]];
 
 
-export class UwaContentPopup /* extends HTMLElement */ {
+export class ContentPopup /* extends HTMLElement */ {
     container: HTMLElement;
     #shadowRoot: ShadowRoot;
     #tableOrigin: HTMLTableElement
@@ -189,18 +189,21 @@ export class UwaContentPopup /* extends HTMLElement */ {
         this.hide();
     }
 
-    show(element: HTMLElement, label: string | null, iconUrl: string | null | undefined, table1: ControlTable, table2: ControlTable, buttonLabel?: string | null | undefined, callback?: (() => void) | undefined) {
+    show(element: HTMLElement, label: string | null, iconUrl: string | null | undefined, table1?: ControlTable, table2?: ControlTable, buttonLabel?: string | null | undefined, callback?: (() => void) | undefined) {
         this.#label.textContent = label;
         this.#label.style.display = 'block';
         if (iconUrl != null) {
             this.#icon.style.display = 'block';
             this.#icon.src = iconUrl;
         }
-        table1.forEach((line, index) => {
+        this.#label1.style.display = 'none';
+        this.#label2.style.display = 'none';
+        table1 && table1.forEach((line, index) => {
             if (index === 0) {
                 this.#label1.textContent = line as string;
                 return;
             }
+            this.#label1.style.display = 'block';
             const tr = this.#tableOrigin.rows[index - 1];
             tr.style.display = 'table-row';
             const tableLine = line as ControlTableLine;
@@ -213,11 +216,12 @@ export class UwaContentPopup /* extends HTMLElement */ {
                 }
             }
         });
-        table2.forEach((line, index) => {
+        table2 && table2.forEach((line, index) => {
             if (index === 0) {
                 this.#label2.textContent = line as string;
                 return;
             }
+            this.#label2.style.display = 'block';
             const tr = this.#tableAccount.rows[index - 1];
             tr.style.display = 'table-row';
             const tableLine = line as ControlTableLine;
@@ -301,3 +305,6 @@ export class UwaContentPopup /* extends HTMLElement */ {
                 : (this.container.style.top = `${boundRect.bottom}px`);
     }
 }
+
+// eslint-disable-next-line no-unused-vars
+export const contentPopup = new ContentPopup()

@@ -95,6 +95,7 @@ export type lookupXpocUriResult =
 
 export async function lookupXpocUri(tabUrl: string, xpocUrl: string): Promise<lookupXpocUriResult> {
 
+    console.log("lookupXpocUri called", tabUrl, xpocUrl)
     const manifest = await downloadManifest(xpocUrl)
 
     if (manifest instanceof Error) {

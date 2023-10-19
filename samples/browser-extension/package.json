@@ -5,11 +5,11 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "clean": "rimraf ./dist/**/*",
+    "clean": "rimraf dist",
     "build": "cross-env NODE_ENV=production rollup -c",
-    "build:clean": "npm run clean && npm run build:debug",
+    "build:clean": "npm run clean && npm run build",
     "build:debug": "cross-env NODE_ENV=development rollup -c",
-    "build:watch": "npm run build:debug -- -w",
+    "build:watch": "cross-env NODE_ENV=development rollup -c -w",
     "test": "echo \"Error: no tests\" && exit 1"
   },
   "devDependencies": {

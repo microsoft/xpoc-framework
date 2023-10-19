@@ -1,6 +1,6 @@
 {
     "name": "XPOC framework sample",
-    "url": "https://raw.githubusercontent.com/microsoft/xpoc-framework/main/samples/tests",
+    "baseurl": "https://raw.githubusercontent.com/microsoft/xpoc-framework/main/samples/tests",
 	"version": "0.2",
 	"accounts": [
 		{

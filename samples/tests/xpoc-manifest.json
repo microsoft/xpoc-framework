@@ -1,0 +1,22 @@
+{
+    "name": "XPOC framework sample",
+    "baseurl": "https://raw.githubusercontent.com/microsoft/xpoc-framework/main/samples/tests",
+	"version": "0.2",
+	"accounts": [
+		{
+			"platform": "Test",
+			"url": "https://github.com/microsoft/xpoc-framework/blob/main/samples/tests/valid-account.md",
+			"account": "TestAccount"
+		}
+	],
+    "content": [
+		{
+			"timestamp": "2023-10-19T00:00:00Z",
+			"desc": "XPOC test valid content", 
+			"url": "https://github.com/microsoft/xpoc-framework/blob/main/samples/tests/valid-content-1234.md",
+			"platform": "Test",
+			"puid": "1234",
+			"account": "TestAccount"
+		}
+    ]
+}

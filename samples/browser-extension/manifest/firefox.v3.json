@@ -30,7 +30,10 @@
     "web_accessible_resources": [
         {
             "resources": [
-                "icons/xpoc_logo.svg"
+                "icons/xpoc_logo.svg",
+                "icons/checkmark.svg",
+                "icons/invalid.svg",
+                "icons/warning.svg"
             ],
             "matches": [
                 "<all_urls>"

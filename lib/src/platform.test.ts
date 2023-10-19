@@ -4,7 +4,7 @@
 import {
     CanonicalizedAccountData, CanonicalizedContentData, Platform, Platforms, PlatformAccountData, PlatformContentData,
     // platforms
-    Facebook, GitHub, GoogleScholar, Instagram, LinkedIn, Medium, Rumble, Threads, TikTok, XTwitter, YouTube
+    Facebook, GitHub, GoogleScholar, Instagram, LinkedIn, Medium, Rumble, Telegram, Threads, TikTok, XTwitter, YouTube
 } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
@@ -638,7 +638,6 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://notrumble.com/v3lvq1f-crossette.html',
         ],
         canonicalAccountData: [
-
             ...new Array(6).fill(
                 {
                     url: 'https://rumble.com/c/c-4908074',
@@ -719,8 +718,61 @@ const platformTestDataArray: PlatformTestData[] = [
         },
 
         sampleContentData: undefined
-    }
+    },
 
+        // Telegram test data
+        {
+            platform: new Telegram(),
+            accountNames: [
+                'xpoctest',
+                '@xpoctest',
+                ' xpoctest '
+            ],
+            validAccountUrls: [
+                // accounts
+                'https://t.me/xpoctest',
+                'https://t.me/xpoctest/',
+                'https://www.t.me/xpoctest',
+                'https://web.telegram.org/k/#@xpoctest',
+                'https://web.telegram.org/a/#@xpoctest',
+                'https://web.telegram.org/z/#@xpoctest',
+                'https://telegram.me/xpoctest',
+                'https://telegram.dog/xpoctest',
+                // channels
+                'https://www.t.me/testxpocchannel',
+                'https://web.telegram.org/k/#@testxpocchannel'
+            ],
+            validContentUrls: [
+                // n/a
+            ],
+            invalidAccountUrls: [
+                'https://t.me',
+                'https://web.telegram.org',
+                'https://nott.me/xpoctest',
+                'https://nottelegram.org/xpoctest'
+            ],
+            invalidContentUrls: [
+                // n/a
+            ],
+            canonicalAccountData: [
+                ...new Array(8).fill( // canonicalized version of validAccountUrls (representing all the same account)
+                {
+                    url: 'https://t.me/xpoctest',
+                    account: 'xpoctest'
+                }),
+                ...new Array(2).fill( // canonicalized version of validAccountUrls (representing all the same account)
+                {
+                    url: 'https://t.me/testxpocchannel',
+                    account: 'testxpocchannel'
+                })
+            ],
+            canonicalContentData: [
+                // n/a
+            ],
+            sampleAccountData: undefined,
+            sampleContentData: undefined
+        }
+    
 ];
 
 const hasValue = (s: string | undefined): boolean => s !== undefined && s !== '';
@@ -844,6 +896,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedAccountUrl('https://rumble.com/c/accountname')).toBe(true);
         // GitHub
         expect(Platforms.isSupportedAccountUrl('https://github.com/accountname')).toBe(true);
+        // Telegram
+        expect(Platforms.isSupportedAccountUrl('https://t.me/accountname')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -871,6 +925,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedContentUrl('https://rumble.com/abcefgh-content.html')).toBe(true);
         // GitHub (no supported content)
         expect(Platforms.isSupportedContentUrl('https://github.com/accountname')).toBe(false);
+        // Telegram (no supported content)
+        expect(Platforms.isSupportedContentUrl('https://t.me/accountname')).toBe(false);
         // unsupported platform
         expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });
@@ -940,6 +996,11 @@ describe('platform operations', () => {
         expect(accountData.account).toBe('christianpaquin');
         expect(accountData.url).toBe('https://github.com/christianpaquin');
 
+        // Telegram test (no public access, expect a not supported exception)
+        url = 'https://t.me/xpoctest';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
+        await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
+        
         // unsupported platform
         url = 'https://www.notaplatform.com/accountname';
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
@@ -1009,6 +1070,11 @@ describe('platform operations', () => {
 
         // GitHub test (no content URL, expect a not supported exception)
         url = 'https://github.com/christianpaquin';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+
+        // Telegram test (no content URL, expect a not supported exception)
+        url = 'https://t.me/xpoctest';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 

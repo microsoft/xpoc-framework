@@ -33,7 +33,6 @@ export interface CanonicalizedContentData extends CanonicalizedAccountData {
     type: ContentType
 }
 
-// TODO: move each platform to its own file? (maybe not, since they're smaller due to refactor)
 export abstract class Platform {
     // the platform's display name
     public DisplayName: string;
@@ -705,14 +704,9 @@ export class GitHub extends Platform {
         );
     }
 
-    // overwrite base class's implementation
-    isValidContentUrl(url: string): boolean {
-        return false; // GitHub does not support content URLs
-    }
-
-    canonicalizeContentUrl(url: string): CanonicalizedContentData {
-        throw new Error('GitHub does not support content URLs');
-    }
+    // overwrite base class's implementations (GitHub does not support content URLs)
+    isValidContentUrl = (url: string): boolean => false;
+    canonicalizeContentUrl = (url: string): CanonicalizedContentData => { throw new Error(`${this.DisplayName} does not support content URLs`) };
 
     async getAccountData(url: string): Promise<PlatformAccountData> {
         // TODO: same implementation as YouTube's; refactor
@@ -733,6 +727,26 @@ export class GitHub extends Platform {
     }
 }
 
+// Telegram platform implementation. This platform only supports account listing.
+export class Telegram extends Platform {
+    constructor() {
+        super('Telegram', 'https://t.me',
+        `${ACCOUNT_STR}`, ``, // no content URL for Telegram
+        false, false, // n/a
+        // matches Telegram URLs
+        "^https?://(?:www\\.|web\\.)?(telegram\\.org|telegram\\.me|t.me|telegram\\.dog)",
+        // matches Telegram account and channel URLs (optional web version (k/a/z), optional #, optional @, account name, optional /, optional query parameters)
+        `/(k/|a/|z/)?#?@?(?<accountName>[^/]+)/?(?:\\?.*?)?$`, 
+        '' // no content URL for Telegram
+        );
+    }
+
+    canonicalizeAccountName = trimAndRemoveAtPrefix;
+    // overwrite base class's implementations (Telegram does not support content URLs)
+    isValidContentUrl = (url: string): boolean => false;
+    canonicalizeContentUrl = (url: string): CanonicalizedContentData => { throw new Error(`${this.DisplayName} does not support content URLs`) };
+}
+
 // supported platforms
 export const Platforms = {
 
@@ -747,7 +761,8 @@ export const Platforms = {
         new Threads(),
         new GoogleScholar(),
         new Rumble(),
-        new GitHub()
+        new GitHub(),
+        new Telegram()
     ],
 
     /**

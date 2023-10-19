@@ -704,14 +704,9 @@ export class GitHub extends Platform {
         );
     }
 
-    // overwrite base class's implementation
-    isValidContentUrl(url: string): boolean {
-        return false; // GitHub does not support content URLs
-    }
-
-    canonicalizeContentUrl(url: string): CanonicalizedContentData {
-        throw new Error('GitHub does not support content URLs');
-    }
+    // overwrite base class's implementations (GitHub does not support content URLs)
+    isValidContentUrl = (url: string): boolean => false;
+    canonicalizeContentUrl = (url: string): CanonicalizedContentData => { throw new Error(`${this.DisplayName} does not support content URLs`) };
 
     async getAccountData(url: string): Promise<PlatformAccountData> {
         // TODO: same implementation as YouTube's; refactor
@@ -747,6 +742,9 @@ export class Telegram extends Platform {
     }
 
     canonicalizeAccountName = trimAndRemoveAtPrefix;
+    // overwrite base class's implementations (Telegram does not support content URLs)
+    isValidContentUrl = (url: string): boolean => false;
+    canonicalizeContentUrl = (url: string): CanonicalizedContentData => { throw new Error(`${this.DisplayName} does not support content URLs`) };
 }
 
 // supported platforms

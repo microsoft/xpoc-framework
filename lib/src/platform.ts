@@ -33,7 +33,6 @@ export interface CanonicalizedContentData extends CanonicalizedAccountData {
     type: ContentType
 }
 
-// TODO: move each platform to its own file? (maybe not, since they're smaller due to refactor)
 export abstract class Platform {
     // the platform's display name
     public DisplayName: string;
@@ -731,6 +730,23 @@ export class GitHub extends Platform {
             throw new Error('Failed to fetch GitHub data');
         }
     }
+}
+
+// Telegram platform implementation. This platform only supports account listing.
+export class Telegram extends Platform {
+    constructor() {
+        super('Telegram', 'https://t.me',
+        `${ACCOUNT_STR}`, ``, // no content URL for Telegram
+        false, false, // n/a
+        // matches Telegram URLs
+        "^https?://(?:www\\.|web\\.)?(telegram\\.org|telegram\\.me|t.me|telegram\\.dog)",
+        // matches Telegram account and channel URLs (optional web version (k/a/z), optional #, optional @, account name, optional /, optional query parameters)
+        `/(k/|a/|z/)?#?@?(?<accountName>[^/]+)/?(?:\\?.*?)?$`, 
+        '' // no content URL for Telegram
+        );
+    }
+
+    canonicalizeAccountName = trimAndRemoveAtPrefix;
 }
 
 // supported platforms

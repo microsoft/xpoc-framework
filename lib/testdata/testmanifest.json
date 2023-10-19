@@ -59,6 +59,11 @@
 			"url": "https://github.com/a_gh_test_account"
 		},
 		{
+			"account": "a_tg_test_account",
+			"platform": "Telegram",
+			"url": "https://t.me/a_tg_test_account"
+		},
+		{
 			"account": "a_us_test_account",
 			"platform": "Unsupported",
 			"url": "https://unsupported.platform/a_us_test_account"

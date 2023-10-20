@@ -64,6 +64,10 @@
 			"url": "https://t.me/a_tg_test_account"
 		},
 		{
+			"account": "a_ln_test_account",
+			"platform": "LINE"
+		},
+		{
 			"account": "a_us_test_account",
 			"platform": "Unsupported",
 			"url": "https://unsupported.platform/a_us_test_account"

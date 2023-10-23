@@ -727,10 +727,6 @@ export class GitHub extends Platform {
         this.SupportContentUrls = false;
         this.removeAtPrefixInAccountNames = false;
     }
-
-    // overwrite base class's implementations (GitHub does not support content URLs)
-    isValidContentUrl = (url: string): boolean => false;
-    canonicalizeContentUrl = (url: string): CanonicalizedContentData => { throw new Error(`${this.DisplayName} does not support content URLs`) };
 }
 
 // Telegram platform implementation. This platform only supports account listing.

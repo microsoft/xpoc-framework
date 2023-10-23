@@ -31,8 +31,7 @@
                 },
                 "required": [
                     "account",
-                    "platform",
-                    "url"
+                    "platform"
                 ]
             }
         },

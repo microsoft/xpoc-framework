@@ -1,7 +1,8 @@
 {
     "name": "A test name",
     "baseurl": "https://example.com",
-	"version": "0.2",
+	"version": "0.3",
+	"updated": "2023-10-23T15:00:00Z",
 	"accounts": [
 		{
 			"account": "a_X_test_account",

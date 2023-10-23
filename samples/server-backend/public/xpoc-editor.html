@@ -11,6 +11,8 @@
     - Implement better error handling and reporting (highlight erroneous fields, tooltips, etc.)
     - Provide input pickers for common fields (e.g., platform, timestamp)
     - Add auto-fill based on URL (by fetching the target page and deducing content fields); would require CORS support
+
+    TODO: add "updated" field to the manifest
 -->
 
 <!DOCTYPE html>
@@ -51,7 +53,11 @@
                     <td><input type="text" id="manifestBaseUrl" onchange="manifest.baseurl = this.value"></td>
                 </tr>
                 <tr>
-                    <td><label for="manifestVersion">Version:</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.2</span></span></td>
+                    <td><label for="manifestUpdated">Last updated</label><span class="info-tooltip">i<span class="tooltip-text">Last updated timestamp in ISO format (e.g., YYYY-MM-DDTHH:MM:SSZ)</span></span></td>
+                    <td><input type="text" id="manifestUpdated" readonly></td>
+                </tr>
+                <tr>
+                    <td><label for="manifestVersion">Version:</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Current version is 0.3</span></span></td>
                     <td><input type="text" id="manifestVersion" onchange="manifest.version = this.value"></td>
                 </tr>
             </tbody>
@@ -77,10 +83,12 @@
 
     <script src="xpoc-common.js"></script>
     <script>
+        const currentVersion = "0.3";
+
         let manifest = {
             name: "",
             baseurl: "",
-            version: "0.2",
+            version: currentVersion,
             accounts: [],
             content: []
         };
@@ -89,14 +97,14 @@
             clearError();
             document.getElementById('manifestName').value = manifest.name || '';
             document.getElementById('manifestBaseUrl').value = manifest.baseurl || '';
-            document.getElementById('manifestVersion').value = manifest.version || '0.2';
+            document.getElementById('manifestVersion').value = manifest.version || currentVersion;
         }
 
         function createNewManifest() {
             manifest = {
                 name: "",
                 baseurl: "",
-                version: "0.2",
+                version: currentVersion,
                 accounts: [],
                 content: []
             };

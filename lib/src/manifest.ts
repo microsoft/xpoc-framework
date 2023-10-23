@@ -12,7 +12,7 @@ import { ValidateFunction } from 'ajv';
 export type Account = {
     account: string;
     platform: string;
-    url: string;
+    url?: string;
 };
 
 /**
@@ -33,6 +33,7 @@ export type ContentItem = {
 export type XPOCManifest = {
     name: string;
     baseurl: string;
+    updated?: string;
     version: string;
     accounts: Account[];
     content: ContentItem[];
@@ -60,7 +61,7 @@ export type ContentMatchValues = {
 /**
  * Returns true if the two resources referenced by two URLs are the same.
  */
-const areResourcesEqual = (url1: string, url2: string): boolean => {
+const areResourcesEqual = (url1: string | undefined, url2: string | undefined): boolean => {
     if (!url1 || !url2) return false;
     // trim the URLs to remove any whitespace, the http(s):// prefix, and trailing slashes
     const trimUrl = (url: string): string => url.trim().replace(/^(https?:\/\/)/, '').replace(/\/$/, '');
@@ -72,7 +73,7 @@ const areResourcesEqual = (url1: string, url2: string): boolean => {
  */
 export class ManifestBase {
     manifest: XPOCManifest;
-    static LatestVersion = '0.2';
+    static LatestVersion = '0.3';
 
     constructor(manifest: XPOCManifest) {
         this.manifest = manifest;

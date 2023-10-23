@@ -68,6 +68,10 @@
 			"platform": "LINE"
 		},
 		{
+			"account": "a_sc_test_account",
+			"platform": "Snapchat"
+		},
+		{
 			"account": "a_us_test_account",
 			"platform": "Unsupported",
 			"url": "https://unsupported.platform/a_us_test_account"

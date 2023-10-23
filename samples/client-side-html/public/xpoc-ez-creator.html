@@ -119,6 +119,13 @@
             },
             {
                 show: false,
+                displayName: "LINE",
+                name: "LINE",
+                // does not support account URLs
+                logo: "img/line-logo.svg"
+            },
+            {
+                show: false,
                 displayName: "Medium",
                 name: "Medium",
                 url: `https://${accountReplaceString}.medium.com`,
@@ -190,11 +197,14 @@
                             return item.platform != platform.name;
                         });
                         // update the account in the manifest
-                        manifest.accounts.push({
+                        let account = {
                             "account": accountName,
-                            "platform": platform.name,
-                            "url": platform.url.replace(accountReplaceString, accountName)
-                        })
+                            "platform": platform.name
+                        }
+                        if (platform.url) {
+                            account.url = platform.url.replace(accountReplaceString, accountName)
+                        }
+                        manifest.accounts.push(account)
                         count++;
                     }
                 }

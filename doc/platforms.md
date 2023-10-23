@@ -11,6 +11,7 @@ List of platforms:
 -   [LinkedIn](#linkedin)
 -   [Medium](#medium)
 -   [Rumble](#rumble)
+-   [Snapchat](#snapchat)
 -   [Telegram](#telegram)
 -   [Threads](#threads)
 -   [TikTok](#tiktok)
@@ -168,6 +169,21 @@ Medium accounts and specific stories can be added to a XPOC manifest.
 
 - For individuals: in the user's channel Description field (per channel). This will appear on the About page (`<url>/about/`) of the account.
 - For a post: in a video's tag field.
+
+## Snapchat
+
+Snapchat only offers in-app access, therefore XPOC manifests cannot link to account and content URLs. 
+
+### Manifest content
+
+-   `accounts` properties:
+    -   `platform`: "Snapchat"
+    -   `account`: the owner's username
+    -   `url`: n/a (leave empty)
+
+### XPOC URI placement
+
+Not applicable.
 
 ## Telegram
 

@@ -4,7 +4,7 @@
 import {
     CanonicalizedAccountData, CanonicalizedContentData, Platform, Platforms, PlatformAccountData, PlatformContentData,
     // platforms
-    Facebook, GitHub, GoogleScholar, Instagram, LinkedIn, Medium, Rumble, Telegram, Threads, TikTok, XTwitter, YouTube
+    Facebook, GitHub, GoogleScholar, Instagram, LINE, LinkedIn, Medium, Rumble, Telegram, Threads, TikTok, XTwitter, YouTube
 } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
@@ -720,58 +720,76 @@ const platformTestDataArray: PlatformTestData[] = [
         sampleContentData: undefined
     },
 
-        // Telegram test data
-        {
-            platform: new Telegram(),
-            accountNames: [
-                'xpoctest',
-                '@xpoctest',
-                ' xpoctest '
-            ],
-            validAccountUrls: [
-                // accounts
-                'https://t.me/xpoctest',
-                'https://t.me/xpoctest/',
-                'https://www.t.me/xpoctest',
-                'https://web.telegram.org/k/#@xpoctest',
-                'https://web.telegram.org/a/#@xpoctest',
-                'https://web.telegram.org/z/#@xpoctest',
-                'https://telegram.me/xpoctest',
-                'https://telegram.dog/xpoctest',
-                // channels
-                'https://www.t.me/testxpocchannel',
-                'https://web.telegram.org/k/#@testxpocchannel'
-            ],
-            validContentUrls: [
-                // n/a
-            ],
-            invalidAccountUrls: [
-                'https://t.me',
-                'https://web.telegram.org',
-                'https://nott.me/xpoctest',
-                'https://nottelegram.org/xpoctest'
-            ],
-            invalidContentUrls: [
-                // n/a
-            ],
-            canonicalAccountData: [
-                ...new Array(8).fill( // canonicalized version of validAccountUrls (representing all the same account)
-                {
-                    url: 'https://t.me/xpoctest',
-                    account: 'xpoctest'
-                }),
-                ...new Array(2).fill( // canonicalized version of validAccountUrls (representing all the same account)
-                {
-                    url: 'https://t.me/testxpocchannel',
-                    account: 'testxpocchannel'
-                })
-            ],
-            canonicalContentData: [
-                // n/a
-            ],
-            sampleAccountData: undefined,
-            sampleContentData: undefined
-        }
+    // Telegram test data
+    {
+        platform: new Telegram(),
+        accountNames: [
+            'xpoctest',
+            '@xpoctest',
+            ' xpoctest '
+        ],
+        validAccountUrls: [
+            // accounts
+            'https://t.me/xpoctest',
+            'https://t.me/xpoctest/',
+            'https://www.t.me/xpoctest',
+            'https://web.telegram.org/k/#@xpoctest',
+            'https://web.telegram.org/a/#@xpoctest',
+            'https://web.telegram.org/z/#@xpoctest',
+            'https://telegram.me/xpoctest',
+            'https://telegram.dog/xpoctest',
+            // channels
+            'https://www.t.me/testxpocchannel',
+            'https://web.telegram.org/k/#@testxpocchannel'
+        ],
+        validContentUrls: [
+            // n/a
+        ],
+        invalidAccountUrls: [
+            'https://t.me',
+            'https://web.telegram.org',
+            'https://nott.me/xpoctest',
+            'https://nottelegram.org/xpoctest'
+        ],
+        invalidContentUrls: [
+            // n/a
+        ],
+        canonicalAccountData: [
+            ...new Array(8).fill( // canonicalized version of validAccountUrls (representing all the same account)
+            {
+                url: 'https://t.me/xpoctest',
+                account: 'xpoctest'
+            }),
+            ...new Array(2).fill( // canonicalized version of validAccountUrls (representing all the same account)
+            {
+                url: 'https://t.me/testxpocchannel',
+                account: 'testxpocchannel'
+            })
+        ],
+        canonicalContentData: [
+            // n/a
+        ],
+        sampleAccountData: undefined,
+        sampleContentData: undefined
+    },
+
+    // LINE test data
+    {
+        platform: new LINE(),
+        accountNames: [
+            'xpoctest',
+            '@xpoctest',
+            ' xpoctest '
+        ],
+        validAccountUrls: [],
+        validContentUrls: [],
+        invalidAccountUrls: [],
+        invalidContentUrls: [],
+        canonicalAccountData: [],
+        canonicalContentData: [],
+        sampleAccountData: undefined,
+        sampleContentData: undefined
+    }
     
 ];
 
@@ -898,6 +916,7 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedAccountUrl('https://github.com/accountname')).toBe(true);
         // Telegram
         expect(Platforms.isSupportedAccountUrl('https://t.me/accountname')).toBe(true);
+        // LINE: n/a
         // unsupported platform
         expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -927,6 +946,7 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedContentUrl('https://github.com/accountname')).toBe(false);
         // Telegram (no supported content)
         expect(Platforms.isSupportedContentUrl('https://t.me/accountname')).toBe(false);
+        // LINE: n/a
         // unsupported platform
         expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });
@@ -1001,6 +1021,8 @@ describe('platform operations', () => {
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
         await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
         
+        // LINE: n/a
+
         // unsupported platform
         url = 'https://www.notaplatform.com/accountname';
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
@@ -1077,6 +1099,8 @@ describe('platform operations', () => {
         url = 'https://t.me/xpoctest';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
+
+        // LINE: n/a
 
         // unsupported platform
         url = 'https://www.notaplatform.com/abc123';

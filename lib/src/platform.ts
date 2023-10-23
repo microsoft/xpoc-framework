@@ -45,6 +45,12 @@ export abstract class Platform {
     // canonical hostname
     public CanonicalHostname: string;
 
+    // true if the platform support account URLs
+    public SupportAccountUrls: boolean = true;
+
+    // true if the platform support content URLs
+    public SupportContentUrls: boolean = true;
+
     // account path URL template (after the hostname) 
     public AccountPathUrlTemplate: string;
 
@@ -52,24 +58,26 @@ export abstract class Platform {
     public ContentPathUrlTemplate: string;
 
     // returns true if the platform account data is accessible (either publicly, or through pre-configured API access)
-    // if true, @see getAccountData can be called
+    // (SupportAccountUrls must be true). if true, @see getAccountData can be called
     public CanFetchAccountData: boolean;
 
     // returns true if the platform content data is accessible (either publicly, or through pre-configured API access)
-    // if true, @see getContentData can be called
+    // (SupportContentUrls must be true). if true, @see getContentData can be called
     public CanFetchContentData: boolean;
 
     // regex strings used to validate and canonicalize hostname URLs
-    public regexHostnameString: string;
+    protected regexHostnameString: string;
 
-    // regex strings used to validate and canonicalize account URLs
+    // regex strings used to validate and canonicalize account URLs (only if SupportAccountUrls is true)
     protected accountRegexString: string;
 
-    // regex strings used to validate and canonicalize content URLs
+    // regex strings used to validate and canonicalize content URLs (only if SupportContentUrls is true)
     protected contentRegexString: string;
 
     // query object to find the XPOC URI in the HTML from an account URL 
     protected accountXpocUriQuery: AccountQueryData | undefined;
+    // determines if canonicalizeAccountName removes the '@' prefix
+    protected removeAtPrefixInAccountNames:boolean = true;
 
     constructor(displayName: string, canonicalHostname: string, accountUrlTemplate: string, contentUrlTemplate: string,
         canFetchAccountData: boolean, canFetchContentData: boolean,
@@ -89,23 +97,36 @@ export abstract class Platform {
 
     // returns true if the given URL is a valid account URL on the platform
     isValidAccountUrl(url: string): boolean {
+        if (!this.SupportAccountUrls) {
+            return false;
+        }
         const accountRegex = new RegExp(this.accountRegexString);
         return accountRegex.test(url);
     }
 
     // returns true if the given URL is a valid content URL on the platform
     isValidContentUrl(url: string): boolean {
+        if (!this.SupportContentUrls) {
+            return false;
+        }
         const contentRegex = new RegExp(this.contentRegexString);
         return contentRegex.test(url);
     }
 
     // returns the canonical account name
     canonicalizeAccountName(account: string): string {
-        return account.trim();
+        account = account.trim();
+        if (this.removeAtPrefixInAccountNames) {
+            account = account.replace(/^@/, '');
+        }
+        return account;
     }
 
     // transforms an account URL into the platform's canonical form
     canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
+        if (!this.SupportAccountUrls) {
+            throw new Error(`${this.DisplayName} does not support account URLs`);
+        }
         if (!this.isValidAccountUrl(url)) {
             throw new Error(`Malformed ${this.DisplayName} account URL`);
         }
@@ -129,6 +150,9 @@ export abstract class Platform {
 
     // transforms a content URL into the platform's canonical form
     canonicalizeContentUrl(url: string): CanonicalizedContentData {
+        if (!this.SupportContentUrls) {
+            throw new Error(`${this.DisplayName} does not support content URLs`);
+        }
         if (!this.isValidContentUrl(url)) {
             throw new Error(`Malformed ${this.DisplayName} content URL`);
         }
@@ -203,10 +227,6 @@ const findXpocUri = (text: string | undefined) => {
     }
 }
 
-const trimAndRemoveAtPrefix = (str: string) => {
-    return str.trim().replace('@', '');
-}
-
 // converts data-time strings to UTC strings
 const toUTCString = (dateStr: string): string => {
     if (!dateStr) { return ''; }
@@ -218,6 +238,15 @@ const toUTCString = (dateStr: string): string => {
     // depending on the timezone of the machine
     const dt = new Date(dateStr).toISOString();
     return hasTime ? dt : dt.replace(/T.*/, 'T00:00:00Z');
+}
+
+// Base class for all platforms without web-access (e.g., app access only)
+export class NoWebPlatform extends Platform {
+    constructor(displayName: string, canonicalHostname: string) {
+        super(displayName, canonicalHostname, '', '', false, false, '', '', '');
+        this.SupportAccountUrls = false;
+        this.SupportContentUrls = false;
+    }
 }
 
 // TODO: make sure all regex ignore the case of the hostname
@@ -240,8 +269,6 @@ export class YouTube extends Platform {
             {queryObject: {nodeQuery: 'meta[name="description"]', attribute: 'content'}}
         );
     }
-
-    canonicalizeAccountName = trimAndRemoveAtPrefix;
 
     filterType = (type: string | undefined): ContentType => 'video';
 
@@ -289,8 +316,6 @@ export class XTwitter extends Platform {
         );
     }
 
-    canonicalizeAccountName = trimAndRemoveAtPrefix;
-
     filterType = (type: string | undefined): ContentType => 'post';
 }
 
@@ -310,6 +335,7 @@ export class Facebook extends Platform {
             // TODO: Facebook has many types of valid content URLs, this could be improved 
             `/(?:(?<accountName>\\w+)/(?:(?<contentType>posts|photos|videos|reels)/)|(?<contentType2>post|photo|video|reel)\\?.*?fbid=(?<fbid>\\d+))`
         );
+        this.removeAtPrefixInAccountNames = false;
     }
 
     filterType(type: string): ContentType {
@@ -378,8 +404,6 @@ export class Instagram extends Platform {
             `/(?<type>p|reel)/(?<puid>[a-zA-Z0-9_-]+)/?(?:\\?.*?)?$`
         );
     }
-
-    canonicalizeAccountName = trimAndRemoveAtPrefix;
 
     filterType(type: string): ContentType {
         switch (type) {
@@ -452,8 +476,6 @@ export class Medium extends Platform {
         // url doesn't match any content form
         return false;
     }
-
-    canonicalizeAccountName = trimAndRemoveAtPrefix;
 
     // override base class implementation to handle two url forms
     canonicalizeAccountUrl(url: string): CanonicalizedAccountData {
@@ -557,8 +579,6 @@ export class TikTok extends Platform {
         );
     }
 
-    canonicalizeAccountName = trimAndRemoveAtPrefix;
-
     filterType = (type: string | undefined): ContentType => 'video';
 }
 
@@ -577,6 +597,7 @@ export class LinkedIn extends Platform {
             // matches LinkedIn content URLs  
             `/(?!in/|school/|company/)(?<type>[a-zA-Z0-9-]+)/(?<title>[a-zA-Z0-9-_]+)?\/?(?:/|\\?.*)?$`
         );
+        this.removeAtPrefixInAccountNames = false;
     }
 
     filterType(liContentTypes: string): ContentType {
@@ -610,8 +631,6 @@ export class Threads extends Platform {
         );
     }
 
-    canonicalizeAccountName = trimAndRemoveAtPrefix;
-
     filterType = (type: string | undefined): ContentType => 'post';
 }
 
@@ -630,15 +649,8 @@ export class GoogleScholar extends Platform {
             // no content URL for Google Scholar 
             ``
         );
-    }
-
-    // overwrite base class's implementation
-    isValidContentUrl(url: string): boolean {
-        return false; // Google Scholar does not support content URLs
-    }
-
-    canonicalizeContentUrl(url: string): CanonicalizedContentData {
-        throw new Error('Google Scholar does not support content URLs');
+        this.SupportContentUrls = false;
+        this.removeAtPrefixInAccountNames = false;
     }
 }
 
@@ -660,7 +672,7 @@ export class Rumble extends Platform {
     }
 
     canonicalizeAccountName = (url: string): string => {
-        return trimAndRemoveAtPrefix(url).replace(/\/?(c\/)?/, '')
+        return url.trim().replace(/^@/, '').replace(/\/?(c\/)?/, '')
     };
 
     filterType = (type: string | undefined): ContentType => 'video';
@@ -712,6 +724,8 @@ export class GitHub extends Platform {
         // fetch XPOC URI in the description of the account page
         {queryObject: {nodeQuery: 'meta[name="description"]', attribute: 'content'}}
         );
+        this.SupportContentUrls = false;
+        this.removeAtPrefixInAccountNames = false;
     }
 
     // overwrite base class's implementations (GitHub does not support content URLs)
@@ -731,12 +745,14 @@ export class Telegram extends Platform {
         `/(k/|a/|z/)?#?@?(?<accountName>[^/]+)/?(?:\\?.*?)?$`, 
         '' // no content URL for Telegram
         );
+        this.SupportContentUrls = false;
     }
+}
 
-    canonicalizeAccountName = trimAndRemoveAtPrefix;
-    // overwrite base class's implementations (Telegram does not support content URLs)
-    isValidContentUrl = (url: string): boolean => false;
-    canonicalizeContentUrl = (url: string): CanonicalizedContentData => { throw new Error(`${this.DisplayName} does not support content URLs`) };
+// LINE platform implementation. This platform only supports account listing,
+// with no web accessible resources.
+export class LINE extends NoWebPlatform {
+    constructor() { super('LINE', 'https://line.me') }
 }
 
 // supported platforms
@@ -754,7 +770,8 @@ export const Platforms = {
         new GoogleScholar(),
         new Rumble(),
         new GitHub(),
-        new Telegram()
+        new Telegram(),
+        new LINE()
     ],
 
     /**

@@ -7,9 +7,11 @@ List of platforms:
 -   [GitHub](#github)
 -   [Google Scholar](#google-scholar)
 -   [Instagram](#instagram)
+-   [LINE](#line)
 -   [LinkedIn](#linkedin)
 -   [Medium](#medium)
 -   [Rumble](#rumble)
+-   [Telegram](#telegram)
 -   [Threads](#threads)
 -   [TikTok](#tiktok)
 -   [X (Twitter)](#x-twitter)
@@ -90,6 +92,21 @@ It is RECOMMENDED to only list Instagram accounts and not individual pieces of c
 
 -    On the account page: in the account page's Bio field.
 -    For a post: in a post's caption field.
+
+## LINE
+
+LINE only offers in-app access, therefore XPOC manifests cannot link to account and content URLs. 
+
+### Manifest content
+
+-   `accounts` properties:
+    -   `platform`: "LINE"
+    -   `account`: the owner's LINE ID (without the `@`)
+    -   `url`: n/a (leave empty)
+
+### XPOC URI placement
+
+Not applicable.
 
 ## LinkedIn
 

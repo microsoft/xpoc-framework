@@ -61,6 +61,7 @@ export type ContentMatchValues = {
  * Returns true if the two resources referenced by two URLs are the same.
  */
 const areResourcesEqual = (url1: string, url2: string): boolean => {
+    if (!url1 || !url2) return false;
     // trim the URLs to remove any whitespace, the http(s):// prefix, and trailing slashes
     const trimUrl = (url: string): string => url.trim().replace(/^(https?:\/\/)/, '').replace(/\/$/, '');
     return trimUrl(url1) === trimUrl(url2);
@@ -121,8 +122,8 @@ export class ManifestBase {
                 result.push(...matches);
             }
             if (amv.url) {
+                let canonicalUrl = amv.url.trim(); // fallback value for unsupported platforms
                 for (let account of this.manifest.accounts) {
-                    let canonicalUrl = amv.url.trim(); // fallback value for unsupported platforms
                     // get the canonical version of the URL for supported versions
                     if (Platforms.isSupportedPlatform(account.platform)) {
                         const platform = Platforms.getPlatform(account.platform);
@@ -169,8 +170,8 @@ export class ManifestBase {
                 result.push(...matches);
             }
             if (cmv.url) {
+                let canonicalUrl = cmv.url.trim(); // fallback value for unsupported platforms
                 for (let content of this.manifest.content) {
-                    let canonicalUrl = cmv.url.trim(); // fallback value for unsupported platforms
                     // get the canonical version of the URL for supported versions
                     if (Platforms.isSupportedPlatform(content.platform)) {
                         const platform = Platforms.getPlatform(content.platform);

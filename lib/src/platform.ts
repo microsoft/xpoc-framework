@@ -761,6 +761,12 @@ export class LINE extends NoWebPlatform {
     constructor() { super('LINE', 'https://line.me') }
 }
 
+// Snapchat platform implementation. This platform only supports account listing,
+// with no web accessible resources.
+export class Snapchat extends NoWebPlatform {
+    constructor() { super('Snapchat', 'https://www.snapchat.com/') }
+}
+
 // supported platforms
 export const Platforms = {
 
@@ -777,7 +783,8 @@ export const Platforms = {
         new Rumble(),
         new GitHub(),
         new Telegram(),
-        new LINE()
+        new LINE(),
+        new Snapchat()
     ],
 
     /**

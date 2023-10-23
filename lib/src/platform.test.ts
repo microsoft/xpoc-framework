@@ -4,7 +4,7 @@
 import {
     CanonicalizedAccountData, CanonicalizedContentData, Platform, Platforms, PlatformAccountData, PlatformContentData,
     // platforms
-    Facebook, GitHub, GoogleScholar, Instagram, LINE, LinkedIn, Medium, Rumble, Telegram, Threads, TikTok, XTwitter, YouTube
+    Facebook, GitHub, GoogleScholar, Instagram, LINE, LinkedIn, Medium, Rumble, Snapchat, Telegram, Threads, TikTok, XTwitter, YouTube
 } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
@@ -789,7 +789,25 @@ const platformTestDataArray: PlatformTestData[] = [
         canonicalContentData: [],
         sampleAccountData: undefined,
         sampleContentData: undefined
-    }
+    },
+
+    // Snapchat test data
+    {
+        platform: new Snapchat(),
+        accountNames: [
+            'xpoctest',
+            ' xpoctest '
+        ],
+        validAccountUrls: [],
+        validContentUrls: [],
+        invalidAccountUrls: [],
+        invalidContentUrls: [],
+        canonicalAccountData: [],
+        canonicalContentData: [],
+        sampleAccountData: undefined,
+        sampleContentData: undefined
+    },
+    
     
 ];
 
@@ -917,6 +935,7 @@ describe('platform operations', () => {
         // Telegram
         expect(Platforms.isSupportedAccountUrl('https://t.me/accountname')).toBe(true);
         // LINE: n/a
+        // Snapchat: n/a
         // unsupported platform
         expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -947,6 +966,7 @@ describe('platform operations', () => {
         // Telegram (no supported content)
         expect(Platforms.isSupportedContentUrl('https://t.me/accountname')).toBe(false);
         // LINE: n/a
+        // Snapchat: n/a
         // unsupported platform
         expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });
@@ -1022,6 +1042,8 @@ describe('platform operations', () => {
         await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
         
         // LINE: n/a
+
+        // Snapchat: n/a
 
         // unsupported platform
         url = 'https://www.notaplatform.com/accountname';
@@ -1101,6 +1123,8 @@ describe('platform operations', () => {
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 
         // LINE: n/a
+
+        // Snapchat: n/a
 
         // unsupported platform
         url = 'https://www.notaplatform.com/abc123';

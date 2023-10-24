@@ -2,6 +2,7 @@
 
 ## 0.3
 
+-   Made the `accounts` and `content` properties optional.
 -   Made the account `url` property optional.
 -   Added the `updated` field to the manifest info.
 

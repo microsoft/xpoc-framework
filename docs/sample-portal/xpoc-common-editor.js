@@ -1,11 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-const currentVersion = "0.2";
+const currentVersion = "0.3";
+
+function getCurrentIsoTime() {
+    return new Date().toISOString().slice(0, "YYYY-MM-DDTHH:MM:SS".length) + 'Z';
+}
 
 let manifest = {
     name: "",
     baseurl: "",
+    updated: getCurrentIsoTime(),
     version: currentVersion,
     accounts: [],
     content: []
@@ -35,37 +40,39 @@ function validateAndUpdateURL(inputValue, inputElement, contentType = 'info', in
     clearError();
     inputValue = inputValue.trim();
     validatedURL = inputValue;
-    // prepend 'https://' if missing
-    if (!/^https?:\/\//i.test(inputValue)) {
-        validatedURL = 'https://' + inputValue;
-    }
-    // account and content URLs can have query params and anchor
-    const nonDomainChars = "a-zA-Z0-9-_.!~*'();:@&=+$,";
-    const fullUrl = contentType !== 'info';
-    const fullUrlPattern = fullUrl ? `(\\?[${nonDomainChars}/%]+)?(#[a-zA-Z0-9-_.!~*'();:@&=+$,/%]+)?` : "";
-    const validURLPattern = new RegExp(`^https:\\/\\/` + // https protocol
-                                   `[a-zA-Z0-9.-]+` + // (sub)domain name
-                                   `(\\.[a-zA-Z]{2,})` + // top level domain
-                                   `(\\/[${nonDomainChars}]+(\\/[${nonDomainChars}]+)*)?\\/??` + // path
-                                   `${fullUrlPattern}$`, "i"); // query params and anchor
-    if (!validURLPattern.test(validatedURL)) {
-        let urlField;
-        if (contentType === 'info') {
-            urlField = "owner's website";
-        } else if (contentType === 'content') {
-            urlField = "content URL";
-        } else if (contentType === 'account') {
-            urlField = "platform URL";
+    if (validatedURL) {
+        // prepend 'https://' if missing
+        if (!/^https?:\/\//i.test(inputValue)) {
+            validatedURL = 'https://' + inputValue;
         }
-        showError(`Please enter a valid base URL for the ${urlField}.`);
-        return;
-    }
-    if (contentType === 'info') {
-        manifest.baseurl = validatedURL;
-    } else if (contentType === 'content') {
-        manifest.content[index].url = validatedURL;
-    } else if (contentType === 'account') {
-        manifest.accounts[index].url = validatedURL;
+        // account and content URLs can have query params and anchor
+        const nonDomainChars = "a-zA-Z0-9-_.!~*'();:@&=+$,";
+        const fullUrl = contentType !== 'info';
+        const fullUrlPattern = fullUrl ? `(\\?[${nonDomainChars}/%]+)?(#[a-zA-Z0-9-_.!~*'();:@&=+$,/%]+)?` : "";
+        const validURLPattern = new RegExp(`^https:\\/\\/` + // https protocol
+                                    `[a-zA-Z0-9.-]+` + // (sub)domain name
+                                    `(\\.[a-zA-Z]{2,})` + // top level domain
+                                    `(\\/[${nonDomainChars}]+(\\/[${nonDomainChars}]+)*)?\\/??` + // path
+                                    `${fullUrlPattern}$`, "i"); // query params and anchor
+        if (!validURLPattern.test(validatedURL)) {
+            let urlField;
+            if (contentType === 'info') {
+                urlField = "owner's website";
+            } else if (contentType === 'content') {
+                urlField = "content URL";
+            } else if (contentType === 'account') {
+                urlField = "platform URL";
+            }
+            showError(`Please enter a valid base URL for the ${urlField}.`);
+            return;
+        }
+        if (contentType === 'info') {
+            manifest.baseurl = validatedURL;
+        } else if (contentType === 'content') {
+            manifest.content[index].url = validatedURL;
+        } else if (contentType === 'account') {
+            manifest.accounts[index].url = validatedURL;
+        }
     }
     // update value in the input field
     inputElement.value = validatedURL;
@@ -89,11 +96,19 @@ function validateAndUpdateAccount(inputValue, inputElement, contentType = undefi
 }
 
 function displayManifest() {
+        // Update the update timestamp
+        manifest.updated = getCurrentIsoTime();
+        // Delete the accounts and content arrays if they are empty
+        if (manifest.accounts.length === 0) {
+            delete manifest.accounts;
+        }
+        if (manifest.content.length === 0) {
+            delete manifest.content;
+        }
         // Populate the textarea with the generated manifest and make it visible
         const manifestTextArea = document.getElementById('manifestTextArea');
-        manifestTextArea.value = JSON.stringify(manifest, null, 2);;
+        manifestTextArea.value = JSON.stringify(manifest, null, 2);
         manifestTextArea.style.display = 'block';
-
         // Enable the Save and Copy buttons
         document.getElementById('saveButton').disabled = false;
         document.getElementById('copyButton').disabled = false;

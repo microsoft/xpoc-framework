@@ -98,11 +98,17 @@ function validateAndUpdateAccount(inputValue, inputElement, contentType = undefi
 function displayManifest() {
         // Update the update timestamp
         manifest.updated = getCurrentIsoTime();
+        // Delete the accounts and content arrays if they are empty
+        if (manifest.accounts.length === 0) {
+            delete manifest.accounts;
+        }
+        if (manifest.content.length === 0) {
+            delete manifest.content;
+        }
         // Populate the textarea with the generated manifest and make it visible
         const manifestTextArea = document.getElementById('manifestTextArea');
         manifestTextArea.value = JSON.stringify(manifest, null, 2);
         manifestTextArea.style.display = 'block';
-
         // Enable the Save and Copy buttons
         document.getElementById('saveButton').disabled = false;
         document.getElementById('copyButton').disabled = false;

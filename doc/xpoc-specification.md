@@ -42,7 +42,7 @@ A XPOC manifest is a JSON file with the following schema:
             platform: string,
             url: string (optional),
         }, ...
-    ],
+    ] (optional),
     content: [
         {
             account: string,
@@ -52,7 +52,7 @@ A XPOC manifest is a JSON file with the following schema:
             puid: string (optional),
             timestamp: string (optional)
         }, ...
-    ]
+    ] (optional)
 }
 ```
 

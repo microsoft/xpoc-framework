@@ -275,6 +275,13 @@
         }
 
         function saveToFile() {
+            // Delete the accounts and content arrays if they are empty
+            if (manifest.accounts.length === 0) {
+                delete manifest.accounts;
+            }
+            if (manifest.content.length === 0) {
+                delete manifest.content;
+            }
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(manifest, null, 4));
             const downloadAnchorNode = document.createElement('a');
             downloadAnchorNode.setAttribute("href", dataStr);

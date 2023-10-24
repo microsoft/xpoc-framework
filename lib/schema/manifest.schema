@@ -77,8 +77,6 @@
     "required": [
         "name",
         "baseurl",
-        "version",
-        "accounts",
-        "content"
+        "version"
     ]
 }

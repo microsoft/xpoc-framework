@@ -48,6 +48,8 @@
         }
 
         function displayManifest(data) {
+            // TODO: desplay timestamps in local time zone
+
             clearError();
             document.getElementById('errorMsg').textContent = '';
 
@@ -61,6 +63,10 @@
             <tr>
                 <td><label for="manifestBaseUrl">Base URL</td>
                 <td>${data.baseurl}</td>
+            </tr>
+            <tr>
+                <td><label for="manifestUpdated">Last updated:</td>
+                <td>${data.updated}</td>
             </tr>
             <tr>
                 <td><label for="manifestVersion">Version</td>

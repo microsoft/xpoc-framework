@@ -12,7 +12,7 @@ import { ValidateFunction } from 'ajv';
 export type Account = {
     account: string;
     platform: string;
-    url: string;
+    url?: string;
 };
 
 /**
@@ -33,9 +33,10 @@ export type ContentItem = {
 export type XPOCManifest = {
     name: string;
     baseurl: string;
+    updated?: string;
     version: string;
-    accounts: Account[];
-    content: ContentItem[];
+    accounts?: Account[];
+    content?: ContentItem[];
 };
 
 /**
@@ -60,7 +61,7 @@ export type ContentMatchValues = {
 /**
  * Returns true if the two resources referenced by two URLs are the same.
  */
-const areResourcesEqual = (url1: string, url2: string): boolean => {
+const areResourcesEqual = (url1: string | undefined, url2: string | undefined): boolean => {
     if (!url1 || !url2) return false;
     // trim the URLs to remove any whitespace, the http(s):// prefix, and trailing slashes
     const trimUrl = (url: string): string => url.trim().replace(/^(https?:\/\/)/, '').replace(/\/$/, '');
@@ -72,7 +73,7 @@ const areResourcesEqual = (url1: string, url2: string): boolean => {
  */
 export class ManifestBase {
     manifest: XPOCManifest;
-    static LatestVersion = '0.2';
+    static LatestVersion = '0.3';
 
     constructor(manifest: XPOCManifest) {
         this.manifest = manifest;
@@ -83,6 +84,7 @@ export class ManifestBase {
      * @param account Account to add.
      */
     addAccount(account: Account): void {
+        this.manifest.accounts = this.manifest.accounts ?? [];
         this.manifest.accounts.push(account);
     }
 
@@ -91,6 +93,7 @@ export class ManifestBase {
      * @param contentItem Content item to add.
      */
     addContentItem(contentItem: ContentItem): void {
+        this.manifest.content = this.manifest.content ?? [];
         this.manifest.content.push(contentItem);
     }
 
@@ -103,7 +106,7 @@ export class ManifestBase {
         const result: Account[] = [];
         if (amv) {
             if (amv.account) {
-                for (let account of this.manifest.accounts) {
+                for (let account of this.manifest.accounts??[]) {
                     let canonicalAccountName = amv.account.trim(); // fallback value for unsupported platforms
                     if (Platforms.isSupportedPlatform(account.platform)) {
                         const platform = Platforms.getPlatform(account.platform);
@@ -118,12 +121,12 @@ export class ManifestBase {
             }
             if (amv.platform) {
                 const canonicalPlatform = Platforms.getCanonicalPlatformName(amv.platform);
-                const matches = this.manifest.accounts.filter(account => account.platform === canonicalPlatform);
-                result.push(...matches);
+                const matches = this.manifest.accounts?.filter(account => account.platform === canonicalPlatform);
+                result.push(...matches??[]);
             }
             if (amv.url) {
                 let canonicalUrl = amv.url.trim(); // fallback value for unsupported platforms
-                for (let account of this.manifest.accounts) {
+                for (let account of this.manifest.accounts??[]) {
                     // get the canonical version of the URL for supported versions
                     if (Platforms.isSupportedPlatform(account.platform)) {
                         const platform = Platforms.getPlatform(account.platform);
@@ -151,7 +154,7 @@ export class ManifestBase {
         const result: ContentItem[] = [];
         if (cmv) {
             if (cmv.account) {
-                for (let content of this.manifest.content) {
+                for (let content of this.manifest.content??[]) {
                     let canonicalAccountName = cmv.account.trim(); // fallback value for unsupported platforms
                     if (Platforms.isSupportedPlatform(content.platform)) {
                         const platform = Platforms.getPlatform(content.platform);
@@ -166,12 +169,12 @@ export class ManifestBase {
             }
             if (cmv.platform) {
                 const canonicalPlatform = Platforms.getCanonicalPlatformName(cmv.platform);
-                const matches = this.manifest.content.filter(content => content.platform === canonicalPlatform);
-                result.push(...matches);
+                const matches = this.manifest.content?.filter(content => content.platform === canonicalPlatform);
+                result.push(...matches??[]);
             }
             if (cmv.url) {
                 let canonicalUrl = cmv.url.trim(); // fallback value for unsupported platforms
-                for (let content of this.manifest.content) {
+                for (let content of this.manifest.content??[]) {
                     // get the canonical version of the URL for supported versions
                     if (Platforms.isSupportedPlatform(content.platform)) {
                         const platform = Platforms.getPlatform(content.platform);
@@ -189,8 +192,8 @@ export class ManifestBase {
             if (cmv.puid) {
                 // compare PUIDs as-is
                 const searchPuid = cmv.puid.trim();
-                const matches = this.manifest.content.filter(content => content.puid === searchPuid);
-                result.push(...matches);
+                const matches = this.manifest.content?.filter(content => content.puid === searchPuid);
+                result.push(...matches??[]);
             }
         }
         return result;

@@ -49,8 +49,12 @@
                     <td><input type="text" id="manifestBaseUrl" onchange="validateAndUpdateURL(this.value, this, 'info', 0)"></td>
                 </tr>
                 <tr>
-                    <td><label for="manifestVersion">Version</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Latest version is 0.2</span></span></td>
-                    <td><input type="text" id="manifestVersion" value="0.2" readonly></td>
+                    <td><label for="manifestUpdated">Last updated</label><span class="info-tooltip">i<span class="tooltip-text">Last updated timestamp in ISO format (e.g., YYYY-MM-DDTHH:MM:SSZ)</span></span></td>
+                    <td><input type="text" id="manifestUpdated" readonly></td>
+                </tr>
+                <tr>
+                    <td><label for="manifestVersion">Version</label><span class="info-tooltip">i<span class="tooltip-text">Specification version of the XPOC manifest. Current version is 0.3</span></span></td>
+                    <td><input type="text" id="manifestVersion" value="0.3" readonly></td>
                 </tr>
             </tbody>
         </table>
@@ -77,17 +81,20 @@
     <script>
         const supportedPlatforms = [
             // {name: platform name, alias: other names for the platform}
-            { name: "YouTube" },
-            { name: "X", alias: "Twitter" },
             { name: "Facebook" },
-            { name: "Instagram" },
-            { name: "Medium" },
-            { name: "TikTok" },
-            { name: "LinkedIn" },
-            { name: "Threads" },
+            { name: "GitHub" },
             { name: "GoogleScholar" },
+            { name: "Instagram" },
+            { name: "LINE" },
+            { name: "LinkedIn" },
+            { name: "Medium" },
             { name: "Rumble" },
-            { name: "GitHub" }
+            { name: "Snapchat" },
+            { name: "Telegram" },
+            { name: "Threads" },
+            { name: "TikTok" },
+            { name: "X", alias: "Twitter" },
+            { name: "YouTube" }
         ]
 
         function initializeManifestInfo() {
@@ -95,6 +102,7 @@
             document.getElementById('manifestName').value = manifest.name || '';
             document.getElementById('manifestBaseUrl').value = manifest.baseurl || '';
             document.getElementById('manifestVersion').value = manifest.version || currentVersion;
+            document.getElementById('manifestUpdated').value = getCurrentIsoTime();
         }
 
         function createNewManifest() {
@@ -199,8 +207,8 @@
                 <thead>
                     <tr>
                         <th>Platform *<span class="info-tooltip">i<span class="tooltip-text">The platform hosting the account (e.g., YouTube, X, Facebook)</span></span></th>
-                        <th>URL *<span class="info-tooltip">i<span class="tooltip-text">Location of the account page (e.g., bio or profile)</span></span></th>
                         <th>Account *<span class="info-tooltip">i<span class="tooltip-text">Account identifier (e.g., handle, username)</span></span></th>
+                        <th>URL<span class="info-tooltip">i<span class="tooltip-text">Location of the account page (e.g., bio or profile)</span></span></th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -211,8 +219,8 @@
                 html += `
                     <tr>
                         <td><input type="text" value="${account.platform}" onchange="validateAndUpdatePlatform(this.value, this, 'account', ${index})"></td>
-                        <td><input type="text" value="${account.url}" onchange="validateAndUpdateURL(this.value, this, 'account', ${index})"></td>
                         <td><input type="text" value="${account.account}" onchange="validateAndUpdateAccount(this.value, this, 'account', ${index})"></td>
+                        <td><input type="text" value="${account.url}" onchange="validateAndUpdateURL(this.value, this, 'account', ${index})"></td>
                         <td><button onclick="deleteAccount(${index})">Delete</button></td>
                     </tr>
                 `;
@@ -231,7 +239,7 @@
                         <th>Platform *<span class="info-tooltip">i<span class="tooltip-text">Platform hosting the content (e.g., YouTube, X, Facebook)</span></span></th>
                         <th>PUID<span class="info-tooltip">i<span class="tooltip-text">(Optional) Platform-specific Unique Identifier for the content</span></span></th>
                         <th>Account *<span class="info-tooltip">i<span class="tooltip-text">Platform account associated with the content</span></span></th>
-                        <th>Timestamp<span class="info-tooltip">i<span class="tooltip-text">(Optional) Content creation time in ISO format (e.g., (YYYY-MM-DDTHH:MM:SSZ))</span></span></th>
+                        <th>Timestamp<span class="info-tooltip">i<span class="tooltip-text">(Optional) Content creation time in ISO format (e.g., YYYY-MM-DDTHH:MM:SSZ)</span></span></th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -267,6 +275,13 @@
         }
 
         function saveToFile() {
+            // Delete the accounts and content arrays if they are empty
+            if (manifest.accounts.length === 0) {
+                delete manifest.accounts;
+            }
+            if (manifest.content.length === 0) {
+                delete manifest.content;
+            }
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(manifest, null, 4));
             const downloadAnchorNode = document.createElement('a');
             downloadAnchorNode.setAttribute("href", dataStr);

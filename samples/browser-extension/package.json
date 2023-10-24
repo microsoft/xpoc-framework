@@ -1,6 +1,6 @@
 {
   "name": "xpoc-browser-extension",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Cross-Platform Origin of Content Browser Extension",
   "license": "MIT",
   "type": "module",

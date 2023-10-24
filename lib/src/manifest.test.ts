@@ -13,6 +13,7 @@ describe('manifest file operations', () => {
             name: 'test',
             baseurl: 'example.com',
             version: Manifest.LatestVersion,
+            updated: "2023-10-23T00:00:00Z",
             accounts: [
                 {
                     account: 'abc',
@@ -40,7 +41,7 @@ describe('manifest file operations', () => {
             platform: 'test',
             url: 'https://platform.test/def'
         });
-        expect(manifest.manifest.accounts.length).toBe(2);
+        expect(manifest.manifest.accounts?.length).toBe(2);
     });
 
     test('add content', () => {
@@ -52,7 +53,7 @@ describe('manifest file operations', () => {
             puid: 'uvw',
             timestamp: '2021-01-01T00:00:00Z'
         });
-        expect(manifest.manifest.content.length).toBe(2);
+        expect(manifest.manifest.content?.length).toBe(2);
     });
 });
 
@@ -77,8 +78,9 @@ describe('manifest file operations', () => {
         expect(testManifest).toBeDefined();
         expect(testManifest?.manifest.name).toBe('A test name');
         expect(testManifest?.manifest.version).toBe(Manifest.LatestVersion);
-        expect(testManifest?.manifest.accounts.length).toBe(15);
-        expect(testManifest?.manifest.content.length).toBe(10);
+        expect(testManifest?.manifest.updated).toBe("2023-10-23T15:00:00Z");
+        expect(testManifest?.manifest.accounts?.length).toBe(15);
+        expect(testManifest?.manifest.content?.length).toBe(10);
     });
 
     (testManifest ? test : test.skip)('match accounts', () => {
@@ -125,6 +127,7 @@ describe('manifest file operations', () => {
             name: 'A test name',
             baseurl: 'example.com',
             version: Manifest.LatestVersion,
+            updated: "2023-10-23T15:00:00Z",
             accounts: [],
             content: []
         });
@@ -183,7 +186,9 @@ describe('manifest validation', () => {
 
     test('validate schema: bad account url', () => {
         const clonedManifest = { ...testManifest.manifest }
-        clonedManifest.accounts[0].url = clonedManifest.accounts[0].url.replace('https://', 'http://');
+        if (clonedManifest.accounts) {
+            clonedManifest.accounts[0].url = clonedManifest.accounts[0].url?.replace('https://', 'http://');
+        }
         const validation = Manifest.validate(clonedManifest);
         expect(validation.valid).toBe(false);
         expect(validation.errors?.[0]).toContain('must match pattern "^https://"');

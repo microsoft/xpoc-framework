@@ -1,7 +1,8 @@
 {
     "name": "XPOC framework sample",
     "baseurl": "https://raw.githubusercontent.com/microsoft/xpoc-framework/main/samples/tests",
-	"version": "0.2",
+	"updated": "2023-10-23T00:00:00Z",
+	"version": "0.3",
 	"accounts": [
 		{
 			"platform": "Test",

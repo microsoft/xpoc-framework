@@ -1,6 +1,6 @@
 # Cross-Platform Origin of Content (XPOC) Framework Specification
 
-This document specifies the Cross-Platform Origin of Content (XPOC) framework, to enable interoperable implementation. The current version of the specification is 0.2.
+This document specifies the Cross-Platform Origin of Content (XPOC) framework, to enable interoperable implementation. The current version of the specification is 0.3.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC2119](https://www.rfc-editor.org/rfc/rfc2119).
 
@@ -35,13 +35,14 @@ A XPOC manifest is a JSON file with the following schema:
     name: string,
     baseurl: string,
     version: string,
+    updated: string (optional),
     accounts: [
         {
             account: string
             platform: string,
-            url: string,
+            url: string (optional),
         }, ...
-    ],
+    ] (optional),
     content: [
         {
             account: string,
@@ -51,7 +52,7 @@ A XPOC manifest is a JSON file with the following schema:
             puid: string (optional),
             timestamp: string (optional)
         }, ...
-    ]
+    ] (optional)
 }
 ```
 
@@ -59,7 +60,8 @@ where:
 
 -   `name` is the human-readable name of the Owner,
 -   `baseurl` is the base url of the Owner's website, i.e., the hostname (domain) followed by an optional path, without the protocol header (e.g., `example.com` or `example.com/some/path`),
--   `version` is the version number of the specification used to generate the manifest; currently `0.2`.
+-   `version` is the version number of the specification used to generate the manifest; currently `0.3`.
+-   `updated`: last manifest update timestamp, represented in the ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
 -   `accounts` is an array of the Owner's platform accounts, JSON objects with the following properties:
     -   `account` is the platform-specific account name,
     -   `platform` is the name of the hosting platform, and
@@ -70,7 +72,9 @@ where:
     -   `url` is the URL of the content item on a hosting platform,
     -   `desc` is a description of the content item,
     -   `puid` is a platform-specific unique identifier of the hosted content, and
-    -   `timestamp` is the creation time of the item, represented in the ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC. For example, Sept 1st, 2023, 10:30 UTC is represented as "2023-09-01T10:30:00Z".
+    -   `timestamp` is the creation time of the item, represented in the ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
+
+Date values are represented in the ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC. For example, Sept 1st, 2023, 10:30 UTC is represented as "2023-09-01T10:30:00Z".
 
 Different platforms represent content differently; implementation SHOULD follow the [guidelines](./platforms.md) on how to encode platform-specific data for some popular hosting platforms.
 
@@ -96,7 +100,8 @@ Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-
 {
     "name": "Alex Example",
     "baseurl": "alexexample.com",
-    "version": "0.2",
+    "updated": "2023-10-23T17:00:00Z",
+    "version": "0.3",
     "accounts": [],
     "content": []
 }

@@ -1,6 +1,6 @@
 {
   "name": "xpoc-server-backend-sample",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Server backend sample for a XPOC portal",
   "type": "module",
   "main": "src/server.ts",

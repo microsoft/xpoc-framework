@@ -106,7 +106,7 @@ export async function lookupXpocUri(tabUrl: string, xpocUrl: string): Promise<lo
     const manifest = await downloadManifest(xpocUrl)
 
     if (manifest instanceof Error) {
-        console.error('Error fetching manifest:', manifest);
+        console.log('Error fetching manifest:', manifest.message);
         return { type: 'error', message: `Error fetching manifest: ${manifest.message}` }
     }
 

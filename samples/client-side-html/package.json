@@ -1,6 +1,6 @@
 {
   "name": "xpoc-client-side-html-sample",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Client-side HTML XPOC Sample",
   "main": "server.js",
   "dependencies": {

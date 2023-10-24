@@ -1,6 +1,6 @@
 # Cross-Platform Origin of Content (XPOC) Framework
 
-_This is a pre-release preview of the framework, currently at version 0.2. The specification and sample implementations might change as we continue its development and receive feedback._
+_This is a pre-release preview of the framework, currently at version 0.3. The specification and sample implementations might change as we continue its development and receive feedback._
 
 This project introduces the Cross-Platform Origin of Content (XPOC) framework, along with a sample implementation.
 

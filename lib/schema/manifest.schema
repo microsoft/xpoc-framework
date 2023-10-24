@@ -12,6 +12,10 @@
         "version": {
             "type": "string"
         },
+        "updated": {
+            "type": "string",
+            "format": "date-time"
+        },
         "accounts": {
             "type": "array",
             "items": {
@@ -73,8 +77,6 @@
     "required": [
         "name",
         "baseurl",
-        "version",
-        "accounts",
-        "content"
+        "version"
     ]
 }

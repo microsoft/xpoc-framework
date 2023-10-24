@@ -60,6 +60,7 @@ template.innerHTML = `
     }
 
     label {
+        color: black;
         font-weight: 700;
         margin-bottom: 0.4em;
         display: block;

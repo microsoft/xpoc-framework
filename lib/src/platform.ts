@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { query, QueryObject} from "./htmlParser.node.js";
+import { query, type QueryObject } from "./htmlParser.node.js";
 
 export type ContentType = 'post' | 'photo' | 'video' | 'reel' | 'event' | 'misc';
 

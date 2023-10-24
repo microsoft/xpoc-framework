@@ -51,23 +51,30 @@ async function fetchWithTimeout<T>(url: string, options: RequestInit = {}, timeo
 
     const timeoutId = setTimeout(() => { controller.abort() }, timeout)
 
-    const response = await fetch(url, { ...options, signal })
+    const response: Response | Error = await fetch(url, { ...options, signal })
         .catch(error => {
             console.log('fetch error', error)
             // if the fetch was aborted, throw a timeout error instead
             if (error.name === 'AbortError') {
                 return new Error(`HTTP timeout of ${timeout}ms to ${url}`)
             } else {
-                return error
+                return new Error(`HTTP error: ${error}`)
             }
         })
         .finally(() => { clearTimeout(timeoutId) })
 
-    if (!response.ok) {
-        return new Error(`HTTP error! Status: ${response.status}`)
+    if (response instanceof Error) {
+        return response
     }
 
-    return await response.json()
+    if (!response.ok) {
+        return new Error(`HTTP error: ${response.status}`)
+    }
+
+    return await response.json().catch((error) => {
+        return new Error(`Error parsing manifest: ${error}`)
+    })
+
 }
 
 export type lookupXpocUriResult =

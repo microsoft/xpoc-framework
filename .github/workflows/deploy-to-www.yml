@@ -52,8 +52,8 @@ jobs:
           fi
           
           # Update sample HTML pages with commit details
-          sed -i "s/__LAST_MODIFIED_DATE__/${{ steps.get-commit-details.outputs.date }}/g" docs/samples-portal/*.html
-          sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" docs/samples-portal/*.html
+          sed -i "s/__LAST_MODIFIED_DATE__/${{ steps.get-commit-details.outputs.date }}/g" docs/sample-portal/*.html
+          sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" docs/sample-portal/*.html
 
           # Commit and push the changes to www branch
           git add .

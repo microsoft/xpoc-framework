@@ -31,11 +31,6 @@ jobs:
           echo "::set-output name=date::$(git log -1 --format=%cd --date=format:'%Y-%m-%d')"
           echo "::set-output name=hash::$(git rev-parse --short HEAD)"
 
-      - name: Update sample HTML pages with commit details
-        run: |
-          sed -i "s/__LAST_MODIFIED_DATE__/${{ steps.get-commit-details.outputs.date }}/g" samples/client-side-html/public/*.html
-          sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" samples/client-side-html/public/*.html
-
       - name: Copy files to www branch
         run: |
           git checkout www
@@ -56,6 +51,10 @@ jobs:
             exit 0
           fi
           
+          # Update sample HTML pages with commit details
+          sed -i "s/__LAST_MODIFIED_DATE__/${{ steps.get-commit-details.outputs.date }}/g" docs/samples-portal/*.html
+          sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" docs/samples-portal/*.html
+
           # Commit and push the changes to www branch
           git add .
           git commit -m "Update docs and sample-portal"

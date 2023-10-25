@@ -25,6 +25,17 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "github-actions@github.com"
 
+      - name: Get commit details
+        id: get-commit-details
+        run: |
+          echo "::set-output name=date::$(git log -1 --format=%cd --date=format:'%Y-%m-%d')"
+          echo "::set-output name=hash::$(git rev-parse --short HEAD)"
+
+      - name: Update sample HTML pages with commit details
+        run: |
+          sed -i "s/__LAST_MODIFIED_DATE__/${{ steps.get-commit-details.outputs.date }}/g" samples/client-side-html/public/*.html
+          sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" samples/client-side-html/public/*.html
+
       - name: Copy files to www branch
         run: |
           git checkout www

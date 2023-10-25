@@ -227,3 +227,18 @@ input:checked + .slider:before {
     max-height: 400px; 
     overflow-y: auto;
 }
+
+hr {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+footer {
+    font-family: 'Arial', sans-serif;
+    padding: 10px 20px;
+    font-size: 12px;
+    color: #6c757d;
+    text-align: right;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}

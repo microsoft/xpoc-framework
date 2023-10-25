@@ -1,12 +1,17 @@
 # Cross-Platform Origin of Content (XPOC) Framework Specification
 
-This document specifies the Cross-Platform Origin of Content (XPOC) framework, to enable interoperable implementation. The current version of the specification is 0.3.
+This document specifies the Cross-Platform Origin of Content (XPOC) framework, to enable interoperable implementation. The current version of the specification is 0.3 (see the [changes](./changes.md) history).
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC2119](https://www.rfc-editor.org/rfc/rfc2119).
 
 ## System Overview
 
-A content Owner can attest 1) to the ownership of various accounts on hosting platforms, and 2) to the origin of content items hosted on these platforms by listing both the accounts and content items in a manifest on its own website `[ORIGIN_URL]`. A content Owner can attach a XPOC URI `xpoc://[ORIGIN_URL]` to their platform account page and content items (in a platform-specific way) pointing back to the manifest. Verifiers can validate the origin of an account or content item by using the XPOC URI to discover the Owner's manifest and by verifying that the account or content item is indeed listed therein.
+A content Owner can attest to
+
+1. the ownership of various accounts on hosting platforms, and
+2. the origin of content items hosted on these platforms by listing both the accounts and content items in a manifest on its own website `[ORIGIN_URL]`.
+
+A content Owner can attach a XPOC URI `xpoc://[ORIGIN_URL]` to their platform account page and content items (in a platform-specific way) pointing back to the manifest. Verifiers can validate the origin of an account or content item by using the XPOC URI to discover the Owner's manifest and by verifying that the account or content item is indeed listed therein.
 
 ## Terminology
 
@@ -109,7 +114,7 @@ Alex creates a manifest and makes it available at `https://alexexample.com/xpoc-
 
 ### Account linking
 
-Alex adds their Facebook account name `alex.example` and their X/Twitter account name `@ExAlex` to its known accounts by adding the XPOC URI `xpoc://alexexample.com!` in their Facebook and X bio fields and by adding the following JSON objects to their manifest's `accounts` array:
+Alex adds their Facebook account name `alex.example` and their X/Twitter account name `@ExAlex` to their known accounts by adding the XPOC URI `xpoc://alexexample.com!` in their Facebook and X bio fields and by adding the following JSON objects to their manifest's `accounts` array:
 
 ```json
 {

@@ -72,7 +72,7 @@
             </tr>
             <tr>
                 <td><label for="manifestUpdated">Last updated:</td>
-                <td>${data.updated}</td>
+                <td>${isoToLocalTime(data.updated)}</td>
             </tr>
             <tr>
                 <td><label for="manifestVersion">Version</td>
@@ -130,7 +130,7 @@
                         <td>${content.platform}</td>
                         <td>${content.puid}</td>
                         <td>${content.account}</td>
-                        <td>${content.timestamp}</td>
+                        <td>${isoToLocalTime(content.timestamp)}</td>
                     </tr>
                 `;
             });

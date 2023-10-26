@@ -31,7 +31,7 @@
     <footer>
         Last modified: <span id="lastModified">2023-10-26</span>
         •
-        Commit ID: <span id="commitId">3147c05</span>
+        Commit ID: <span id="commitId">e746342</span>
     </footer>
 
     <script src="xpoc-common.js"></script>
@@ -72,7 +72,7 @@
             </tr>
             <tr>
                 <td><label for="manifestUpdated">Last updated:</td>
-                <td>${data.updated}</td>
+                <td>${isoToLocalTime(data.updated)}</td>
             </tr>
             <tr>
                 <td><label for="manifestVersion">Version</td>
@@ -130,7 +130,7 @@
                         <td>${content.platform}</td>
                         <td>${content.puid}</td>
                         <td>${content.account}</td>
-                        <td>${content.timestamp}</td>
+                        <td>${isoToLocalTime(content.timestamp)}</td>
                     </tr>
                 `;
             });

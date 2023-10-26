@@ -49,7 +49,7 @@
                     <td><input type="text" id="manifestBaseUrl" onchange="validateAndUpdateURL(this.value, this, 'info', 0)"></td>
                 </tr>
                 <tr>
-                    <td><label for="manifestUpdated">Last updated</label><span class="info-tooltip">i<span class="tooltip-text">Last updated timestamp in ISO format (e.g., YYYY-MM-DDTHH:MM:SSZ)</span></span></td>
+                    <td><label for="manifestUpdated">Last updated</label><span class="info-tooltip">i<span class="tooltip-text">Last updated timestamp (local time)</span></span></td>
                     <td><input type="text" id="manifestUpdated" readonly></td>
                 </tr>
                 <tr>
@@ -80,7 +80,7 @@
     <footer>
         Last modified: <span id="lastModified">2023-10-26</span>
         •
-        Commit ID: <span id="commitId">3147c05</span>
+        Commit ID: <span id="commitId">e746342</span>
     </footer>
 
     <script src="xpoc-common-editor.js"></script>
@@ -108,7 +108,7 @@
             document.getElementById('manifestName').value = manifest.name || '';
             document.getElementById('manifestBaseUrl').value = manifest.baseurl || '';
             document.getElementById('manifestVersion').value = currentVersion; // always save to latest version
-            document.getElementById('manifestUpdated').value = getCurrentIsoTime();
+            document.getElementById('manifestUpdated').value = isoToLocalTime(getCurrentIsoTime());
         }
 
         function createNewManifest() {
@@ -250,7 +250,7 @@
                         <th>Platform *<span class="info-tooltip">i<span class="tooltip-text">Platform hosting the content (e.g., YouTube, X, Facebook)</span></span></th>
                         <th>PUID<span class="info-tooltip">i<span class="tooltip-text">(Optional) Platform-specific Unique Identifier for the content</span></span></th>
                         <th>Account *<span class="info-tooltip">i<span class="tooltip-text">Platform account associated with the content</span></span></th>
-                        <th>Timestamp<span class="info-tooltip">i<span class="tooltip-text">(Optional) Content creation time in ISO format (e.g., YYYY-MM-DDTHH:MM:SSZ)</span></span></th>
+                        <th>Timestamp<span class="info-tooltip">i<span class="tooltip-text">(Optional) Content creation date and time (local time)</span></span></th>
                         <th>Action</th>
                     </tr>
                 </thead>

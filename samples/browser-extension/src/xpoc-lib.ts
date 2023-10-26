@@ -114,8 +114,12 @@ export async function lookupXpocUri(tabUrl: string, xpocUrl: string): Promise<lo
 
     // check each manifest account to see if it matches the current tab url
     tabUrl = getBaseURL(tabUrl as string);
-    const matchingAccount = manifest.accounts.find(
+    const matchingAccount = manifest.accounts?.find(
         (account: Account) => {
+            // skip account if no url is specified
+            if (!account.url) {
+                return false
+            }
             // get the platform object for this account
             const platform = Platforms.isSupportedPlatform(account.platform) ? Platforms.getPlatform(account.platform) : undefined
             if (platform && platform?.isValidAccountUrl(tabUrl)) {
@@ -144,7 +148,7 @@ export async function lookupXpocUri(tabUrl: string, xpocUrl: string): Promise<lo
         };
     }
 
-    const matchingContent = manifest.content.find(
+    const matchingContent = manifest.content?.find(
         (content: ContentItem) => {
             // get the platform object for this account
             const platform = Platforms.isSupportedPlatform(content.platform) ? Platforms.getPlatform(content.platform) : undefined

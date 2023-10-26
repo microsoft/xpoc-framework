@@ -1,10 +1,9 @@
 # Client HTML with server backend XPOC sample pages
 
-This is a sample implementation of client-side HTML/JavaScript frontend pages and a server backend to view and edit XPOC manifests and to validate XPOC URIs, demonstrating how to interact with XPOC artifacts. For details about XPOC, consult the [specification](../../doc/xpoc-specification.md).
+This is a sample implementation of client-side HTML/JavaScript frontend pages and a server backend to view XPOC manifests and to validate XPOC URIs, demonstrating how to interact with XPOC artifacts. These complement the [client-side HTML sample](../client-side-html/README.md), allowing the pages to fetch cross-domain web resources without restrictions. For details about XPOC, consult the [specification](../../doc/xpoc-specification.md).
 
-The sample contains three pages (accessible from `public/index.html`):
+The sample contains two pages (accessible from `public/index.html`):
 
--   `public/xpoc-editor.html`: use to create and edit XPOC manifests
 -   `public/xpoc-viewer.html`: to view a XPOC manifest hosted on a website
 -   `public/xpoc-validator.html`: to validate a XPOC resource associated with a XPOC URI
 

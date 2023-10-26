@@ -7,6 +7,13 @@ function getCurrentIsoTime() {
     return new Date().toISOString().slice(0, "YYYY-MM-DDTHH:MM:SS".length) + 'Z';
 }
 
+function isoToLocalTime(isoTime) {
+    if (!isoTime) {
+        return '';
+    }
+    return new Date(isoTime).toLocaleString();
+}
+
 let manifest = {
     name: "",
     baseurl: "",

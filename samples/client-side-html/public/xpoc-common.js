@@ -13,6 +13,13 @@ function clearError() {
     errMsgElem.style.display = 'none';
 }
 
+function isoToLocalTime(isoTime) {
+    if (!isoTime) {
+        return '';
+    }
+    return new Date(isoTime).toLocaleString();
+}
+
 // fetch the xpoc manifest from the given base URL or XPOC URI
 async function fetchXpocManifest(location) {
     // if location is a XPOC URI (starts with xpoc://), replace the protocol with https:// and remove the trailing '!' (if present)

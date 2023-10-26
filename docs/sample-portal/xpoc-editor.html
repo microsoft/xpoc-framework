@@ -78,9 +78,9 @@
     </div>
 
     <footer>
-        Last modified: <span id="lastModified">2023-10-25</span>
+        Last modified: <span id="lastModified">2023-10-26</span>
         •
-        Commit ID: <span id="commitId">d93f6d8</span>
+        Commit ID: <span id="commitId">275df44</span>
     </footer>
 
     <script src="xpoc-common-editor.js"></script>
@@ -107,11 +107,16 @@
             clearError();
             document.getElementById('manifestName').value = manifest.name || '';
             document.getElementById('manifestBaseUrl').value = manifest.baseurl || '';
-            document.getElementById('manifestVersion').value = manifest.version || currentVersion;
+            document.getElementById('manifestVersion').value = currentVersion; // always save to latest version
             document.getElementById('manifestUpdated').value = getCurrentIsoTime();
         }
 
         function createNewManifest() {
+            // Re-initialize the manifest fields (if edited previously)
+            manifest.name = "";
+            manifest.baseurl = "";
+            manifest.accounts = [];
+            manifest.content = [];
             // Display the initialized manifest info and clear tables
             initializeManifestInfo();
             updateAccountsTable();
@@ -281,6 +286,10 @@
         }
 
         function saveToFile() {
+            // Update timestamp
+            manifest.updated = getCurrentIsoTime();
+            // Make sure we save to the latest version (in case we read an older version)
+            manifest.version = currentVersion;
             // Delete the accounts and content arrays if they are empty
             if (manifest.accounts.length === 0) {
                 delete manifest.accounts;

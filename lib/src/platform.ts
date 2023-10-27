@@ -42,6 +42,9 @@ export abstract class Platform {
     // the platform's display name
     public DisplayName: string;
 
+    // the platform's alias (if any)
+    public Alias: string | undefined = undefined;
+
     // canonical hostname
     public CanonicalHostname: string;
 
@@ -314,6 +317,7 @@ export class XTwitter extends Platform {
             // matches X/Twitter content URLs with a status path and a status ID path
             `/@?(?<accountName>[a-zA-Z0-9_]{1,15})/status/(?<puid>\\d{1,19})$`
         );
+        this.Alias = 'Twitter';
     }
 
     filterType = (type: string | undefined): ContentType => 'post';
@@ -757,6 +761,8 @@ export class Snapchat extends NoWebPlatform {
     constructor() { super('Snapchat', 'https://www.snapchat.com/') }
 }
 
+const lowercaseNoSpace = (str: string | undefined) => str?.toLowerCase().replace(/\s+/g, '');
+
 // supported platforms
 export const Platforms = {
 
@@ -782,9 +788,9 @@ export const Platforms = {
      * @param platform the platform to check.
      */
     isSupportedPlatform(platform: string): boolean {
-        const lcPlatform = platform.trim().toLowerCase();
+        const lcPlatform = lowercaseNoSpace(platform);
         for (const platform of Platforms.platforms) {
-            if (platform.DisplayName.toLowerCase() === lcPlatform) {
+            if (lowercaseNoSpace(platform.DisplayName) === lcPlatform || lowercaseNoSpace(platform.Alias) === lcPlatform) {
                 return true;
             }
         }
@@ -793,30 +799,30 @@ export const Platforms = {
 
     /**
      * Returns the canonical platform name (if the platform is supported) or the unchanged input value (otherwise).
-     * @param platform the platform to canonicalize.
+     * @param platformName the platform to canonicalize.
      */
-    getCanonicalPlatformName(platform: string): string {
-        const lcPlatform = platform.trim().toLowerCase();
+    getCanonicalPlatformName(platformName: string): string {
+        const lcPlatform = lowercaseNoSpace(platformName);
         for (const platform of Platforms.platforms) {
-            if (platform.DisplayName.toLowerCase() === lcPlatform) {
+            if (lowercaseNoSpace(platform.DisplayName) === lcPlatform || lowercaseNoSpace(platform.Alias) === lcPlatform) {
                 return platform.DisplayName;
             }
         }
-        return platform;
+        return platformName.trim();
     },
 
     /**
      * Returns the platform object for a given platform name.
-     * @param platform the platform name.
+     * @param platformName the platform name.
      */
-    getPlatform(platform: string): Platform {
-        const lcPlatform = platform.trim().toLowerCase();
+    getPlatform(platformName: string): Platform {
+        const lcPlatform = lowercaseNoSpace(platformName);
         for (const platform of Platforms.platforms) {
-            if (platform.DisplayName.toLowerCase() === lcPlatform) {
+            if (lowercaseNoSpace(platform.DisplayName) === lcPlatform || lowercaseNoSpace(platform.Alias) === lcPlatform) {
                 return platform;
             }
         }
-        throw new Error(`Unsupported platform: ${platform}`);
+        throw new Error(`Unsupported platform: ${platformName}`);
     },
 
     /**

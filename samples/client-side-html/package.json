@@ -7,8 +7,8 @@
     "express": "^4.18.2"
   },
   "scripts": {
-    "setup": "shx cp ../../lib/browser/xpoc.iife.min.js public/",
-    "start": "npm run setup && node server.js"
+    "build": "shx cp ../../lib/browser/xpoc.iife.min.js public/",
+    "start": "npm run build && node server.js"
   },
   "license": "MIT",
   "devDependencies": {

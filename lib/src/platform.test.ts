@@ -909,6 +909,50 @@ for (const platformTestData of platformTestDataArray) {
 }
 
 describe('platform operations', () => {
+    test('platform support', () => {
+        // supported platforms
+        expect(Platforms.isSupportedPlatform('YouTube')).toBe(true);
+        expect(Platforms.isSupportedPlatform('X')).toBe(true);
+        expect(Platforms.isSupportedPlatform('Twitter')).toBe(true); // X alias
+        expect(Platforms.isSupportedPlatform('Facebook')).toBe(true);
+        expect(Platforms.isSupportedPlatform('Instagram')).toBe(true);
+        expect(Platforms.isSupportedPlatform('Medium')).toBe(true);
+        expect(Platforms.isSupportedPlatform('TikTok')).toBe(true);
+        expect(Platforms.isSupportedPlatform('LinkedIn')).toBe(true);
+        expect(Platforms.isSupportedPlatform('Threads')).toBe(true);
+        expect(Platforms.isSupportedPlatform('Google Scholar')).toBe(true);
+        expect(Platforms.isSupportedPlatform('googlescholar')).toBe(true); // no space
+        expect(Platforms.isSupportedPlatform('Rumble')).toBe(true);
+        expect(Platforms.isSupportedPlatform('GitHub')).toBe(true);
+        expect(Platforms.isSupportedPlatform('Telegram')).toBe(true);
+        expect(Platforms.isSupportedPlatform('LINE')).toBe(true);
+        expect(Platforms.isSupportedPlatform('Snapchat')).toBe(true);
+        // unsupported platform
+        expect(Platforms.isSupportedPlatform('NotAPlatform')).toBe(false);
+    });
+
+    test('platform canonical name', () => {
+        // supported platforms (try lowercase with added white space)
+        expect(Platforms.getCanonicalPlatformName(' youTube ')).toBe('YouTube');
+        expect(Platforms.getCanonicalPlatformName(' x ')).toBe('X');
+        expect(Platforms.getCanonicalPlatformName(' twitter ')).toBe('X'); // X alias
+        expect(Platforms.getCanonicalPlatformName(' facebook ')).toBe('Facebook');
+        expect(Platforms.getCanonicalPlatformName(' instagram ')).toBe('Instagram');
+        expect(Platforms.getCanonicalPlatformName(' medium ')).toBe('Medium');
+        expect(Platforms.getCanonicalPlatformName(' tiktok ')).toBe('TikTok');
+        expect(Platforms.getCanonicalPlatformName(' linkedin ')).toBe('LinkedIn');
+        expect(Platforms.getCanonicalPlatformName(' threads ')).toBe('Threads');
+        expect(Platforms.getCanonicalPlatformName(' google scholar ')).toBe('Google Scholar');
+        expect(Platforms.getCanonicalPlatformName(' googlescholar ')).toBe('Google Scholar'); // no space
+        expect(Platforms.getCanonicalPlatformName(' rumble ')).toBe('Rumble');
+        expect(Platforms.getCanonicalPlatformName(' github ')).toBe('GitHub');
+        expect(Platforms.getCanonicalPlatformName(' telegram ')).toBe('Telegram');
+        expect(Platforms.getCanonicalPlatformName(' line ')).toBe('LINE');
+        expect(Platforms.getCanonicalPlatformName(' snapchat ')).toBe('Snapchat');
+        // unsupported platform
+        expect(Platforms.getCanonicalPlatformName(' NotAPlatform ')).toBe('NotAPlatform');
+    });
+
     test('platform account URL validation', () => {
         // YouTube test
         expect(Platforms.isSupportedAccountUrl('https://www.youtube.com/@accountname')).toBe(true);

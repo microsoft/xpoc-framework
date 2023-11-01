@@ -15,6 +15,7 @@ List of platforms:
 -   [Telegram](#telegram)
 -   [Threads](#threads)
 -   [TikTok](#tiktok)
+-   [Vimeo](#vimeo)
 -   [X (Twitter)](#x-twitter)
 -   [YouTube](#youtube)
 
@@ -243,6 +244,25 @@ It is RECOMMENDED to only list TikTok accounts and not individual pieces of cont
 
 -    On the account page: in the account page's Bio field.
 -    For a video: in a video's caption field.
+
+## Vimeo
+
+### Manifest content
+
+-   properties shared by `accounts` and `content`:
+    -   `platform`: `Vimeo`
+    -   `account`: the owner's account name `<accountname>`
+-   `accounts` properties:
+    -   `url`: `https://vimeo.com/<accountname>`.
+-   `content` properties:
+    -   `url`: `https://vimeo.com/<videoID>`
+    -   `puid`: `<videoID>`
+    -   `timestamp`: exact creation time in  ISO 8601 date-time format (YYYY-MM-DDTHH:MM:SSZ) in UTC.
+
+### XPOC URI placement
+
+-    On the account page: in the account page's Bio field.
+-    On a video content page: in the video's description.
 
 ## X (Twitter)
 

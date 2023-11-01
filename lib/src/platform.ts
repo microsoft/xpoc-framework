@@ -761,6 +761,26 @@ export class Snapchat extends NoWebPlatform {
     constructor() { super('Snapchat', 'https://www.snapchat.com/') }
 }
 
+// Vimeo platform implementation.
+export class Vimeo extends Platform {
+    constructor() {
+        super('Vimeo', 'https://vimeo.com',
+            `${ACCOUNT_STR}`,  `${PUID_STR}`,
+            true, false, // TODO: implement CanFetchContentData (Vimeo's page is a bit different than YouTube, requires more analysis)
+            // matches Vimeo URLs, with or without a www. subdomains
+            "^https?://(?:www\\.)?(vimeo\\.com)",
+            // matches Vimeo account URLs, with an optional 'about/' path
+            `/(?<accountName>[^/?&#]+)(/about)?\/?(?:\\?.*)?$`,
+            // matches Vimeo content URLs
+            "/(?<puid>[0-9]+)\/?(?:\\?.*)?$",
+            // fetch XPOC URI in the description of the account page
+            {queryObject: {nodeQuery: 'meta[name="description"]', attribute: 'content'}}
+        );
+    }
+
+    filterType = (type: string | undefined): ContentType => 'video';
+}
+
 const lowercaseNoSpace = (str: string | undefined) => str?.toLowerCase().replace(/\s+/g, '');
 
 // supported platforms
@@ -780,7 +800,8 @@ export const Platforms = {
         new GitHub(),
         new Telegram(),
         new LINE(),
-        new Snapchat()
+        new Snapchat(),
+        new Vimeo()
     ],
 
     /**

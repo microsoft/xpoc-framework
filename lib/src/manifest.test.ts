@@ -79,8 +79,8 @@ describe('manifest file operations', () => {
         expect(testManifest?.manifest.name).toBe('A test name');
         expect(testManifest?.manifest.version).toBe(Manifest.LatestVersion);
         expect(testManifest?.manifest.updated).toBe("2023-10-23T15:00:00Z");
-        expect(testManifest?.manifest.accounts?.length).toBe(15);
-        expect(testManifest?.manifest.content?.length).toBe(10);
+        expect(testManifest?.manifest.accounts?.length).toBe(16);
+        expect(testManifest?.manifest.content?.length).toBe(11);
     });
 
     (testManifest ? test : test.skip)('match accounts', () => {

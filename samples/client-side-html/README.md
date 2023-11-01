@@ -16,13 +16,15 @@ Note that client-side functionality could be limited by a browser security polic
 
 These pages can be self-hosted by following these steps:
 
-1. Setup the express server:
+1. Build the reference implementation library; see instructions in its [README](../../lib/README.md).
+
+2. Setup the express server:
 
 ```
 npm install
 ```
 
-2. Start the server
+3. Start the server
 
 ```
 npm run start

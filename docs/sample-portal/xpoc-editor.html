@@ -78,31 +78,14 @@
     </div>
 
     <footer>
-        Last modified: <span id="lastModified">2023-10-27</span>
+        Last modified: <span id="lastModified">2023-11-01</span>
         •
-        Commit ID: <span id="commitId">0db37f9</span>
+        Commit ID: <span id="commitId">98502b2</span>
     </footer>
 
+    <script src="./xpoc.iife.min.js"></script>
     <script src="xpoc-common-editor.js"></script>
     <script>
-        const supportedPlatforms = [
-            // {name: platform name, alias: other names for the platform}
-            { name: "Facebook" },
-            { name: "GitHub" },
-            { name: "GoogleScholar" },
-            { name: "Instagram" },
-            { name: "LINE" },
-            { name: "LinkedIn" },
-            { name: "Medium" },
-            { name: "Rumble" },
-            { name: "Snapchat" },
-            { name: "Telegram" },
-            { name: "Threads" },
-            { name: "TikTok" },
-            { name: "X", alias: "Twitter" },
-            { name: "YouTube" }
-        ]
-
         function initializeManifestInfo() {
             clearError();
             document.getElementById('manifestName').value = manifest.name || '';
@@ -158,20 +141,8 @@
         }
 
         function validateAndUpdatePlatform(inputValue, inputElement, contentType, index) {
-            // TODO: use library bundle for this
             clearError();
-            inputValue= inputValue.trim();
-            let platform = inputValue;
-            let lowerCaseNoSpacePlatform = platform.toLowerCase().replace(/\s+/g, '');
-            for (let p of supportedPlatforms) {
-                if (p.name.toLowerCase() === lowerCaseNoSpacePlatform) {
-                    platform = p.name;
-                    break;
-                } else if (p.alias && p.alias.toLowerCase() === lowerCaseNoSpacePlatform) {
-                    platform = p.name;
-                    break;
-                }
-            }
+            let platform = xpoc.Platforms.getCanonicalPlatformName(inputValue);
             if (contentType === 'content') {
                 manifest.content[index].platform = platform;
             } else if (contentType === 'account') {

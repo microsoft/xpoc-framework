@@ -68,7 +68,6 @@ jobs:
         run: cd samples/${{ matrix.sample }} && npm install
 
       - name: Build (except for client-side-html)
-        if: matrix.sample != 'client-side-html'
         # TODO: build lib here because the lib/dist is not available. Why not?
         run: | 
           cd lib && npm install && npm run build && cd ..

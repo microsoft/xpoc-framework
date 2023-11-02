@@ -4,7 +4,7 @@
 import fs from 'fs';
 import { Platforms } from './platform.js';
 //import { Manifest as validateManifest } from './manifest.schema.mjs';
-import * as schema from './manifest.schema.js';
+import * as schema from './manifest.schema.cjs';
 import { ValidateFunction } from 'ajv';
 import { fetchObject } from './fetch.js';
 

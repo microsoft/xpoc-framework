@@ -4,7 +4,7 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { Manifest, XPOCManifest, AccountMatchValues, ContentMatchValues } from './manifest';
+import { Manifest, XPOCManifest, AccountMatchValues, ContentMatchValues } from '../src/manifest';
 
 describe('manifest file operations', () => {
     let manifest: Manifest;
@@ -60,7 +60,7 @@ describe('manifest file operations', () => {
 describe('manifest file operations', () => {
     // Path to our temporary directory and file
     const tmpDir = join(tmpdir(), 'xpoc_tmp');
-    const tmpFilePath = join(tmpDir, 'testmanifest.json');
+    const tmpFilePath = join(tmpDir, 'xpoc-manifest.json');
 
     // Before all tests, ensure the directory exists
     beforeAll(async () => {
@@ -72,7 +72,7 @@ describe('manifest file operations', () => {
         }
     });
 
-    let testManifest = Manifest.loadFromFile('./testdata/testmanifest.json');
+    let testManifest = Manifest.loadFromFile('./testdata/xpoc-manifest.json');
     test('load manifest from file', () => {
         // sanity check
         expect(testManifest).toBeDefined();
@@ -153,7 +153,7 @@ describe('manifest file operations', () => {
 describe('manifest validation', () => {
     // Path to our temporary directory and file
     const tmpDir = join(tmpdir(), 'xpoc_tmp');
-    const tmpFilePath = join(tmpDir, 'testmanifest.json');
+    const tmpFilePath = join(tmpDir, 'xpoc-manifest.json');
 
     //
     // TODO: create additional test manifests with invalid values
@@ -169,7 +169,7 @@ describe('manifest validation', () => {
         }
     });
 
-    let testManifest = Manifest.loadFromFile('./testdata/testmanifest.json');
+    let testManifest = Manifest.loadFromFile('./testdata/xpoc-manifest.json');
 
     test('validate schema: valid', () => {
         const validation = Manifest.validate(testManifest.manifest);
@@ -203,4 +203,52 @@ describe('manifest validation', () => {
             // ignore errors
         }
     });
+});
+
+describe('manifest download', () => {
+
+    // the test manifest at ./testData/xpoc-manifest.json, but in the repo
+    const manifestUrl = 'https://raw.githubusercontent.com/microsoft/xpoc-framework/main/lib/testdata';
+
+    test('download: valid manifest', async () => {
+        const manifest = await Manifest.download(manifestUrl);
+        if (manifest instanceof Error) {
+            throw manifest;
+        }
+        const validation = Manifest.validate(manifest);
+        expect(validation.valid).toBe(true);
+    });
+
+    test('download: valid manifest (trailing slash)', async () => {
+        const manifest = await Manifest.download(manifestUrl + '/');
+        if (manifest instanceof Error) {
+            throw manifest;
+        }
+        const validation = Manifest.validate(manifest);
+        expect(validation.valid).toBe(true);
+    });
+
+    test('download: valid manifest (full path)', async () => {
+        const manifest = await Manifest.download(manifestUrl + '/xpoc-manifest.json');
+        if (manifest instanceof Error) {
+            throw manifest;
+        }
+        const validation = Manifest.validate(manifest);
+        expect(validation.valid).toBe(true);
+    });
+
+    test('download: non-existent url', async () => {
+        const manifest = await Manifest.download(manifestUrl + 'x');
+        const error = manifest as Error;
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toMatch(/^Error fetching XPOC manifest/);
+    });
+
+    test('download: not JSON file', async () => {
+        const manifest = await Manifest.download('https://raw.githubusercontent.com/microsoft/xpoc-framework/main/lib/README.md');
+        const error = manifest as Error;
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toMatch(/^Error fetching XPOC manifest/);
+    });
+
 });

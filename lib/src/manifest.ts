@@ -3,8 +3,12 @@
 
 import fs from 'fs';
 import { Platforms } from './platform.js';
-import { Manifest as validateManifest } from './manifest.schema.js'
+//import { Manifest as validateManifest } from './manifest.schema.mjs';
+import * as schema from './manifest.schema.js';
 import { ValidateFunction } from 'ajv';
+import { fetchObject } from './fetch.js';
+
+const validateManifest = schema.Manifest
 
 /**
  * A platform account.
@@ -205,6 +209,32 @@ export class ManifestBase {
         if (valid) return { valid: true };
         const errors: string[] = validateFunction.errors?.map((err) => `${err.instancePath}: ${err.message}` ?? '') ?? [];
         return { valid: false, errors };
+    }
+
+    static download = async (location: string): Promise<XPOCManifest | Error> => {
+        // if location is a XPOC URI (starts with xpoc://), replace the protocol with https:// and remove the trailing '!' (if present)
+        location = location.replace(/^xpoc:\/\//, 'https://').replace(/!$/, '');
+        // add a https:// prefix if the location doesn't have one
+        if (!/^https?:\/\//i.test(location)) {
+            location = 'https://' + location;
+        }
+        // create the full manifest url
+        const url = new URL(location);
+        if (!url.pathname.endsWith('xpoc-manifest.json')) {
+            url.pathname =
+                (url.pathname.endsWith('/') ? url.pathname : url.pathname + '/') +
+                'xpoc-manifest.json';
+        }
+        const urlString = url.toString();
+
+        const manifest = await fetchObject<XPOCManifest>(urlString);
+
+        if (manifest instanceof Error) {
+            console.error(`Error fetching XPOC manifest from ${urlString}: ` + manifest);
+            return new Error(`Error fetching XPOC manifest from ${urlString}`);
+        }
+
+        return manifest
     }
 }
 

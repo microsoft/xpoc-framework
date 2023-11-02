@@ -13,7 +13,7 @@
     "build:schema": "node src/compile.schema.js",
     "build": "npm run build:schema && npm run build:tsc && npm run build:bundle",
     "clean": "rimraf dist browser ./src/manifest.schema.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose"
+    "test": "jest --silent"
   },
   "license": "MIT",
   "dependencies": {
@@ -30,25 +30,27 @@
     "@rollup/plugin-terser": "^0.4.3",
     "@types/jest": "^29.5.4",
     "@types/node": "^20.8.2",
+    "dotenv": "^16.3.1",
     "jest": "^29.6.4",
     "rimraf": "^5.0.5",
     "rollup": "^3.29.3",
     "rollup-plugin-typescript2": "^0.35.0",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
   },
-  "files": [
-    "dist/",
-    "lib/",
-    "!**/*.test.ts"
-  ],
   "jest": {
     "testTimeout": 15000,
-    "testMatch": [
-      "**/*.test.js"
-    ],
-    "testEnvironment": "node",
-    "coverageReporters": [
-      "json-summary"
-    ]
+    "preset": "ts-jest/presets/default-esm",
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "transform": {
+      "^.+\\.[tj]s$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
+    }
   }
 }

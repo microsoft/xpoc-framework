@@ -3,12 +3,10 @@
 
 import fs from 'fs';
 import { Platforms } from './platform.js';
-//import { Manifest as validateManifest } from './manifest.schema.mjs';
-import * as schema from './manifest.schema.cjs';
+import { Manifest as validateManifest} from './manifest.schema.js';
 import { ValidateFunction } from 'ajv';
 import { fetchObject } from './fetch.js';
 
-const validateManifest = schema.Manifest
 
 /**
  * A platform account.
@@ -230,7 +228,7 @@ export class ManifestBase {
         const manifest = await fetchObject<XPOCManifest>(urlString);
 
         if (manifest instanceof Error) {
-            console.error(`Error fetching XPOC manifest from ${urlString}: ` + manifest);
+            console.error(`Error fetching XPOC manifest from ${urlString}: ${JSON.stringify(manifest)}`);
             return new Error(`Error fetching XPOC manifest from ${urlString}`);
         }
 

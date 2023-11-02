@@ -8,12 +8,13 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build:clean": "npm run clean && npm run build",
-    "build:tsc": "tsc",
+    "build:tsc": "npm run build:schema && tsc",
     "build:bundle": "rollup -c",
     "build:schema": "node src/compile.schema.js",
     "build": "npm run build:schema && npm run build:tsc && npm run build:bundle",
-    "clean": "rimraf dist browser ./src/manifest.schema.js",
-    "test": "jest --silent"
+    "clean": "rimraf dist browser src/manifest.schema.js",
+    "test": "jest --silent",
+    "prepare": "npm run build"
   },
   "license": "MIT",
   "dependencies": {

@@ -119,7 +119,7 @@ export async function fetchObject<T>(url: string, options: RequestInit = {}, tim
             }
             // it succeeded with an opaque response, so it was a likely cors error
             if (noCorsFetch.ok === false && noCorsFetch.type === 'opaque') {
-                return new FetchError(FetchErrors.CORS, `Failed to fetch ${url}`)
+                return new FetchError(FetchErrors.CORS, `Probable CORS error to ${url}`)
             }
         }
 

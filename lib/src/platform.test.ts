@@ -4,7 +4,7 @@
 import {
     CanonicalizedAccountData, CanonicalizedContentData, Platform, Platforms, PlatformAccountData, PlatformContentData,
     // platforms
-    Facebook, GitHub, GoogleScholar, Instagram, LINE, LinkedIn, Medium, Rumble, Snapchat, Telegram, Threads, TikTok, XTwitter, YouTube
+    Facebook, GitHub, GoogleScholar, Instagram, LINE, LinkedIn, Medium, Rumble, Snapchat, Telegram, Threads, TikTok, Vimeo, XTwitter, YouTube
 } from './platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
@@ -808,7 +808,74 @@ const platformTestDataArray: PlatformTestData[] = [
         sampleContentData: undefined
     },
     
-    
+    // Vimeo test data
+    {
+        platform: new Vimeo(),
+        accountNames: [
+            'xpoctester',
+            ' xpoctester '
+        ],
+        validAccountUrls: [
+            'https://vimeo.com/xpoctester',
+            'https://vimeo.com/xpoctester/',
+            'https://www.vimeo.com/xpoctester',
+            'https://vimeo.com/xpoctester/about',
+            'https://vimeo.com/xpoctester?utm_source=affiliate&utm_channel=affiliate',
+        ],
+        validContentUrls: [
+            'https://vimeo.com/879818126',
+            'https://vimeo.com/879818126/',
+            'https://www.vimeo.com/879818126',
+            'https://vimeo.com/879818126?utm_source=affiliate&utm_channel=affiliate',
+        ],
+        invalidAccountUrls: [
+            'https://vimeo.com',
+            'https://notvimeo.com',
+        ],
+        invalidContentUrls: [
+            'https://vimeo.com',
+            'https://notvimeo.com',
+        ],
+        canonicalAccountData: [
+            ...new Array(5).fill(
+                {
+                    url: 'https://vimeo.com/xpoctester',
+                    account: 'xpoctester'
+                }
+            ),
+            ...new Array(4).fill(
+                {
+                    url: 'https://vimeo.com/879818126',
+                    account: '879818126'
+                }
+            )
+        ],
+        canonicalContentData: [
+            ...new Array(5).fill(
+                {
+                    url: 'https://vimeo.com/879818126',
+                    account: '',
+                    puid: '879818126',
+                    type: 'video'
+                }
+            )
+        ],
+        sampleAccountData: {
+            xpocUri: expectedXpocUri,
+            platform: "Vimeo",
+            url: "https://vimeo.com/xpoctester",
+            account: "xpoctester",
+        },
+        sampleContentData: {
+            xpocUri: expectedXpocUri,
+            platform: "Vimeo",
+            url: "https://vimeo.com/879818126",
+            account: "xpoctester",
+            timestamp: "2023-10-31T14:49:45Z",
+            puid: "879818126"
+        }
+    },
+
 ];
 
 const hasValue = (s: string | undefined): boolean => s !== undefined && s !== '';
@@ -927,6 +994,7 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedPlatform('Telegram')).toBe(true);
         expect(Platforms.isSupportedPlatform('LINE')).toBe(true);
         expect(Platforms.isSupportedPlatform('Snapchat')).toBe(true);
+        expect(Platforms.isSupportedPlatform('Vimeo')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedPlatform('NotAPlatform')).toBe(false);
     });
@@ -949,6 +1017,7 @@ describe('platform operations', () => {
         expect(Platforms.getCanonicalPlatformName(' telegram ')).toBe('Telegram');
         expect(Platforms.getCanonicalPlatformName(' line ')).toBe('LINE');
         expect(Platforms.getCanonicalPlatformName(' snapchat ')).toBe('Snapchat');
+        expect(Platforms.getCanonicalPlatformName(' vimeo ')).toBe('Vimeo');
         // unsupported platform
         expect(Platforms.getCanonicalPlatformName(' NotAPlatform ')).toBe('NotAPlatform');
     });
@@ -980,6 +1049,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedAccountUrl('https://t.me/accountname')).toBe(true);
         // LINE: n/a
         // Snapchat: n/a
+        // Vimeo
+        expect(Platforms.isSupportedAccountUrl('https://vimeo.com/accountname')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
     });
@@ -1011,6 +1082,8 @@ describe('platform operations', () => {
         expect(Platforms.isSupportedContentUrl('https://t.me/accountname')).toBe(false);
         // LINE: n/a
         // Snapchat: n/a
+        // Vimeo
+        expect(Platforms.isSupportedContentUrl('https://vimeo.com/123456789')).toBe(true);
         // unsupported platform
         expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
     });
@@ -1088,6 +1161,14 @@ describe('platform operations', () => {
         // LINE: n/a
 
         // Snapchat: n/a
+
+        // Vimeo test
+        url = 'https://vimeo.com/xpoctester';
+        expect(Platforms.canFetchAccountFromUrl(url)).toBe(true);
+        accountData = await Platforms.getAccountFromUrl(url);
+        expect(accountData.platform).toBe('Vimeo');
+        expect(accountData.account).toBe('xpoctester');
+        expect(accountData.url).toBe('https://vimeo.com/xpoctester');
 
         // unsupported platform
         url = 'https://www.notaplatform.com/accountname';
@@ -1169,6 +1250,11 @@ describe('platform operations', () => {
         // LINE: n/a
 
         // Snapchat: n/a
+
+        // Vimeo test
+        url = 'https://vimeo.com/879818126';
+        expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
+        await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 
         // unsupported platform
         url = 'https://www.notaplatform.com/abc123';

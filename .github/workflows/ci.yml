@@ -64,14 +64,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-${{ matrix.sample }}-
 
+      - name: Install Lib and Dependencies for samples
+        # TODO: build lib here because the lib/dist is not available. Why not?
+        run: | 
+          cd lib && npm install && npm run build && cd ..
+          cd samples/${{ matrix.sample }} && npm install
+
       - name: Install Dependencies for samples
         run: cd samples/${{ matrix.sample }} && npm install
 
       - name: Build (except for client-side-html)
-        # TODO: build lib here because the lib/dist is not available. Why not?
-        run: | 
-          cd lib && npm install && npm run build && cd ..
-          cd samples/${{ matrix.sample }} && npm run build
+        run: cd samples/${{ matrix.sample }} && npm run build
 
       - name: Start Server and Check
         if: matrix.sample != 'browser-extension'

@@ -160,6 +160,8 @@
                     date = null;
                 } else {
                     date = date.toISOString();
+                    // remove milliseconds (if present)
+                    date = date.replace(/\.\d{3}Z$/, 'Z');
                 }
                 // update value in the input field
                 inputElement.value = inputValue;

@@ -80,7 +80,7 @@
     <footer>
         Last modified: <span id="lastModified">2023-11-03</span>
         •
-        Commit ID: <span id="commitId">c70433e</span>
+        Commit ID: <span id="commitId">2a23c30</span>
     </footer>
 
     <script src="./xpoc.iife.min.js"></script>
@@ -160,6 +160,8 @@
                     date = null;
                 } else {
                     date = date.toISOString();
+                    // remove milliseconds (if present)
+                    date = date.replace(/\.\d{3}Z$/, 'Z');
                 }
                 // update value in the input field
                 inputElement.value = inputValue;

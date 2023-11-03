@@ -214,7 +214,7 @@ export class ManifestBase {
         return { valid: false, errors };
     }
 
-    static download = async (location: string): Promise<Manifest | Error> => {
+    static download = async (location: string): Promise<ManifestBase | Error> => {
         // if location is a XPOC URI (starts with xpoc://), replace the protocol with https:// and remove the trailing '!' (if present)
         location = location.replace(/^xpoc:\/\//, 'https://').replace(/!$/, '');
         // add a https:// prefix if the location doesn't have one
@@ -237,7 +237,7 @@ export class ManifestBase {
             return new Error(`Error fetching XPOC manifest from ${urlString}`);
         }
 
-        return new Manifest(manifest)
+        return new ManifestBase(manifest)
     }
 }
 

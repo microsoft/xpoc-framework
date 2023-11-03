@@ -5,7 +5,7 @@ import {
     CanonicalizedAccountData, CanonicalizedContentData, Platform, Platforms, PlatformAccountData, PlatformContentData,
     // platforms
     Facebook, GitHub, GoogleScholar, Instagram, LINE, LinkedIn, Medium, Rumble, Snapchat, Telegram, Threads, TikTok, Vimeo, XTwitter, YouTube
-} from './platform';
+} from '../src/platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
 const expectedXpocUri = 'xpoc://christianpaquin.github.io!';

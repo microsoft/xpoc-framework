@@ -73,6 +73,11 @@
 			"platform": "Snapchat"
 		},
 		{
+			"account": "a_vm_test_account",
+			"platform": "Vimeo",
+			"url": "https://vimeo.com/a_vm_test_account"
+		},
+		{
 			"account": "a_us_test_account",
 			"platform": "Unsupported",
 			"url": "https://unsupported.platform/a_us_test_account"
@@ -149,7 +154,16 @@
 			"url": "https://rumble.com/abc1234-title.html/",
 			"desc": "a test video",
 			"puid": "abc1234",
-			"timestamp": "2023-07-18T00:00:00Z"		},
+			"timestamp": "2023-07-18T00:00:00Z"
+		},
+		{
+			"account": "a_vm_test_account",
+			"platform": "Vimeo",
+			"url": "https://vimeo.com/123456789",
+			"desc": "a test video",
+			"puid": "123456789",
+			"timestamp": "2023-07-19T00:00:00Z"
+		},
 		{
 			"account": "a_us_test_account",
 			"platform": "Unsupported",

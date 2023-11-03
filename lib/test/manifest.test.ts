@@ -215,8 +215,7 @@ describe('manifest download', () => {
         if (manifest instanceof Error) {
             throw manifest;
         }
-        const validation = Manifest.validate(manifest);
-        expect(validation.valid).toBe(true);
+        expect(manifest.valid).toBe(true);
     });
 
     test('download: valid manifest (trailing slash)', async () => {
@@ -224,8 +223,7 @@ describe('manifest download', () => {
         if (manifest instanceof Error) {
             throw manifest;
         }
-        const validation = Manifest.validate(manifest);
-        expect(validation.valid).toBe(true);
+        expect(manifest.valid).toBe(true);
     });
 
     test('download: valid manifest (full path)', async () => {
@@ -233,8 +231,7 @@ describe('manifest download', () => {
         if (manifest instanceof Error) {
             throw manifest;
         }
-        const validation = Manifest.validate(manifest);
-        expect(validation.valid).toBe(true);
+        expect(manifest.valid).toBe(true);
     });
 
     test('download: non-existent url', async () => {

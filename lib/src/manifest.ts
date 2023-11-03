@@ -75,10 +75,15 @@ const areResourcesEqual = (url1: string | undefined, url2: string | undefined): 
  */
 export class ManifestBase {
     manifest: XPOCManifest;
+    valid: boolean;
+    errors: string[] = [];
     static LatestVersion = '0.3';
 
     constructor(manifest: XPOCManifest) {
         this.manifest = manifest;
+        const validation = ManifestBase.validate(manifest);
+        this.valid = validation.valid;
+        this.errors = validation.errors ?? [];
     }
 
     /**
@@ -209,7 +214,7 @@ export class ManifestBase {
         return { valid: false, errors };
     }
 
-    static download = async (location: string): Promise<XPOCManifest | Error> => {
+    static download = async (location: string): Promise<Manifest | Error> => {
         // if location is a XPOC URI (starts with xpoc://), replace the protocol with https:// and remove the trailing '!' (if present)
         location = location.replace(/^xpoc:\/\//, 'https://').replace(/!$/, '');
         // add a https:// prefix if the location doesn't have one
@@ -232,7 +237,7 @@ export class ManifestBase {
             return new Error(`Error fetching XPOC manifest from ${urlString}`);
         }
 
-        return manifest
+        return new Manifest(manifest)
     }
 }
 

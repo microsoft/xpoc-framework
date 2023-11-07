@@ -247,3 +247,79 @@ scanner.start(
     }
 )
 
+
+const proxyUrl = `http://localhost:3000`; // TODO: move to config
+let proxyIsAlive = true; // TODO: call proxyUrl/isalive at startup
+
+// on supported platforms (currently, only X/Twitter), check if we can find a link to a origin website,
+// and then check if that website contains a link back to the Twitter account
+// TODO: handle x.com
+// TODO: only check account pages
+if (proxyIsAlive) {
+    if (window.location.hostname === 'twitter.com' || window.location.hostname.endsWith('.twitter.com')) {
+        console.log('Running on Twitter; check for a user URL');
+
+        const twitterAccountName = window.location.pathname.split('/')[1].toLowerCase();
+        console.log(`Twitter account name: ${twitterAccountName}`);
+        let hasProcessedUserUrl = false;
+
+        // use an observer to catch all updates to the page (this failed before when simply looking on the page, even if the page was idle)
+        const observer = new MutationObserver(async (mutations) => {
+            if (hasProcessedUserUrl) return;
+
+            for (const mutation of mutations) {
+                if (mutation.type === 'childList') {
+                    // twitter stores its user URLS in a UserUrl element (TODO: also check for other URLs in the bio)
+                    const userUrlElement = document.querySelector('a[data-testid="UserUrl"] span');
+                    if (userUrlElement && userUrlElement instanceof HTMLElement) {
+                        let userUrlText: string = userUrlElement.textContent || userUrlElement.innerText;
+                        if (!userUrlText.startsWith('http://') && !userUrlText.startsWith('https://')) {
+                            userUrlText = 'https://' + userUrlText;
+                        }
+                        console.log(`Found User URL: ${userUrlText}`);
+                        hasProcessedUserUrl = true;
+                        observer.disconnect(); // Stop observing once we've found the element
+
+                        try {
+                            // TODO: Run into CORS issue if fetching directly from here; currently using a proxy server
+                            // to do the processing; but could this be moved to the background script? (ljoy)
+                            //   const response = await fetch(userUrlText);
+                            //   const pageContent = await response.text();
+                            //   const lowerCasePageContent = pageContent.toLowerCase();
+                            //   const twitterUrlPattern = `twitter.com/${twitterAccountName}`;
+                            //   console.log(lowerCasePageContent);
+                            //   if (lowerCasePageContent.includes(twitterUrlPattern)) {
+                            //     console.log(`Found Twitter URL in fetched content: ${twitterUrlPattern}`);
+                            //   } else {
+                            //     console.log('Twitter URL not found in fetched content');
+                            //   }
+                            const response = await fetch(`${proxyUrl}/check?url=${encodeURIComponent(userUrlText)}&platform=${encodeURIComponent("twitter")}&account=${encodeURIComponent(twitterAccountName)}`);
+                            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                            const responseJson = await response.json();
+                            if (responseJson.found) {
+                                const message = `Confirmed origin: ${responseJson.foundAccount} referenced on ${userUrlText}`;
+                                console.log(message);
+                                alert(message); // TODO: display a badge on the page or url bar instead
+                            } else if (responseJson.foundAccount) {
+                                const message = `Warning: a different X account (${responseJson.foundAccount}) is referenced on ${userUrlText}`;
+                                console.log(message);
+                                alert(message); // TODO: display a badge on the page or url bar instead
+                            } else {
+                                const message = `No origin found on ${userUrlText}`;
+                                console.log(message);
+                            }
+                        } catch (error) {
+                            console.error('Failed to fetch or process the User URL', error);
+                        }
+
+                        break;
+                    }
+                }
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    } else {
+        console.log('This script only runs on Twitter');
+    }
+}

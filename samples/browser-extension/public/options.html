@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>External Server URLs</title>
+    <link rel='stylesheet' type='text/css' media='screen' href='options.css'>
+</head>
+
+<body>
+
+    <div>
+        <h3>External Server URLs</h3>
+        <form id="setUrlForm">
+            <div class="section">
+                <label for="issuerUrl">Issuer</label>
+                <input type="text" id="issuerUrl" value="http://localhost:8080" placeholder="e.g., http://localhost:8080">
+            </div>
+            <div class="section">
+                <label for="verifierUrl">Verifier</label>
+                <input type="text" id="verifierUrl" value="http://localhost:8081" placeholder="e.g., http://localhost:8081">
+            </div>
+            <input type="submit" id="buttonSubmit" value="Save">
+        </form>
+        <br>
+    </div>
+
+    <script src='options.js'></script>
+
+</body>
+
+</html>

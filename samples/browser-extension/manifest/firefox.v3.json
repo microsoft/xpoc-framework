@@ -17,6 +17,12 @@
     "icons": {
         "128": "icons/xpoc128x128.png"
     },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "options_ui": {
+        "page": "options.html"
+    },
     "content_scripts": [
         {
             "matches": [

@@ -190,6 +190,27 @@ const popup = {
 }
 
 /*
+  options.js
+*/
+const options = {
+  input: 'src/options.ts',
+  output: {
+    file: 'dist/options.js',
+    ...commonOutput
+  },
+  plugins: [
+    copy({
+      targets: [
+        { src: 'public/options.html', dest: 'dist/chrome' },
+        { src: 'public/options.css', dest: 'dist/chrome' }
+      ]
+    }),
+    ...commonPlugins
+  ],
+  onwarn: commonWarningHandler
+}
+
+/*
   offscreen.js (for Chrome v3)
 */
 const offscreen = {
@@ -239,10 +260,12 @@ export default MANIFEST_VERSION === 3 ? [
   content,
   offscreen,
   popup,
+  options,
   background_firefox
 ] : [ // v2
   background_chrome,
   background_firefox,
   content,
-  popup
+  popup,
+  options
 ]

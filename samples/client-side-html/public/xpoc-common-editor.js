@@ -46,12 +46,40 @@ function validateAndUpdateName(inputValue, inputElement) {
 function validateAndUpdateURL(inputValue, inputElement, contentType = 'info', index = 0) {
     clearError();
     inputValue = inputValue.trim();
-    validatedURL = inputValue;
-    if (validatedURL) {
-        // prepend 'https://' if missing
-        if (!/^https?:\/\//i.test(inputValue)) {
-            validatedURL = 'https://' + inputValue;
+    if (inputValue) {
+        // value fields we can extract from an account or content URL
+        let validatedURL = undefined;
+        let accountName = undefined;
+        let platformName = undefined;
+
+        if (contentType === 'account') {
+            // check if it is a supported platform account URL
+            let platform = xpoc.Platforms.getPlatformFromAccountUrl(inputValue);
+            if (platform) {
+                data = platform.canonicalizeAccountUrl(inputValue);
+                validatedURL = data.url;
+                accountName = data.account;
+                platformName = platform.DisplayName;
+            }
         }
+        if (contentType === 'content') {
+            // check if it is a supported platform content URL
+            let platform = xpoc.Platforms.getPlatformFromContentUrl(inputValue);
+            if (platform) {
+                data = platform.canonicalizeContentUrl(inputValue);
+                validatedURL = data.url;
+                accountName = data.account;
+                platformName = platform.DisplayName;
+            }
+        }
+        if (!validatedURL) {
+            // prepend 'https://' if missing
+            if (!/^https?:\/\//i.test(inputValue)) {
+                validatedURL = 'https://' + inputValue;
+            }
+        }
+        
+        // validate the URL (platform canonicalization will have already done this)
         // account and content URLs can have query params and anchor
         const nonDomainChars = "a-zA-Z0-9-_.!~*'();:@&=+$,";
         const fullUrl = contentType !== 'info';
@@ -73,16 +101,32 @@ function validateAndUpdateURL(inputValue, inputElement, contentType = 'info', in
             showError(`Please enter a valid base URL for the ${urlField}.`);
             return;
         }
+        // update the manifest values
+        let accountFieldIndex, platformFieldIndex;
         if (contentType === 'info') {
             manifest.baseurl = validatedURL;
         } else if (contentType === 'content') {
+            platformFieldIndex = 2; // position of the platform field in the table (TODO: don't hardcode)
+            accountFieldIndex = 4; // position of the account field in the table
             manifest.content[index].url = validatedURL;
+            if (accountName) { manifest.content[index].account = accountName; }
+            if (platformName) { manifest.content[index].platform = platformName; }
         } else if (contentType === 'account') {
+            platformFieldIndex = 0; // position of the platform field in the table (TODO: don't hardcode)
+            accountFieldIndex = 1; // position of the account field in the table
             manifest.accounts[index].url = validatedURL;
+            if (accountName) { manifest.accounts[index].account = accountName; }
+            if (platformName) { manifest.accounts[index].platform = platformName; }
+        }
+        // update value in the input field
+        inputElement.value = validatedURL;
+        if (accountName || platformName) {
+            let parentRow = inputElement.closest('tr');
+            let inputs = parentRow.querySelectorAll('input[type="text"]');
+            if (accountName) { inputs[accountFieldIndex].value = accountName; }
+            if (platformName) { inputs[platformFieldIndex].value = platformName; }
         }
     }
-    // update value in the input field
-    inputElement.value = validatedURL;
 }
 
 function validateAndUpdateAccount(inputValue, inputElement, contentType = undefined, index = 0) {

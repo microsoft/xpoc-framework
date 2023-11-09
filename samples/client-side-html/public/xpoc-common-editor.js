@@ -51,6 +51,7 @@ function validateAndUpdateURL(inputValue, inputElement, contentType = 'info', in
         let validatedURL = undefined;
         let accountName = undefined;
         let platformName = undefined;
+        let puidValue = undefined;
 
         if (contentType === 'account') {
             // check if it is a supported platform account URL
@@ -69,17 +70,21 @@ function validateAndUpdateURL(inputValue, inputElement, contentType = 'info', in
                 data = platform.canonicalizeContentUrl(inputValue);
                 validatedURL = data.url;
                 accountName = data.account;
+                puidValue = data.puid;
                 platformName = platform.DisplayName;
             }
         }
         if (!validatedURL) {
+            // not a URL from a supported platform, so just validate it
+            validatedURL = inputValue; // initial value
             // prepend 'https://' if missing
             if (!/^https?:\/\//i.test(inputValue)) {
                 validatedURL = 'https://' + inputValue;
             }
         }
         
-        // validate the URL (platform canonicalization will have already done this)
+        // validate the URL (platform canonicalization will have already done this,
+        // but we do a final check here to catch any invalid URLs)
         // account and content URLs can have query params and anchor
         const nonDomainChars = "a-zA-Z0-9-_.!~*'();:@&=+$,";
         const fullUrl = contentType !== 'info';
@@ -102,29 +107,27 @@ function validateAndUpdateURL(inputValue, inputElement, contentType = 'info', in
             return;
         }
         // update the manifest values
-        let accountFieldIndex, platformFieldIndex;
+        let accountFieldIndex, platformFieldIndex, puidFieldIndex;
         if (contentType === 'info') {
             manifest.baseurl = validatedURL;
         } else if (contentType === 'content') {
-            platformFieldIndex = 2; // position of the platform field in the table (TODO: don't hardcode)
-            accountFieldIndex = 4; // position of the account field in the table
             manifest.content[index].url = validatedURL;
             if (accountName) { manifest.content[index].account = accountName; }
             if (platformName) { manifest.content[index].platform = platformName; }
+            if (puidValue) { manifest.content[index].puid = puidValue; }
         } else if (contentType === 'account') {
-            platformFieldIndex = 0; // position of the platform field in the table (TODO: don't hardcode)
-            accountFieldIndex = 1; // position of the account field in the table
             manifest.accounts[index].url = validatedURL;
             if (accountName) { manifest.accounts[index].account = accountName; }
             if (platformName) { manifest.accounts[index].platform = platformName; }
         }
-        // update value in the input field
+        // update value in the input field and other fields in the same row (if applicable)
         inputElement.value = validatedURL;
-        if (accountName || platformName) {
+        if (accountName || platformName || puidValue) {
             let parentRow = inputElement.closest('tr');
-            let inputs = parentRow.querySelectorAll('input[type="text"]');
-            if (accountName) { inputs[accountFieldIndex].value = accountName; }
-            if (platformName) { inputs[platformFieldIndex].value = platformName; }
+            //let inputs = parentRow.querySelectorAll('input[type="text"]');
+            if (accountName) { parentRow.querySelector('input[data-fieldname="account"]').value = accountName; }
+            if (platformName) { parentRow.querySelector('input[data-fieldname="platform"]').value = platformName; }
+            if (puidValue) { parentRow.querySelector('input[data-fieldname="puid"]').value = puidValue; }
         }
     }
 }

@@ -8,7 +8,7 @@
     The editor performs minimal input validation. Here is a list of usability and validation improvements that can be made:
     - Validate the manifest against the XPOC manifest schema
     - Implement better error handling and reporting (highlight erroneous fields, tooltips, etc.)
-    - Add auto-fill based on URL (by fetching the target page and deducing content fields); would require CORS support
+    - Check for consistency between fields (e.g., platform matches URL values)
 -->
 
 <!DOCTYPE html>
@@ -78,9 +78,9 @@
     </div>
 
     <footer>
-        Last modified: <span id="lastModified">2023-11-03</span>
+        Last modified: <span id="lastModified">2023-11-09</span>
         •
-        Commit ID: <span id="commitId">2a23c30</span>
+        Commit ID: <span id="commitId">51c739f</span>
     </footer>
 
     <script src="./xpoc.iife.min.js"></script>
@@ -202,9 +202,9 @@
             manifest.accounts.forEach((account, index) => {
                 html += `
                     <tr>
-                        <td><input type="text" value="${account.platform}" onchange="validateAndUpdatePlatform(this.value, this, 'account', ${index})"></td>
-                        <td><input type="text" value="${account.account}" onchange="validateAndUpdateAccount(this.value, this, 'account', ${index})"></td>
-                        <td><input type="text" value="${account.url}" onchange="validateAndUpdateURL(this.value, this, 'account', ${index})"></td>
+                        <td><input type="text" data-fieldname="platform" value="${account.platform}" onchange="validateAndUpdatePlatform(this.value, this, 'account', ${index})"></td>
+                        <td><input type="text" data-fieldname="account" value="${account.account}" onchange="validateAndUpdateAccount(this.value, this, 'account', ${index})"></td>
+                        <td><input type="text" data-fieldname="url" value="${account.url}" onchange="validateAndUpdateURL(this.value, this, 'account', ${index})"></td>
                         <td><button onclick="deleteAccount(${index})">Delete</button></td>
                     </tr>
                 `;
@@ -233,12 +233,12 @@
             manifest.content.forEach((content, index) => {
                 html += `
                     <tr>
-                        <td><input type="text" value="${content.desc || ''}" placeholder="Optional" onchange="manifest.content[${index}].desc = this.value"></td>
-                        <td><input type="text" value="${content.url}" onchange="validateAndUpdateURL(this.value, this, 'content', ${index})"></td>
-                        <td><input type="text" value="${content.platform}" onchange="validateAndUpdatePlatform(this.value, this, 'content', ${index})"></td>
-                        <td><input type="text" value="${content.puid || ''}" placeholder="Optional" onchange="manifest.content[${index}].puid = this.value"></td>
-                        <td><input type="text" value="${content.account}" onchange="validateAndUpdateAccount(this.value, this, 'content', ${index})"></td>
-                        <td><input type="datetime-local" value="${convertIsoToDatetimeLocal(content.timestamp) || ''}" placeholder="Optional" onchange="validateAndUpdateTimestamp(${index}, this.value, this)"></td>
+                        <td><input type="text" data-fieldname="desc" value="${content.desc || ''}" placeholder="Optional" onchange="manifest.content[${index}].desc = this.value"></td>
+                        <td><input type="text" data-fieldname="url" value="${content.url}" onchange="validateAndUpdateURL(this.value, this, 'content', ${index})"></td>
+                        <td><input type="text" data-fieldname="platform" value="${content.platform}" onchange="validateAndUpdatePlatform(this.value, this, 'content', ${index})"></td>
+                        <td><input type="text" data-fieldname="puid" value="${content.puid || ''}" placeholder="Optional" onchange="manifest.content[${index}].puid = this.value"></td>
+                        <td><input type="text" data-fieldname="account" value="${content.account}" onchange="validateAndUpdateAccount(this.value, this, 'content', ${index})"></td>
+                        <td><input type="datetime-local" data-fieldname="timestamp" value="${convertIsoToDatetimeLocal(content.timestamp) || ''}" placeholder="Optional" onchange="validateAndUpdateTimestamp(${index}, this.value, this)"></td>
                         <td><button onclick="deleteContent(${index})">Delete</button></td>
                     </tr>
                 `;

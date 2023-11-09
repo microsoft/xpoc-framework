@@ -860,6 +860,20 @@ export const Platforms = {
     },
 
     /**
+     * Returns the platform object for a given account URL.
+     * @param url an account URL.
+     * @returns the platform object for the account URL.
+     */
+    getPlatformFromAccountUrl(url: string): Platform | undefined {
+        for (const platform of Platforms.platforms) {
+            if (platform.isValidAccountUrl(url)) {
+                return platform;
+            }
+        }
+        return undefined;
+    },
+
+    /**
      * Checks if account data can be retrieved from the URL. If so,
      * getAccountFromUrl() can be called.
      * @param url URL to check.
@@ -902,6 +916,20 @@ export const Platforms = {
         return false;
     },
 
+    /**
+     * Returns the platform object for a given content URL.
+     * @param url an content URL.
+     * @returns the platform object for the content URL.
+     */
+    getPlatformFromContentUrl(url: string): Platform | undefined {
+        for (const platform of Platforms.platforms) {
+            if (platform.isValidContentUrl(url)) {
+                return platform;
+            }
+        }
+        return undefined;
+    },
+    
     /**
      * Checks if content data can be retrieved from the URL. If so,
      * getContentFromUrl() can be called.

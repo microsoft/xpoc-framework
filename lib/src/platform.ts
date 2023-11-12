@@ -687,7 +687,7 @@ export class Rumble extends Platform {
             const results = await query(contentData.url, [
                 {nodeQuery: 'meta[property="og:url"]', attribute: 'content'},
                 {nodeQuery: 'a.media-by--a', attribute: 'href'},
-                {nodeQuery: '.media-description-info-tag > div', attribute: 'title'},
+                {nodeQuery: '.media-description-info-stream-time > div', attribute: 'title'},
                 {nodeQuery: 'meta[property="og:video:tag"]', attribute: 'content'}
             ]) as string[];
 

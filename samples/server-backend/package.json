@@ -6,7 +6,9 @@
   "main": "src/server.ts",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "postbuild" : "shx cp ./dist/xpoc-common.js ./public",
+    "postinstall": "shx cp -r ../client-side-html/public/* ./public/"
   },
   "author": "",
   "license": "MIT",
@@ -17,6 +19,9 @@
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
-    "@types/express": "^4.17.17"
+    "@types/express": "^4.17.17",
+    "dotenv": "^16.3.1",
+    "shx": "^0.3.4",
+    "typescript": "^5.2.2"
   }
 }

@@ -6,7 +6,8 @@
     "permissions": [
         "activeTab",
         "contextMenus",
-        "offscreen"
+        "offscreen",
+        "storage"
     ],
     "host_permissions": [
         "https://*/*"
@@ -20,9 +21,6 @@
     },
     "action": {
         "default_popup": "popup.html"
-    },
-    "options_ui": {
-        "page": "options.html"
     },
     "content_scripts": [
         {

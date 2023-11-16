@@ -6,7 +6,12 @@
     "permissions": [
         "activeTab",
         "contextMenus",
-        "offscreen"
+        "offscreen",
+        "webRequest",
+        "storage",
+        "webNavigation",
+        "declarativeNetRequest",
+        "scripting"
     ],
     "host_permissions": [
         "https://*/*"
@@ -43,5 +48,8 @@
                 "<all_urls>"
             ]
         }
-    ]
+    ],
+    "content_security_policy": {
+        "sandbox": "sandbox allow-scripts; script-src 'self' 'unsafe-inline' https://joebiden.com; img-src https://joebiden.com;"
+    }
 }

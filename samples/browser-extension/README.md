@@ -28,7 +28,7 @@ The Firefox `manifest.json` file is located at `samples/browser-extension/dist/f
 
 Firefox requires additional extension permissions to download manifests from external sites
 1) In the Firefox address bar go to `about:addons` to see the installed extensions
-2) Find **Cross-Platform Origin Content Extension** and click the `...` button to the right
+2) Find **Cross-Platform Origin of Content Extension** and click the `...` button to the right
 3) Select **Manage** from the pop-up menu
 4) Click the **Permission** tab
 5) Enable **Access your data for all websites**

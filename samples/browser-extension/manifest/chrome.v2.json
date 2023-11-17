@@ -1,11 +1,12 @@
 {
     "manifest_version": 2,
-    "name": "Cross-Platform Origin Content Extension",
+    "name": "Cross-Platform Origin of Content Extension",
     "version": "0.3.0",
     "description": "Validates XPOC-protected content",
     "permissions": [
         "activeTab",
         "contextMenus",
+        "storage",
         "https://*/*"
     ],
     "background": {
@@ -20,6 +21,9 @@
         "default_icon": {
             "128": "icons/xpoc128x128.png"
         }
+    },
+    "options_ui": {
+        "page": "options.html"
     },
     "content_scripts": [
         {

@@ -1024,68 +1024,124 @@ describe('platform operations', () => {
 
     test('platform account URL validation', () => {
         // YouTube test
-        expect(Platforms.isSupportedAccountUrl('https://www.youtube.com/@accountname')).toBe(true);
+        let url = 'https://www.youtube.com/@accountname';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("YouTube");
         // X/Twitter test
-        expect(Platforms.isSupportedAccountUrl('https://twitter.com/accountname')).toBe(true);
+        url = 'https://twitter.com/accountname';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("X");
         // Facebook test
-        expect(Platforms.isSupportedAccountUrl('https://www.facebook.com/accountname')).toBe(true);
+        url = 'https://www.facebook.com/accountname';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Facebook");
         // Instagram test
-        expect(Platforms.isSupportedAccountUrl('https://www.instagram.com/accountname/')).toBe(true);
+        url = 'https://www.instagram.com/accountname/';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Instagram");
         // Medium test
-        expect(Platforms.isSupportedAccountUrl('https://medium.com/@accountname')).toBe(true);
+        url = 'https://medium.com/@accountname';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Medium");
         // TikTok
-        expect(Platforms.isSupportedAccountUrl('https://www.tiktok.com/@accountname')).toBe(true);
+        url = 'https://www.tiktok.com/@accountname';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("TikTok");
         // LinkedIn
-        expect(Platforms.isSupportedAccountUrl('https://www.linkedin.com/in/accountname/')).toBe(true);
+        url = 'https://www.linkedin.com/in/accountname/';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("LinkedIn");
         // Threads
-        expect(Platforms.isSupportedAccountUrl('https://www.threads.net/@accountname')).toBe(true);
+        url = 'https://www.threads.net/@accountname';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Threads");
         // Google Scholar
-        expect(Platforms.isSupportedAccountUrl('https://scholar.google.com/citations?user=userid')).toBe(true);
+        url = 'https://scholar.google.com/citations?user=userid';
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Google Scholar");
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
         // Rumble
-        expect(Platforms.isSupportedAccountUrl('https://rumble.com/c/accountname')).toBe(true);
+        url = 'https://rumble.com/c/accountname';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Rumble");
         // GitHub
-        expect(Platforms.isSupportedAccountUrl('https://github.com/accountname')).toBe(true);
+        url = 'https://github.com/accountname';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("GitHub");
         // Telegram
-        expect(Platforms.isSupportedAccountUrl('https://t.me/accountname')).toBe(true);
+        url = 'https://t.me/accountname';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Telegram");
         // LINE: n/a
         // Snapchat: n/a
         // Vimeo
-        expect(Platforms.isSupportedAccountUrl('https://vimeo.com/accountname')).toBe(true);
+        url = 'https://vimeo.com/accountname';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Vimeo");
         // unsupported platform
-        expect(Platforms.isSupportedAccountUrl('https://www.notaplatform.com/accountname')).toBe(false);
+        url = 'https://www.notaplatform.com/accountname';
+        expect(Platforms.isSupportedAccountUrl(url)).toBe(false);
+        expect(Platforms.getPlatformFromAccountUrl(url)).toBe(undefined);
     });
 
     test('platform content URL validation', () => {
         // YouTube test
-        expect(Platforms.isSupportedContentUrl('https://www.youtube.com/watch?v=abcdef12345')).toBe(true);
+        let url = 'https://www.youtube.com/watch?v=abcdef12345';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("YouTube");
         // X/Twitter test
-        expect(Platforms.isSupportedContentUrl('https://twitter.com/accountname/status/1234567890123456789')).toBe(true);
+        url = 'https://twitter.com/accountname/status/1234567890123456789';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("X");
         // Facebook test
-        expect(Platforms.isSupportedContentUrl('https://www.facebook.com/accountname/photos/123456789012345')).toBe(true);
+        url = 'https://www.facebook.com/accountname/posts/123456789012345';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Facebook");
         // Instagram test
-        expect(Platforms.isSupportedContentUrl('https://www.instagram.com/p/ABCDEF12345/')).toBe(true);
+        url = 'https://www.instagram.com/p/ABCDEF12345/';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Instagram");
         // Medium test
-        expect(Platforms.isSupportedContentUrl('https://medium.com/@accountname/title-abcdef123456')).toBe(true);
+        url = 'https://medium.com/@accountname/title-abcdef123456';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Medium");
         // TikTok
-        expect(Platforms.isSupportedContentUrl('https://www.tiktok.com/@accountname/video/1234567890123456789')).toBe(true);
+        url = 'https://www.tiktok.com/@accountname/video/1234567890123456789';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("TikTok");
         // LinkedIn
-        expect(Platforms.isSupportedContentUrl('https://www.linkedin.com/posts/title')).toBe(true);
+        url = 'https://www.linkedin.com/posts/title';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("LinkedIn");
         // Threads
-        expect(Platforms.isSupportedContentUrl('https://www.threads.net/@accountname/post/ABCD1234')).toBe(true);
+        url = 'https://www.threads.net/@accountname/post/ABCD1234';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Threads");
         // Google Scholar (no supported content)
-        expect(Platforms.isSupportedContentUrl('https://scholar.google.com/citations?user=userid')).toBe(false);
+        url = 'https://scholar.google.com/citations?user=userid';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(false);
+        expect(Platforms.getPlatformFromContentUrl(url)).toBe(undefined);
         // Rumble
-        expect(Platforms.isSupportedContentUrl('https://rumble.com/abcefgh-content.html')).toBe(true);
+        url = 'https://rumble.com/abcefgh-content.html';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Rumble");
         // GitHub (no supported content)
-        expect(Platforms.isSupportedContentUrl('https://github.com/accountname')).toBe(false);
+        url = 'https://github.com/accountname'
+        expect(Platforms.isSupportedContentUrl(url)).toBe(false);
+        expect(Platforms.getPlatformFromContentUrl(url)).toBe(undefined);
         // Telegram (no supported content)
-        expect(Platforms.isSupportedContentUrl('https://t.me/accountname')).toBe(false);
+        url = 'https://t.me/accountname';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(false);
+        expect(Platforms.getPlatformFromContentUrl(url)).toBe(undefined);
         // LINE: n/a
         // Snapchat: n/a
         // Vimeo
-        expect(Platforms.isSupportedContentUrl('https://vimeo.com/123456789')).toBe(true);
+        url = 'https://vimeo.com/123456789';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(true);
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Vimeo");
         // unsupported platform
-        expect(Platforms.isSupportedContentUrl('https://www.notaplatform.com/abc123')).toBe(false);
+        url = 'https://www.notaplatform.com/abc123';
+        expect(Platforms.isSupportedContentUrl(url)).toBe(false);
+        expect(Platforms.getPlatformFromContentUrl(url)).toBe(undefined);
     });
 
     test('platform account URL extraction', async () => {

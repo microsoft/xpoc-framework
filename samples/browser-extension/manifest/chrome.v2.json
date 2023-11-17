@@ -6,6 +6,7 @@
     "permissions": [
         "activeTab",
         "contextMenus",
+        "storage",
         "https://*/*"
     ],
     "background": {

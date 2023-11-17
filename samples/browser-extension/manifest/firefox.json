@@ -5,7 +5,8 @@
     "description": "Validates XPOC-protected content",
     "permissions": [
         "activeTab",
-        "contextMenus"
+        "contextMenus",
+        "storage"
     ],
     "host_permissions": [
         "https://*/*"

@@ -5,7 +5,6 @@ import { ContentPopup } from "./control.js";
 import { Icon } from "./icon.js";
 import { scanner } from "./scanner.js";
 import { type lookupXpocUriResult } from "./xpoc-lib";
-import { downloadDocument } from "./renderHtml.js";
 
 const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
 
@@ -247,12 +246,3 @@ scanner.start(
         // TODO: remove the icon if the node is no longer in the DOM
     }
 )
-
-// Example of how to use downloadDocument
-// void (async () => {
-//     const document = await downloadDocument('https://www.google.com')
-//     if (document instanceof Error) return
-//     document.querySelectorAll('a[href^="https://"]').forEach(link => {
-//         console.log((link as HTMLLinkElement).href)
-//     });
-// })()

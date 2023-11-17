@@ -2,9 +2,6 @@
 // Licensed under the MIT license.
 
 import { lookupXpocUri } from './xpoc-lib.js'
-import { backgroundListener } from './renderHtml.js'
-
-backgroundListener()
 
 // the text that was clicked by the user
 let clickedText = '';

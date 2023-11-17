@@ -48,8 +48,5 @@
                 "<all_urls>"
             ]
         }
-    ],
-    "content_security_policy": {
-        "sandbox": "sandbox allow-scripts; script-src 'self' 'unsafe-inline' https://joebiden.com; img-src https://joebiden.com;"
-    }
+    ]
 }

@@ -2,7 +2,7 @@
 <html lang="en" style="height: 400px; width: 400px;">
 
 <head>
-  <title>My Extension Popup</title>
+  <title>XPOC Browser Extension</title>
   <link rel="stylesheet" href="popup.css">
   <script type="module" src="popup.js"></script>
 </head>
@@ -10,16 +10,25 @@
 <body>
   <div>
     <button class="tab active" data-tab="about">About</button>
+    <button class="tab" data-tab="options">Options</button>
   </div>
   <div>
     <div id="about" class="tab-content active-content">
-      <h1>XPOC Browser Extension!</h1>
+      <h1>XPOC Browser Extension</h1>
       <p>This is a sample browser extension for validating content protected by the Cross-Platform Origin of Content (XPOC) framework.</p>
-      <p>Right click on a XPOC URI (xpoc://...) to verify its origin.</p>
-      <p>See the <a href="https://github.com/microsoft/xpoc-framework">github page</a> for details.</p>
+      
+      <p>See the <a href="https://microsoft.github.io/xpoc-framework/">project page</a> for details.</p>
     </div>
 
+    <div id="options" class="tab-content">
+      <!-- TODO: duplicates options.html; can we share code? -->
+      <h1>Options</h1>
+      <p><input type="checkbox" id="auto-verify-xpoc-uri-toggle">
+        <label for="auto-verify-xpoc-uri-toggle">Verify XPOC URI automatically</label>
+      </p>
+    </div>
   </div>
+
 </body>
 
 </html>

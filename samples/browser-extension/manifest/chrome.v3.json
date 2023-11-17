@@ -1,12 +1,13 @@
 {
     "manifest_version": 3,
-    "name": "Cross-Platform Origin Content Extension",
+    "name": "Cross-Platform Origin of Content Extension",
     "version": "0.3.0",
     "description": "Validates XPOC-protected content",
     "permissions": [
         "activeTab",
         "contextMenus",
-        "offscreen"
+        "offscreen",
+        "storage"
     ],
     "host_permissions": [
         "https://*/*"

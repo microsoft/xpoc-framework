@@ -9,27 +9,13 @@ import typescript from 'rollup-plugin-typescript2'
 
 /*
   This config supports two possible build scenarios:
-  - Chrome/Firefox extension with manifest v2
-  - Chrome/Firefox extension with manifest v3
-  
-  The manifest version is set in the .env file
 
-  Chrome v2:
-  - non-persistent background.js page; DOM access
-  - xpoc-lib.js is iife bundled into background.js
-  - no need for offscreen.js/html
-
-  Chrome v3:
+  Chrome:
   - service worker background.js page, NO DOM access 
   - offscreen.js/html for DOM access
   - xpoc-lib.js is esm imported into offscreen.js
 
-  Firefox v2:
-  - non-persistent background.js page; DOM access
-  - xpoc-lib.js is iife bundled into background.js
-  - no need for offscreen.js/html
-
-  Firefox v3:
+  Firefox:
   - non-persistent background.js page; DOM access
   - xpoc-lib.js is iife bundled into background.js
   - no need for offscreen.js/html
@@ -48,8 +34,6 @@ config()
 
 const isDebug = process.env.NODE_ENV !== 'production'
 
-const MANIFEST_VERSION = parseInt(process.env.MANIFEST_VERSION ?? '2')
-
 const copyright =
   `/*!
 *  Copyright (c) Microsoft Corporation.
@@ -61,8 +45,7 @@ const copyright =
   Common output options for all bundles
 */
 const commonOutput = {
-  // manifest v2 does not support esm imports/exports
-  format: MANIFEST_VERSION === 3 ? 'esm' : 'iife',
+  format: 'esm',
   // in debug, we want to see the sourcemap inline to let chrome dev tools debug through the original TS source
   // using separate source map files did not work for me
   sourcemap: isDebug ? 'inline' : false,
@@ -120,20 +103,15 @@ const background_chrome = {
   input: 'src/background.ts',
   output: {
     dir: 'dist/chrome',
-    // keeps xpoc-ts-lib in a separate file (esm mode only)
-    manualChunks: MANIFEST_VERSION === 3 ? {
-      'xpoc-ts-lib': ['xpoc-ts-lib']
-    } : {},
-    chunkFileNames: 'xpoc-ts-lib.js',
     ...commonOutput
   },
   plugins: [
-    alias(MANIFEST_VERSION === 3 ? {
+    alias({
       // replace xpoc lib references with the proxy to offscreen.js
       entries: {
         './xpoc-lib.js': './xpoc-lib-proxy.js'
       }
-    } : {}),
+    }),
     ...commonPlugins,
   ],
   onwarn: commonWarningHandler
@@ -146,6 +124,11 @@ const background_firefox = {
   input: 'src/background.ts',
   output: {
     dir: 'dist/firefox',
+    // keeps xpoc-ts-lib in a separate file instead of bundling it into background.js
+    manualChunks: {
+      'xpoc-ts-lib': ['xpoc-ts-lib']
+    },
+    chunkFileNames: 'xpoc-ts-lib.js',
     ...commonOutput
   },
   plugins: [
@@ -190,7 +173,7 @@ const popup = {
 }
 
 /*
-  offscreen.js (for Chrome v3)
+  offscreen.js (for Chrome)
 */
 const offscreen = {
   input: 'src/offscreen.ts',
@@ -223,8 +206,8 @@ const duplicateFirefox = copy({
   targets: [
     { src: 'public/icons', dest: 'dist/chrome' },
     { src: 'dist/chrome', dest: 'dist', rename: 'firefox' },
-    { src: `manifest/chrome.v${MANIFEST_VERSION}.json`, dest: 'dist/chrome', rename: 'manifest.json' },
-    { src: `manifest/firefox.v${MANIFEST_VERSION}.json`, dest: 'dist/firefox', rename: 'manifest.json' }
+    { src: `manifest/chrome.json`, dest: 'dist/chrome', rename: 'manifest.json' },
+    { src: `manifest/firefox.json`, dest: 'dist/firefox', rename: 'manifest.json' }
   ],
   // ensures the copy happens after the bundle is written so all files are available to copy
   hook: 'writeBundle'
@@ -234,15 +217,10 @@ const duplicateFirefox = copy({
 popup.plugins.push(duplicateFirefox)
 
 // the order matters here
-export default MANIFEST_VERSION === 3 ? [
+export default [
   background_chrome,
   content,
   offscreen,
   popup,
   background_firefox
-] : [ // v2
-  background_chrome,
-  background_firefox,
-  content,
-  popup
 ]

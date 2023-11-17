@@ -6,7 +6,12 @@
     "permissions": [
         "activeTab",
         "contextMenus",
-        "offscreen"
+        "offscreen",
+        "webRequest",
+        "storage",
+        "webNavigation",
+        "declarativeNetRequest",
+        "scripting"
     ],
     "host_permissions": [
         "https://*/*"

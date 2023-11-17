@@ -1,11 +1,12 @@
 import alias from '@rollup/plugin-alias';
-import commonjs from '@rollup/plugin-commonjs'
-import resolve from '@rollup/plugin-node-resolve'
-import replace from '@rollup/plugin-replace'
-import terser from '@rollup/plugin-terser'
-import { config } from 'dotenv'
-import copy from 'rollup-plugin-copy'
-import typescript from 'rollup-plugin-typescript2'
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
+import resolve from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
+import terser from '@rollup/plugin-terser';
+import { config } from 'dotenv';
+import copy from 'rollup-plugin-copy';
+import typescript from 'rollup-plugin-typescript2';
 
 /*
   This config supports two possible build scenarios:
@@ -80,7 +81,7 @@ const commonOutput = {
 */
 const commonPlugins = [
   replace({
-    preventAssignment: true, // This is a necessary option from Rollup v2.3.4 and above
+    preventAssignment: true,
     ...Object.keys(process.env).reduce((acc, key) => {
       acc[`process.env.${key}`] = JSON.stringify(process.env[key])
       return acc
@@ -97,6 +98,7 @@ const commonPlugins = [
       }
     }
   }),
+  json(),
   typescript({
     tsconfig: 'tsconfig.json',
     clear: true
@@ -118,6 +120,9 @@ const commonWarningHandler = (warning, warn) => {
 */
 const background_chrome = {
   input: 'src/background.ts',
+  treeshake: {
+    moduleSideEffects: [/* absolute path of modules with side-effects */]
+  },
   output: {
     dir: 'dist/chrome',
     // keeps xpoc-ts-lib in a separate file (esm mode only)
@@ -144,6 +149,9 @@ const background_chrome = {
 */
 const background_firefox = {
   input: 'src/background.ts',
+  treeshake: {
+    moduleSideEffects: [/* absolute path of modules with side-effects */]
+  },
   output: {
     dir: 'dist/firefox',
     ...commonOutput
@@ -159,6 +167,9 @@ const background_firefox = {
 */
 const content = {
   input: 'src/content.ts',
+  treeshake: {
+    moduleSideEffects: [/* absolute path of modules with side-effects */]
+  },
   output: {
     file: 'dist/chrome/content.js',
     ...commonOutput,

@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { ContentPopup } from "./control";
-import { Icon } from "./icon";
-import { scanner } from "./scanner";
+import { ContentPopup } from "./control.js";
+import { Icon } from "./icon.js";
+import { scanner } from "./scanner.js";
 import { type lookupXpocUriResult } from "./xpoc-lib";
 
 const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
@@ -246,4 +246,3 @@ scanner.start(
         // TODO: remove the icon if the node is no longer in the DOM
     }
 )
-

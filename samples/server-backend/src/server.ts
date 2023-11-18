@@ -11,7 +11,7 @@ app.use(cors());
 
 // fetches the XPOC manifest from the specified location
 app.get('/fetchManifest', async (req, res) => {
-    const manifest = await Manifest.download(req.query.location as string);
+    const manifest = await Manifest.download(req.query.location as string).catch((err) => err);
     if (manifest instanceof Error) {
         console.error(`Error fetching XPOC manifest from ${req.query.location}: ` + manifest);
         res.status(500).send('Error fetching XPOC manifest');

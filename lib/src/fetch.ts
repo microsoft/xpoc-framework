@@ -95,7 +95,12 @@ export async function fetchObject<T>(url: string, options: RequestInit = {}, tim
     timeout = determineTimeout(timeout)
 
     // automatically set the method and content-type if the body is present
-    options = { ...options, method: (options.body == null) ? 'GET' : 'POST', headers: { 'Content-Type': 'application/json' } }
+    // content-type': 'text/plain' will prevent preflight cors requests
+    options = {
+        ...options,
+        headers: { 'content-type': 'text/plain', ...options.headers },
+        method: (options.body == null) ? 'GET' : 'POST'
+    }
 
     const start = Date.now()
     const response = await fetchWithTimeout(url, options, timeout)

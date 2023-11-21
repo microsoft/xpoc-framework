@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { lookupXpocUri } from './xpoc-lib.js'
+import { getLocalStorage, setLocalStorage } from './storage.js';
+import { lookupXpocUri, type lookupXpocUriResult } from './xpoc-lib.js'
 
 // the text that was clicked by the user
 let clickedText = '';
@@ -21,7 +22,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         chrome.contextMenus.update(menuItemId, {
             visible: clickedText != null,
         });
-    }    
+    }
     if (message.action === 'lookupXpocUri') {
         const xpocUri = message.xpocUri;
         lookupXpocUri(sender.tab?.url as string, xpocUri).then((result) => {
@@ -44,12 +45,14 @@ chrome.contextMenus.onClicked.addListener(
                         action: 'displayXpocAccount',
                         result: result,
                     });
+                    await storeXpocResult(tabUrl as string, clickedText, result);
                     break;
                 case 'content':
                     chrome.tabs.sendMessage(tabId, {
                         action: 'displayXpocContent',
                         result: result,
                     });
+                    await storeXpocResult(tabUrl as string, clickedText, result);
                     break;
                 case 'notFound':
                 case 'error':
@@ -62,3 +65,16 @@ chrome.contextMenus.onClicked.addListener(
         }
     }
 );
+
+export type xpocResultSet = {
+    [url: string]: {
+        [xpocUri: string]: lookupXpocUriResult
+    }
+}
+
+async function storeXpocResult(url: string, xpocUri: string, result: lookupXpocUriResult): Promise<void> {
+    let xpocResultsSet = await getLocalStorage('xpocResults') as { xpocResults : xpocResultSet}
+    xpocResultsSet.xpocResults[url] = xpocResultsSet.xpocResults[url] || {}
+    xpocResultsSet.xpocResults[url][xpocUri] = result
+    await setLocalStorage(xpocResultsSet);
+}

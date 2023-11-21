@@ -9,7 +9,7 @@
 
 <body>
   <div>
-    <button class="tab active" data-tab="about">Origin</button>
+    <button class="tab active" data-tab="origin">Origin</button>
     <button class="tab" data-tab="about">About</button>
     <button class="tab" data-tab="options">Options</button>
   </div>
@@ -17,6 +17,7 @@
     <div id="origin" class="tab-content active-content">
       <h1>Content Origin</h1>
       <p>No origin information detected on this page. Right-click on XPOC URIs (e.g., <code>xpoc://example.com!</code>) to validate them.</p>
+      <div id="results"></div>
     </div>
 
     <div id="about" class="tab-content">
@@ -24,7 +25,6 @@
       <p>This is a sample browser extension for validating content protected by the Cross-Platform Origin of Content (XPOC) framework.</p>
       
       <p>See the <a href="https://microsoft.github.io/xpoc-framework/">project page</a> for details.</p>
-      <div id="results"></div>
     </div>
 
     <div id="options" class="tab-content">

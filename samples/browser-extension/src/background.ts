@@ -25,7 +25,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
     if (message.action === 'lookupXpocUri') {
         const xpocUri = message.xpocUri;
+        const tabUrl = (sender.tab as chrome.tabs.Tab).url as string
         lookupXpocUri(sender.tab?.url as string, xpocUri).then((result) => {
+            storeXpocResult(tabUrl as string, clickedText, result);
             sendResponse(result);
         })
     }

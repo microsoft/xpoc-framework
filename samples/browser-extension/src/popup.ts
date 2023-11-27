@@ -78,17 +78,48 @@ async function getActiveTabUrl(): Promise<string> {
 
 
 async function showResults() {
-  const results = document.getElementById('results') as HTMLDivElement
+  const originInfo = document.getElementById('origin-info') as HTMLDivElement
   const xpocResults = await getXpocResultsForCurrentTab()
+  if (xpocResults.length > 0) {
+    // hide the 'no-origin' div
+    const noOrigin = document.getElementById('no-origin') as HTMLDivElement
+    noOrigin.style.display = 'none'
+
+    // show the origin info div
+    originInfo.style.display = 'block'
+
+    // clear the origin info div
+    originInfo.innerHTML = ''
+  }
   xpocResults.forEach((result) => {
-    const xpocUri = Object.keys(result)[0]
-    const xpocUriResult = result[xpocUri]
-    const resultDiv = document.createElement('div')
-    resultDiv.classList.add('result')
-    resultDiv.innerHTML = `
-      <div class="xpoc-uri">${xpocUri}</div>
-      <div class="xpoc-uri-result">${JSON.stringify(xpocUriResult, null, 3)}</div>
-    `
-    results.appendChild(resultDiv)
+    const xpocResult = Object.values(result)[0] as lookupXpocUriResult
+    if (xpocResult.type == 'error' || xpocResult.type == 'notFound') {
+      console.log('xpocResult.type', xpocResult.type)
+    } else {
+      let account = ''
+      let platform = ''
+      let prefix = ''
+      let url = `${xpocResult.baseurl}/xpoc-manifest.json`
+      if (xpocResult.type == 'account') {
+        account = xpocResult.account.account
+        platform = xpocResult.account.platform
+        prefix = `${platform} account "${account}"`
+      } else if (xpocResult.type == 'content') {
+        account = xpocResult.content.account
+        platform = xpocResult.content.platform
+        prefix = `${platform} content posted by "${account}"`
+      }
+      const resultDiv = document.createElement('div')
+      resultDiv.classList.add('result')
+      if (xpocResult) {
+        resultDiv.innerHTML = `
+          <div class="xpoc-result-info">
+            ${prefix} found in ${xpocResult.name}'s manifest at <a href="${url}">${url}</a><br>
+          </div>
+        `
+      }
+      originInfo.appendChild(resultDiv)
+    }
   })
+  
 }

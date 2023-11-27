@@ -99,7 +99,8 @@ async function showResults() {
       let account = ''
       let platform = ''
       let prefix = ''
-      let url = `${xpocResult.baseurl}/xpoc-manifest.json`
+      let baseurl = `https://${xpocResult.baseurl}`
+      let url = `${baseurl}/xpoc-manifest.json`
       if (xpocResult.type == 'account') {
         account = xpocResult.account.account
         platform = xpocResult.account.platform
@@ -114,7 +115,7 @@ async function showResults() {
       if (xpocResult) {
         resultDiv.innerHTML = `
           <div class="xpoc-result-info">
-            ${prefix} found in ${xpocResult.name}'s manifest at <a href="${url}">${url}</a><br>
+            ${prefix} found in ${xpocResult.name}'s <a href="${url}" target="_blank">manifest</a> at <a href="${baseurl}" target="_blank">${xpocResult.baseurl}</a><br>
           </div>
         `
       }

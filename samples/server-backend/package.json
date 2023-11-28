@@ -6,6 +6,7 @@
   "main": "src/server.ts",
   "scripts": {
     "build": "tsc",
+    "build:docker": "docker build -t xpoc-server-backend -f ./Dockerfile ../..",
     "start": "node dist/server.js",
     "postbuild" : "shx cp ./dist/xpoc-common.js ./public",
     "postinstall": "shx cp -r ../client-side-html/public/* ./public/"

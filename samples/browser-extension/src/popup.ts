@@ -90,9 +90,9 @@ async function showResults() {
 
     // clear the origin info div
     originInfo.innerHTML = ''
-  }
-  xpocResults.forEach((result) => {
-    const xpocResult = Object.values(result)[0] as lookupXpocUriResult
+
+    // we only show the first result (TODO: handle multiple; could be the same one, need to make more robust)
+    const xpocResult = Object.values(xpocResults[0])[0] as lookupXpocUriResult
     if (xpocResult.type == 'error' || xpocResult.type == 'notFound') {
       console.log('xpocResult.type', xpocResult.type)
     } else {
@@ -121,6 +121,5 @@ async function showResults() {
       }
       originInfo.appendChild(resultDiv)
     }
-  })
-  
+  }  
 }

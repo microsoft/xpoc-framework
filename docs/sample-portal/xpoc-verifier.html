@@ -24,10 +24,11 @@
     <footer>
         Last modified: <span id="lastModified">2023-11-29</span>
         •
-        Commit ID: <span id="commitId">a832509</span>
+        Commit ID: <span id="commitId">bacdae8</span>
     </footer>
 
     <script src="xpoc-common.js"></script>
+    <script src="xpoc.iife.min.js"></script>
     <script>
         function showManifestInfo(manifest) {
             resultBox.innerHTML = `
@@ -142,8 +143,14 @@
                         }
                     }})
                 .catch(error => {
-                    console.log('Manifest error', error);
-                    showError(`Error fetching or parsing the XPOC manifest.`);
+                    if (error?.code === "CORS") {
+                        showError(`Probable Cross-Origin error from ${url}.`);
+                    } else if (error?.code === "NOT-FOUND") {
+                        showError(`Manifest not found at ${url}.`);
+                    } else {
+                        showError(`Error fetching or parsing the XPOC manifest.`);
+                    }
+                    console.log('Manifest error', error);                    
                 });
            }
     </script>

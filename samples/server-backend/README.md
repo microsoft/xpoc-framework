@@ -34,3 +34,18 @@ npm run start
 The sample pages can be accessed at `http://localhost:4000/index.html`.
 
 >Note: The port may be changed in the `.env` file or by setting the `PORT` environment variable.
+
+### Docker
+The server can also be run in a Docker container. To build the container, run:
+
+```bash
+docker build -t xpoc-server-backend -f ./Dockerfile ../..
+``` 
+
+To run the image in a container, run:
+
+```bash
+docker run -p 4000:4000 xpoc-server-backend
+```
+
+>**Note**: The building of the Docker image also builds the npm package, so there is no need to run `npm install` or `npm run build` before building the image.

@@ -1,8 +1,6 @@
 # Use node:18-bookworm-slim for a smaller image file
 FROM node:18-bookworm-slim
 
-ARG COMMIT_HASH
-
 WORKDIR /usr/src/app/lib
 COPY lib/schema ./schema
 COPY lib/src ./src

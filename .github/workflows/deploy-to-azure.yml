@@ -8,6 +8,12 @@ jobs:
     steps:
     - uses: actions/checkout@master
 
+    - name: Get commit details
+      id: get-commit-details
+      run: |
+        echo "::set-output name=date::$(git log -1 --format=%cd --date=format:'%Y-%m-%d')"
+        echo "::set-output name=hash::$(git rev-parse --short HEAD)"
+
     - uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.CONTAINER_REGISTRY }}
@@ -22,7 +28,9 @@ jobs:
 
     - name: Build and rollout to CI
       run: |
-        docker build -t ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server-backend:latest \
+        sed -i "s/__LAST_MODIFIED_DATE__/${{ steps.get-commit-details.outputs.date }}/g" samples/client-side-html/public/index.html
+        sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" samples/client-side-html/public/index.html
+        docker build -t ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest \
           -f ./samples/server-backend/Dockerfile .
-        docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server-backend:latest
+        docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest
         kubectl -n xpoc-server-ns rollout restart deployment/xpoc-server

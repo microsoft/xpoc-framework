@@ -5,6 +5,7 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { Manifest, XPOCManifest, AccountMatchValues, ContentMatchValues } from '../src/manifest';
+import { type FetchError } from '../src/fetch';
 
 describe('manifest file operations', () => {
     let manifest: Manifest;
@@ -211,41 +212,32 @@ describe('manifest download', () => {
     const manifestUrl = 'https://raw.githubusercontent.com/microsoft/xpoc-framework/main/lib/testdata';
 
     test('download: valid manifest', async () => {
-        const manifest = await Manifest.download(manifestUrl);
-        if (manifest instanceof Error) {
-            throw manifest;
-        }
+        const manifest = await Manifest.download(manifestUrl)
         expect(manifest.valid).toBe(true);
     });
 
     test('download: valid manifest (trailing slash)', async () => {
-        const manifest = await Manifest.download(manifestUrl + '/');
-        if (manifest instanceof Error) {
-            throw manifest;
-        }
+        const manifest = await Manifest.download(manifestUrl + '/')
         expect(manifest.valid).toBe(true);
     });
 
     test('download: valid manifest (full path)', async () => {
-        const manifest = await Manifest.download(manifestUrl + '/xpoc-manifest.json');
-        if (manifest instanceof Error) {
-            throw manifest;
-        }
+        const manifest = await Manifest.download(manifestUrl + '/xpoc-manifest.json')
         expect(manifest.valid).toBe(true);
     });
 
     test('download: non-existent url', async () => {
-        const manifest = await Manifest.download(manifestUrl + 'x');
-        const error = manifest as Error;
+        const manifest = await Manifest.download(manifestUrl + 'x').catch((err) => err);
+        const error = manifest as FetchError;
         expect(error).toBeInstanceOf(Error);
-        expect(error.message).toMatch(/^Error fetching XPOC manifest/);
+        expect(error.code).toMatch("NOT-FOUND");
     });
 
     test('download: not JSON file', async () => {
-        const manifest = await Manifest.download('https://raw.githubusercontent.com/microsoft/xpoc-framework/main/lib/README.md');
-        const error = manifest as Error;
+        const manifest = await Manifest.download('https://raw.githubusercontent.com/microsoft/xpoc-framework/main/lib/README.md').catch((err) => err);
+        const error = manifest as FetchError;
         expect(error).toBeInstanceOf(Error);
-        expect(error.message).toMatch(/^Error fetching XPOC manifest/);
+        expect(error.code).toMatch("NOT-FOUND");
     });
 
 });

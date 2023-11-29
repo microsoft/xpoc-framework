@@ -1,0 +1,36 @@
+name: Deploy Server Backend to AKS
+on:
+  workflow_dispatch:
+  
+jobs:
+  deploy-server-backend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Get commit details
+      id: get-commit-details
+      run: |
+        echo "::set-output name=date::$(git log -1 --format=%cd --date=format:'%Y-%m-%d')"
+        echo "::set-output name=hash::$(git rev-parse --short HEAD)"
+
+    - uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.CONTAINER_REGISTRY }}
+        username: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
+        password: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
+
+    - uses: azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ secrets.CLUSTER_NAME }}
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+
+    - name: Build and rollout to CI
+      run: |
+        sed -i "s/__LAST_MODIFIED_DATE__/${{ steps.get-commit-details.outputs.date }}/g" samples/client-side-html/public/index.html
+        sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" samples/client-side-html/public/index.html
+        docker build -t ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest \
+          -f ./samples/server-backend/Dockerfile .
+        docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest
+        kubectl -n xpoc-server-ns rollout restart deployment/xpoc-server

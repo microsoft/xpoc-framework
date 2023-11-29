@@ -22,6 +22,16 @@ function isoToLocalTime(isoTime) {
 
 // fetch the xpoc manifest from the given base URL or XPOC URI
 async function fetchXpocManifest(location) {
+
+    // if xpoc.Manifest is globally defined, use it to fetch the manifest
+    if(xpoc && xpoc.Manifest) {
+        const manifest = await xpoc.Manifest.download(location)
+        if(manifest instanceof Error) {
+            throw manifest
+        }
+        return manifest.manifest
+    }
+
     // if location is a XPOC URI (starts with xpoc://), replace the protocol with https:// and remove the trailing '!' (if present)
     location = location.replace(/^xpoc:\/\//, 'https://').replace(/!$/, '');
     // add a https:// prefix if the location doesn't have one

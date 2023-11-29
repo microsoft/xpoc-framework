@@ -22,7 +22,8 @@ jobs:
 
     - name: Build and rollout to CI
       run: |
-        docker build . \
-          -t ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server-backend:latest
+        cd samples/server-backend
+        docker build ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server-backend:latest \
+          -f ./Dockerfile ../..
         docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server-backend:latest
         kubectl -n xpoc-server-ns rollout restart deployment/xpoc-server

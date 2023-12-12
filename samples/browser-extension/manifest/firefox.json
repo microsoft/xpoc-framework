@@ -40,7 +40,12 @@
                 "icons/xpoc_logo.svg",
                 "icons/checkmark.svg",
                 "icons/invalid.svg",
-                "icons/warning.svg"
+                "icons/unknown.svg",
+                "icons/warning.svg",
+                "icons/valid128x128.png",
+                "icons/invalid128x128.png",
+                "icons/warning128x128.png",
+                "icons/unknown128x128.png"
             ],
             "matches": [
                 "<all_urls>"

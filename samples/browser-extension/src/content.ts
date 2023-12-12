@@ -8,6 +8,9 @@ import { type lookupXpocUriResult } from "./xpoc-lib";
 
 const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
 
+// by default, show the unknown icon (will be changed if XPOC content is found by the background script)
+chrome.runtime.sendMessage({ action: 'updateIcon', path: 'icons/unknown128x128.png' })
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'displayXpocAccount') {
         if (request.result) {
@@ -227,14 +230,14 @@ chrome.storage.local.get(['autoVerifyXpocUris'], (result) => {
                                     contentPopup.show(
                                         icon.img as HTMLElement,
                                         `This page is not listed in the manifest at ${getBaseURL(xpocUri)}`,
-                                        chrome.runtime.getURL('icons/xpoc_logo.svg'),
+                                        chrome.runtime.getURL('icons/invalid.svg'),
                                     );
                                 }
                                 if (xpocResult.type === 'error') {
                                     contentPopup.show(
                                         icon.img as HTMLElement,
                                         'XPOC Error',
-                                        chrome.runtime.getURL('icons/xpoc_logo.svg'),
+                                        chrome.runtime.getURL('icons/invalid.svg'),
                                         [
                                             'Error',
                                             { label: 'Message', value: `Failed to fetch manifest from ${getBaseURL(xpocUri)}` }

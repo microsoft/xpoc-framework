@@ -31,6 +31,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             sendResponse(result);
         })
     }
+    if (message.action === 'updateIcon') {
+        updateActionIcon(message.path).then(() => {
+            console.log(`Icon updated successfully: ${message.path}`)
+        }).catch((error) => {
+            console.error('Error updating icon:', error)
+        })
+    }
     return true
 });
 
@@ -74,9 +81,32 @@ export type xpocResultSet = {
     }
 }
 
+async function updateActionIcon(path: string) {
+    // code below from the Chrome Extension samples
+    // There are easier ways for a page to extract an image's imageData, but the approach used here
+    // works in both extension pages and service workers.
+    const response = await fetch(chrome.runtime.getURL(path))
+    const blob = await response.blob()
+    const imageBitmap = await createImageBitmap(blob)
+    const osc = new OffscreenCanvas(imageBitmap.width, imageBitmap.height)
+    let ctx = osc.getContext('2d')
+    ctx?.drawImage(imageBitmap, 0, 0)
+    const imageData = ctx?.getImageData(0, 0, osc.width, osc.height)
+    chrome.action.setIcon({ imageData })
+}
+
 async function storeXpocResult(url: string, xpocUri: string, result: lookupXpocUriResult): Promise<void> {
+    // update the toolbar icon
+    console.log(`xpoc result: ${result.type}`)
+    if (result.type === 'error' || result.type === 'notFound') {
+        // "notFound" in manifest is also an error
+        await updateActionIcon('icons/invalid128x128.png')
+    } else {
+        await updateActionIcon('icons/valid128x128.png')
+    }
+    // store the result
     let xpocResultsSet = await getLocalStorage('xpocResults') as { xpocResults : xpocResultSet}
     xpocResultsSet.xpocResults[url] = xpocResultsSet.xpocResults[url] || {}
     xpocResultsSet.xpocResults[url][xpocUri] = result
-    await setLocalStorage(xpocResultsSet);
+    await setLocalStorage(xpocResultsSet)
 }

@@ -8,9 +8,6 @@ import { type lookupXpocUriResult } from "./xpoc-lib";
 
 const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
 
-// by default, show the unknown icon (will be changed if XPOC content is found by the background script)
-chrome.runtime.sendMessage({ action: 'updateIcon', path: 'icons/unknown128x128.png' })
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'displayXpocAccount') {
         if (request.result) {

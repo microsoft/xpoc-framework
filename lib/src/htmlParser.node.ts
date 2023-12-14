@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import { type CheerioAPI, load } from "cheerio";
+import os from "os";
 
 export type QueryObject = {
     nodeQuery: string;
@@ -9,7 +10,15 @@ export type QueryObject = {
 };
 
 export async function query(url: string, queries: QueryObject[]): Promise<(string | undefined)[] | Error> {
-    const htmlOrError = await fetch(url).then((res: Response) => res.text()).catch((err: Error) => err);
+
+    /*
+    * The User-Agent header is required to avoid getting endless redirects from some sites.
+    */
+    const headers = {
+        'User-Agent': `XPOC/0.3.0 (${os.platform()} ${os.release()}; ${os.arch()})`
+    };
+
+    const htmlOrError = await fetch(url, { headers }).then((res: Response) => res.text()).catch((err: Error) => err);
     if (htmlOrError instanceof Error) return htmlOrError;
     const html: string = htmlOrError;
     const $ = load(html)

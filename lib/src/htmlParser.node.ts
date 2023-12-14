@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 import { type CheerioAPI, load } from "cheerio";
-import os from "os";
 
 export type QueryObject = {
     nodeQuery: string;
@@ -15,7 +14,7 @@ export async function query(url: string, queries: QueryObject[]): Promise<(strin
     * The User-Agent header is required to avoid getting endless redirects from some sites.
     */
     const headers = {
-        'User-Agent': `XPOC/0.3.0 (${os.platform()} ${os.release()}; ${os.arch()})`
+        'User-Agent': `XPOC/0.3.0 (+https://github.com/microsoft/xpoc-framework)`
     };
 
     const htmlOrError = await fetch(url, { headers }).then((res: Response) => res.text()).catch((err: Error) => err);

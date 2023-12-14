@@ -153,10 +153,10 @@ function displayManifest() {
         // Update the update timestamp
         manifest.updated = getCurrentIsoTime();
         // Delete the accounts and content arrays if they are empty
-        if (manifest.accounts.length === 0) {
+        if (manifest.accounts && manifest.accounts.length === 0) {
             delete manifest.accounts;
         }
-        if (manifest.content.length === 0) {
+        if (manifest.content && manifest.content.length === 0) {
             delete manifest.content;
         }
         // Populate the textarea with the generated manifest and make it visible

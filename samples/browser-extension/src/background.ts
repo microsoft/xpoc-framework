@@ -7,7 +7,7 @@ import { lookupXpocUri, type lookupXpocUriResult } from './xpoc-lib.js'
 // the text that was clicked by the user
 let clickedText = '';
 
-// Create the context menu item
+// create the context menu item
 let menuItemId = chrome.contextMenus.create({
     id: 'verifyXpocUri',
     title: 'Verify XPOC link',
@@ -29,6 +29,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         lookupXpocUri(sender.tab?.url as string, xpocUri).then((result) => {
             storeXpocResult(tabUrl as string, clickedText, result);
             sendResponse(result);
+        })
+    }
+    if (message.action === 'updateIcon') {
+        updateActionIcon(message.path).then(() => {
+            console.log(`Icon updated successfully: ${message.path}`)
+        }).catch((error) => {
+            console.error('Error updating icon:', error)
         })
     }
     return true
@@ -68,15 +75,67 @@ chrome.contextMenus.onClicked.addListener(
     }
 );
 
+// update the icon when the active tab changes
+chrome.tabs.onActivated.addListener(activeInfo => {
+    // activeInfo.tabId will give you the ID of the newly activated tab
+    console.log(`Tab ${activeInfo.tabId} was activated`)
+    // display the default icon first
+    updateActionIcon('icons/unknown128x128.png')
+    // You can retrieve more information about the tab using chrome.tabs.get
+    chrome.tabs.get(activeInfo.tabId, function(tab) {
+        console.log(`The active tab's URL is ${tab.url}`);
+        // check if we have a result for this url, if not console out `not found`
+        getLocalStorage('xpocResults').then((storageObj) => {
+            const currentTabUrl = tab.url as string
+            if (storageObj.xpocResults[currentTabUrl]) {
+                console.log(`Found results for ${currentTabUrl}`)
+                // we already have a result for this url, so update the icon
+                const xpocResult = storageObj.xpocResults[currentTabUrl] as { [xpocUri: string]: lookupXpocUriResult }
+                console.log(`xpocResult: ${JSON.stringify(xpocResult)}`)
+                const type = xpocResult[Object.keys(xpocResult)[0]].type
+                if (type === 'account' || type === 'content') {
+                    updateActionIcon('icons/valid128x128.png')
+                } else if (type === 'notFound' || type === 'error' ) {
+                    updateActionIcon('icons/invalid128x128.png')
+                }
+            }
+        })
+    })
+})
+
 export type xpocResultSet = {
     [url: string]: {
         [xpocUri: string]: lookupXpocUriResult
     }
 }
 
+async function updateActionIcon(path: string) {
+    // code below from the Chrome Extension samples
+    // There are easier ways for a page to extract an image's imageData, but the approach used here
+    // works in both extension pages and service workers.
+    const response = await fetch(chrome.runtime.getURL(path))
+    const blob = await response.blob()
+    const imageBitmap = await createImageBitmap(blob)
+    const osc = new OffscreenCanvas(imageBitmap.width, imageBitmap.height)
+    let ctx = osc.getContext('2d')
+    ctx?.drawImage(imageBitmap, 0, 0)
+    const imageData = ctx?.getImageData(0, 0, osc.width, osc.height)
+    chrome.action.setIcon({ imageData })
+}
+
 async function storeXpocResult(url: string, xpocUri: string, result: lookupXpocUriResult): Promise<void> {
+    console.log(`storing xpoc result for ${url} and ${xpocUri}`)
+    // update the toolbar icon
+    console.log(`xpoc result: ${result.type}`)
+    if (result.type === 'error' || result.type === 'notFound') {
+        // "notFound" in manifest is also an error
+        await updateActionIcon('icons/invalid128x128.png')
+    } else {
+        await updateActionIcon('icons/valid128x128.png')
+    }
+    // store the result
     let xpocResultsSet = await getLocalStorage('xpocResults') as { xpocResults : xpocResultSet}
     xpocResultsSet.xpocResults[url] = xpocResultsSet.xpocResults[url] || {}
     xpocResultsSet.xpocResults[url][xpocUri] = result
-    await setLocalStorage(xpocResultsSet);
+    await setLocalStorage(xpocResultsSet)
 }

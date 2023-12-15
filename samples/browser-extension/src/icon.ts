@@ -38,17 +38,30 @@ export class Icon {
         img.style.height = '1.5em'
         img.style.width = '1.5em'
         img.setAttribute('src', path)
+        img.setAttribute('xpoc', 'xpocIcon')
         return img
     }
 
-    public setIcon(): void {
+    public setIcon(replaceLink: boolean = false): void {
         const node = this.node
         const img = this.img
-        const text = (node as Text).textContent ?? ''
-        const xpocUriIndex = text.indexOf(this.xpocUri)
-        node.textContent = text.replace(PATTERN, '')
-        const nodeSplit = (node as Text).splitText(xpocUriIndex)
-        nodeSplit.after(img)
+        const textNode = (node as Text)
+        const text = textNode.textContent ?? ''
+        // const xpocUriIndex = text.indexOf(this.xpocUri)
+        if (replaceLink) {
+            node.textContent = text.replace(PATTERN, '')
+        }
+
+        node.parentElement?.setAttribute('xpoc', 'xpocLink')
+
+        if (!(node.nextSibling instanceof HTMLImageElement && node.nextSibling?.getAttribute('xpoc') === 'xpocIcon')) {
+            if (!textNode.textContent?.endsWith(' ')) {
+                textNode.textContent += ' '
+            }
+            // inserts the image after the text node
+            // this works even if there is no next sibling
+            node.parentNode?.insertBefore(img, node.nextSibling)
+        }
     }
 
     set onClick(value: () => void) {

@@ -53,5 +53,9 @@ jobs:
         sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" samples/client-side-html/public/index.html
         docker build -t ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest \
           -f ./samples/server-backend/Dockerfile .
-        docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest
-        kubectl -n xpoc-server-ns rollout restart deployment/xpoc-server
+
+    - name: Push image to ACR
+      run: docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest
+
+    - name: Deploy to AKS
+      run: kubectl -n xpoc-server-ns rollout restart deployment/xpoc-server

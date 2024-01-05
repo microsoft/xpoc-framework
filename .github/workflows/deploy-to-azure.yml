@@ -46,6 +46,10 @@ jobs:
 
     - name: Login to Azure Container Registry
       run: az acr login --name ${{ secrets.CONTAINER_REGISTRY }}
+
+    - name: Get AKS Credentials
+      run: |
+        az aks get-credentials --name ${{ secrets.CLUSTER_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }}
   
     - name: Build and rollout to CI
       run: |

@@ -12,6 +12,10 @@ jobs:
     steps:
     - uses: actions/checkout@master
 
+    - uses: azure/use-kubelogin@v1
+      with:
+        kubelogin-version: 'v0.0.24'
+
     - name: Get commit details
       id: get-commit-details
       run: |

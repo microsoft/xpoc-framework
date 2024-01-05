@@ -23,6 +23,11 @@ jobs:
       run: |
         az aks get-credentials --name ${{ secrets.CLUSTER_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --overwrite-existing
 
+    - name: Install kubelogin
+      uses: azure/use-kubelogin@v1
+      with:
+        kubelogin-version: 'v0.0.24'
+
     - name: Docker Login
       uses: azure/docker-login@v1
       with:

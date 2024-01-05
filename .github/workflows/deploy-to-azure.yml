@@ -44,11 +44,11 @@ jobs:
     #     username: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
     #     password: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
 
-    # - name: Build and rollout to CI
-    #   run: |
-    #     sed -i "s/__LAST_MODIFIED_DATE__/${{ steps.get-commit-details.outputs.date }}/g" samples/client-side-html/public/index.html
-    #     sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" samples/client-side-html/public/index.html
-    #     docker build -t ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest \
-    #       -f ./samples/server-backend/Dockerfile .
-    #     docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest
-    #     kubectl -n xpoc-server-ns rollout restart deployment/xpoc-server
+    - name: Build and rollout to CI
+      run: |
+        sed -i "s/__LAST_MODIFIED_DATE__/${{ steps.get-commit-details.outputs.date }}/g" samples/client-side-html/public/index.html
+        sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" samples/client-side-html/public/index.html
+        docker build -t ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest \
+          -f ./samples/server-backend/Dockerfile .
+        docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest
+        kubectl -n xpoc-server-ns rollout restart deployment/xpoc-server

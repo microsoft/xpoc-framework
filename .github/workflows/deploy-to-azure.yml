@@ -45,7 +45,7 @@ jobs:
     #     password: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
 
     - name: Login to Azure Container Registry
-      run: az acr login --name ${{ secrets.ACR_REGISTRY }}
+      run: az acr login --name ${{ secrets.CONTAINER_REGISTRY }}
   
     - name: Build and rollout to CI
       run: |

@@ -37,12 +37,12 @@ jobs:
     #   run: |
     #     az aks get-credentials --name ${{ secrets.CLUSTER_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --admin
 
-    # - name: Docker Login
-    #   uses: azure/docker-login@v1
-    #   with:
-    #     login-server: ${{ secrets.CONTAINER_REGISTRY }}
-    #     username: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-    #     password: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
+    - name: Docker Login
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.CONTAINER_REGISTRY }}
+        username: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
+        password: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
 
     - name: Build and rollout to CI
       run: |

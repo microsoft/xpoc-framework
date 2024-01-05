@@ -29,6 +29,8 @@ jobs:
       with:
           resource-group: ${{ secrets.RESOURCE_GROUP }}
           cluster-name: ${{ secrets.CLUSTER_NAME }}
+          admin: 'false'
+          use-kubelogin: 'true'
     
     - name: 'Run basic AZ CLI command'
       run: az group list

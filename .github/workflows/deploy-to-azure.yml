@@ -15,8 +15,7 @@ jobs:
     - uses: actions/checkout@master
 
     # Retrieves the date and hash of the most recent commit
-    - name: Get commit details
-      id: get-commit-details
+    - id: get-commit-details
       run: |
         echo "::set-output name=date::$(git log -1 --format=%cd --date=format:'%Y-%m-%d')"
         echo "::set-output name=hash::$(git rev-parse --short HEAD)"
@@ -32,8 +31,7 @@ jobs:
     # Logs into Azure CLI using federated identity for github.com from the xpox service principal
     # Azure Portal->App Registrations->xpoc-service-principal->Certivications & secrets->Fedrated credentials->
     # xpoc-framework-credential : repo:microsoft/xpoc-framework:ref:refs/heads/update-aks-action
-    - name: 'Az CLI login'
-      uses: azure/login@v1
+    - uses: azure/login@v1
       with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -48,25 +46,19 @@ jobs:
           admin: 'false'
           use-kubelogin: 'true'
 
-
-    # - name: 'Run basic AZ CLI command'
-    #   run: az group list
-      # Executes a basic Azure CLI command to list resource groups
-
     # Logs into Azure Container Registry
     - name: Login to Azure Container Registry
       run: az acr login --name ${{ secrets.CONTAINER_REGISTRY }}
 
     # Replaces placeholders in index.html with commit details and builds Docker image
     # Build the doker image
-    - name: Build and rollout to CI
-      run: |
+    - run: |
         sed -i "s/__LAST_MODIFIED_DATE__/${{ steps.get-commit-details.outputs.date }}/g" samples/client-side-html/public/index.html
         sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" samples/client-side-html/public/index.html
         docker build -t ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest -f ./samples/server-backend/Dockerfile .
 
-    - name: Push image to ACR
-      run: docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest
+    # Pushes Docker image to Azure Container Registry
+    - run: docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest
 
-    - name: Deploy to AKS
-      run: kubectl -n xpoc-server-ns rollout restart deployment/xpoc-server
+    # Restarts the deployment in AKS to use the new image
+    - run: kubectl -n xpoc-server-ns rollout restart deployment/xpoc-server

@@ -36,9 +36,15 @@ function initialize(
     _addCallback = addCallback;
     _observer = new MutationObserver((mutationsList) => {
         mutationsList.forEach((mutation) => {
+            if (mutation.type === 'attributes') {
+                // attributes changed - do nothing
+            }
             mutation.addedNodes.forEach((n) => {
                 if (nodeFilter(n)) {
                     _addCallback(n);
+                } else {
+                    // Have you checked the children?
+                    _scanDomText(n);
                 }
             });
             mutation.removedNodes.forEach((n) => {

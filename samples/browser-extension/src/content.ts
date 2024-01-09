@@ -187,7 +187,7 @@ const addIcon = (node: Node) => {
     // We can choose to bypass nodes that are initially hidden. However, there's a complication if a node that 
     // starts off hidden later becomes visible. In such cases, re-scanning the node when it becomes visible is a 
     // challenging task to detect. Therefore, for the time being, we will scan all nodes.
-    if (!cache.has(node) && (node as Text).textContent !== '') {
+    if ((node as Text).textContent !== '') {
 
         const parentElement = node.parentNode as HTMLElement
         if (skipHiddenNodes && isStyleVisible(parentElement) === false) {

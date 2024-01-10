@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Extension Test Page</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <script>
+        const xpocLink = 'xpoc://christianpaquin.github.io!';
+
+        // event with function that runs on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const test3 = document.getElementById('test-3');
+            test3.getElementsByTagName('p')[0].textContent = xpocLink;
+            const test4 = document.getElementById('test-4');
+            test4.getElementsByTagName('p')[0].textContent = xpocLink;
+        });
+
+    </script>
+
+</head>
+
+<body>
+
+    <div>
+        <h1>Extension Test Page</h1>
+        <p>Test various ways the xpoc link could be added/removed from a page</p>
+    </div>
+
+    <div id="test-1">
+        <h3>Static link present on in html</h3>
+        <details>The xpoc link is part of the downloaded HTML page</details>
+        <p>xpoc://christianpaquin.github.io!</p>
+    </div>
+
+    <div id="test-2">
+        <h3>In-line script</h3>
+        <details>The xpoc link is inserted into an existing element from an inline script in the HTML page</details>
+        <p></p>
+        <script>
+            const test2 = document.getElementById('test-2');
+            test2.getElementsByTagName('p')[0].textContent = xpocLink;
+        </script>
+    </div>
+
+    <div id="test-3">
+        <h3>DOMContentLoaded</h3>
+        <details>The xpoc link is inserted into an existing element from the DOMContentLoaded event</details>
+        <p></p>
+    </div>
+
+    <div id="test-4">
+        <h3>Script strips icon</h3>
+        <details>The button strips the xpoc icon from the xpoc link. It should get replaced.</details>
+        <p></p>
+        <input type="button" value="Click me" />
+        <script>
+            // button with event listener that runs on click
+            const test4 = document.getElementById('test-4');
+            test4.getElementsByTagName('input')[0].addEventListener('click', function () {
+                const test4 = document.getElementById('test-4');
+                const xpocImgs = test4.querySelectorAll('img[xpoc]');
+                for (let i = 0; i < xpocImgs.length; i++) {
+                    xpocImgs[i].parentNode.removeChild(xpocImgs[i]);
+                }
+            });
+        </script>
+    </div>
+
+    <div id="test-5">
+        <h3>Disconnect node without deleting</h3>
+        <details>The xpoc link w/icon is disconnected from the DOM and then returned.</details>
+        <p>xpoc://christianpaquin.github.io!</p>
+        <input type="button" value="Click me" />
+        <script>
+            const test5 = document.getElementById('test-5');
+            const button = test5.getElementsByTagName('input')[0]
+            const p = test5.getElementsByTagName('p')?.[0]
+            button.addEventListener('click', function () {
+                if (p.isConnected) {
+                    p.remove();
+                } else {
+                    test5.appendChild(p);
+                }
+            })
+        </script>
+    </div>
+
+    <div id="test-6">
+        <h3>Replace text</h3>
+        <details>All text, within a node, is replaced with an xpoc link</details>
+        <p>not an xpoc link</p>
+        <input type="button" value="Click me" />
+        <script>
+            const test6 = document.getElementById('test-6');
+            const button6 = test6.getElementsByTagName('input')[0]
+            const p6 = test6.getElementsByTagName('p')?.[0]
+            button6.addEventListener('click', function () {
+                if (p6.textContent.includes(xpocLink)) {
+                    p6.textContent = 'not an xpoc link';
+                    return;
+                } else {
+                    p6.textContent = xpocLink;
+                }
+            })
+        </script>
+    </div>
+
+    <div id="test-7">
+        <h3>Replace text</h3>
+        <details>Existing text has an xpoc link inserted</details>
+        <p>not an xpoc link</p>
+        <input type="button" value="Click me" />
+        <script>
+            const test7 = document.getElementById('test-7');
+            const button7 = test7.getElementsByTagName('input')[0]
+            const p7 = test7.getElementsByTagName('p')?.[0]
+            button7.addEventListener('click', function () {
+                if (p7.textContent.includes('christianpaquin')) {
+                    p7.textContent = 'not an xpoc link';
+                    return;
+                } else {
+                    p7.textContent = p7.textContent.replace('xpoc', xpocLink);
+                }
+            })
+        </script>
+    </div>
+
+    <div id="test-8">
+        <h3>Replace text</h3>
+        <details>Existing text has an xpoc link inserted</details>
+        <p></p>
+        <input type="button" value="Click me" />
+        <script>
+            const test8 = document.getElementById('test-8');
+            const button8 = test8.getElementsByTagName('input')[0]
+            const p8 = test8.getElementsByTagName('p')?.[0]
+            const link8 = `link ${xpocLink}`.replace('xpoc', 'xpox')
+            p8.textContent = link8;
+            button8.addEventListener('click', function () {
+                if (p8.textContent.includes('xpoc')) {
+                    p8.textContent = link8;
+                    return;
+                } else {
+                    p8.textContent = link8.replace('xpox', 'xpoc');
+                }
+            })
+        </script>
+    </div>
+
+</body>
+
+</html>

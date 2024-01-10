@@ -3,7 +3,7 @@
 
 import { ContentPopup } from "./control";
 import { Icon } from "./icon";
-import { scanner } from "./scanner";
+import { isStyleVisible, scanner } from "./scanner";
 import { type lookupXpocUriResult } from "./xpoc-lib";
 
 const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
@@ -157,6 +157,7 @@ const getBaseURL = (xpocUri: string): string =>
 
 // keep a cache of nodes we've already processed
 const cache = new WeakMap<Node, string>()
+const skipHiddenNodes = false
 
 // auto-validate XPOC URIs (if enabled)
 chrome.storage.local.get(['autoVerifyXpocUris'], (result) => {
@@ -165,91 +166,107 @@ chrome.storage.local.get(['autoVerifyXpocUris'], (result) => {
     console.log("autoValidateXpocUris: ", autoValidateXpocUris);
     if (autoValidateXpocUris) {
         scanner.start(
-            (node: Node) => {
-                console.log(`add: ${node.textContent}`);
-
-                // skip if the node is empty or hidden
-                // TODO: a node can be initially hidden, but then become visible later
-                if (!cache.has(node) && (node as Text).textContent !== '' && (node.parentNode as HTMLElement).offsetWidth !== 0) {
-                    const match = PATTERN.exec((node as Text).textContent ?? '')
-                    const xpocUri = match?.[0] as string
-                    cache.set(node, xpocUri)
-
-                    lookupXpocUri(xpocUri)
-                        .then((result) => {
-                            const icon = new Icon(node, xpocUri, result)
-                            icon.onClick = () => {
-                                const xpocResult = result as lookupXpocUriResult
-                                if (xpocResult.type === 'content') {
-                                    contentPopup.show(
-                                        icon.img as HTMLElement,
-                                        'XPOC Information',
-                                        chrome.runtime.getURL('icons/xpoc_logo.svg'),
-                                        [
-                                            'Origin information',
-                                            { label: 'Name', value: xpocResult.name },
-                                            { label: 'Website', value: xpocResult.baseurl },
-                                        ],
-                                        [
-                                            'Content information',
-                                            { label: 'Description', value: xpocResult.content.desc },
-                                            { label: 'URL', value: xpocResult.content.url },
-                                            { label: 'PUID', value: xpocResult.content.puid },
-                                            { label: 'Account', value: xpocResult.content.account },
-                                            { label: 'Timestamp', value: xpocResult.content.timestamp },
-                                        ],
-                                    );
-                                }
-                                if (xpocResult.type === 'account') {
-                                    contentPopup.show(
-                                        icon.img as HTMLElement,
-                                        'XPOC Information',
-                                        chrome.runtime.getURL('icons/xpoc_logo.svg'),
-                                        [
-                                            'Origin information',
-                                            { label: 'Name', value: xpocResult.name },
-                                            {
-                                                label: 'Website',
-                                                link: `<a href='https://${xpocResult.baseurl}' target='_blank'>${xpocResult.baseurl}<a/>`,
-                                            },
-                                        ],
-                                        [
-                                            'Account information',
-                                            {
-                                                label: 'URL',
-                                                link: `<a href='${xpocResult.account.url}' target='_blank'>${xpocResult.account.url}<a/>`,
-                                            },
-                                            { label: 'Account', value: xpocResult.account.account },
-                                        ],
-                                    );
-                                }
-                                if (xpocResult.type === 'notFound') {
-                                    contentPopup.show(
-                                        icon.img as HTMLElement,
-                                        `This page is not listed in the manifest at ${getBaseURL(xpocUri)}`,
-                                        chrome.runtime.getURL('icons/invalid.svg'),
-                                    );
-                                }
-                                if (xpocResult.type === 'error') {
-                                    contentPopup.show(
-                                        icon.img as HTMLElement,
-                                        'XPOC Error',
-                                        chrome.runtime.getURL('icons/invalid.svg'),
-                                        [
-                                            'Error',
-                                            { label: 'Message', value: `Failed to fetch manifest from ${getBaseURL(xpocUri)}` }
-                                        ],
-                                    );
-                                }
-                            }
-                            console.log(`result: ${JSON.stringify(result)}`);
-                        })
-                }
-
-            },
-            (result) => {
+            addIcon,
+            (removedNode: Node, parent: HTMLElement) => {
                 // TODO: remove the icon if the node is no longer in the DOM
+
+                // If the icon is removed from the DOM
+                if ((removedNode as HTMLElement).nodeName === 'IMG' && (removedNode as HTMLElement).hasAttribute('xpoc')) {
+                    console.log(`remove: ${removedNode as HTMLElement}`);
+                    cache.delete(parent.childNodes[0] as Node);
+                    addIcon(parent.childNodes[0] as Node);
+                }
             }
         )
     }
 })
+
+const addIcon = (node: Node) => {
+    console.log(`add: ${node.textContent}`);
+
+    // We can choose to bypass nodes that are initially hidden. However, there's a complication if a node that 
+    // starts off hidden later becomes visible. In such cases, re-scanning the node when it becomes visible is a 
+    // challenging task to detect. Therefore, for the time being, we will scan all nodes.
+    if ((node as Text).textContent !== '') {
+
+        const parentElement = node.parentNode as HTMLElement
+        if (skipHiddenNodes && isStyleVisible(parentElement) === false) {
+            return
+        }
+
+        const match = PATTERN.exec((node as Text).textContent ?? '')
+        const xpocUri = match?.[0] as string
+        cache.set(node, xpocUri)
+
+        lookupXpocUri(xpocUri)
+            .then((result) => {
+                const icon = new Icon(node, xpocUri, result)
+                icon.onClick = () => {
+                    const xpocResult = result as lookupXpocUriResult
+                    if (xpocResult.type === 'content') {
+                        contentPopup.show(
+                            icon.img as HTMLElement,
+                            'XPOC Information',
+                            chrome.runtime.getURL('icons/xpoc_logo.svg'),
+                            [
+                                'Origin information',
+                                { label: 'Name', value: xpocResult.name },
+                                { label: 'Website', value: xpocResult.baseurl },
+                            ],
+                            [
+                                'Content information',
+                                { label: 'Description', value: xpocResult.content.desc },
+                                { label: 'URL', value: xpocResult.content.url },
+                                { label: 'PUID', value: xpocResult.content.puid },
+                                { label: 'Account', value: xpocResult.content.account },
+                                { label: 'Timestamp', value: xpocResult.content.timestamp },
+                            ],
+                        );
+                    }
+                    if (xpocResult.type === 'account') {
+                        contentPopup.show(
+                            icon.img as HTMLElement,
+                            'XPOC Information',
+                            chrome.runtime.getURL('icons/xpoc_logo.svg'),
+                            [
+                                'Origin information',
+                                { label: 'Name', value: xpocResult.name },
+                                {
+                                    label: 'Website',
+                                    link: `<a href='https://${xpocResult.baseurl}' target='_blank'>${xpocResult.baseurl}<a/>`,
+                                },
+                            ],
+                            [
+                                'Account information',
+                                {
+                                    label: 'URL',
+                                    link: `<a href='${xpocResult.account.url}' target='_blank'>${xpocResult.account.url}<a/>`,
+                                },
+                                { label: 'Account', value: xpocResult.account.account },
+                            ],
+                        );
+                    }
+                    if (xpocResult.type === 'notFound') {
+                        contentPopup.show(
+                            icon.img as HTMLElement,
+                            `This page is not listed in the manifest at ${getBaseURL(xpocUri)}`,
+                            chrome.runtime.getURL('icons/invalid.svg'),
+                        );
+                    }
+                    if (xpocResult.type === 'error') {
+                        contentPopup.show(
+                            icon.img as HTMLElement,
+                            'XPOC Error',
+                            chrome.runtime.getURL('icons/invalid.svg'),
+                            [
+                                'Error',
+                                { label: 'Message', value: `Failed to fetch manifest from ${getBaseURL(xpocUri)}` }
+                            ],
+                        );
+                    }
+                }
+                console.log(`result: ${JSON.stringify(result)}`);
+            })
+    }
+
+}

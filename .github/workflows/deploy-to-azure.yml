@@ -1,36 +1,64 @@
 name: Deploy Server Backend to AKS
 on:
-  workflow_dispatch:
-  
+  workflow_dispatch: # This triggers the workflow manually
+
+permissions:
+  id-token: write # Allows the workflow to request an OIDC token for authentication with external services
+  contents: read  # Grants read access to the repository's contents
+
 jobs:
   deploy-server-backend:
     runs-on: ubuntu-latest
     steps:
+
+    # Checks out the repository's code so it can be used by the workflow
     - uses: actions/checkout@master
 
-    - name: Get commit details
-      id: get-commit-details
+    # Retrieves the date and hash of the most recent commit
+    - id: get-commit-details
       run: |
         echo "::set-output name=date::$(git log -1 --format=%cd --date=format:'%Y-%m-%d')"
         echo "::set-output name=hash::$(git rev-parse --short HEAD)"
 
-    - uses: azure/docker-login@v1
-      with:
-        login-server: ${{ secrets.CONTAINER_REGISTRY }}
-        username: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
-        password: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
+    # Sets up kubectl, a command-line tool for Kubernetes
+    - uses: azure/setup-kubectl@v3
 
-    - uses: azure/aks-set-context@v1
+    # kubelogin gives kubectl ability to use AAD authentication for AKS
+    - uses: azure/use-kubelogin@v1
       with:
-        creds: '${{ secrets.AZURE_CREDENTIALS }}'
-        cluster-name: ${{ secrets.CLUSTER_NAME }}
-        resource-group: ${{ secrets.RESOURCE_GROUP }}
+        kubelogin-version: 'v0.0.26'
 
-    - name: Build and rollout to CI
-      run: |
+    # Logs into Azure CLI using federated identity for github.com from the xpox service principal
+    # Azure Portal->App Registrations->xpoc-service-principal->Certivications & secrets->Fedrated credentials->
+    # xpoc-framework-credential : repo:microsoft/xpoc-framework:ref:refs/heads/update-aks-action
+    - uses: azure/login@v1
+      with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    # Sets the AKS context for kubectl commands. If we don't use aks-set-context, kubectl will try to login using
+    # kubelogin, which will fail because it will try to log in interactively with the user and browser.
+    - uses: azure/aks-set-context@v3
+      with:
+          resource-group: ${{ secrets.RESOURCE_GROUP }}
+          cluster-name: ${{ secrets.CLUSTER_NAME }}
+          admin: 'false'
+          use-kubelogin: 'true'
+
+    # Logs into Azure Container Registry
+    - name: Login to Azure Container Registry
+      run: az acr login --name ${{ secrets.CONTAINER_REGISTRY }}
+
+    # Replaces placeholders in index.html with commit details and builds Docker image
+    # Build the doker image
+    - run: |
         sed -i "s/__LAST_MODIFIED_DATE__/${{ steps.get-commit-details.outputs.date }}/g" samples/client-side-html/public/index.html
         sed -i "s/__COMMIT_HASH__/${{ steps.get-commit-details.outputs.hash }}/g" samples/client-side-html/public/index.html
-        docker build -t ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest \
-          -f ./samples/server-backend/Dockerfile .
-        docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest
-        kubectl -n xpoc-server-ns rollout restart deployment/xpoc-server
+        docker build -t ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest -f ./samples/server-backend/Dockerfile .
+
+    # Pushes Docker image to Azure Container Registry
+    - run: docker push ${{ secrets.CONTAINER_REGISTRY }}/xpoc-server:latest
+
+    # Restarts the deployment in AKS to use the new image
+    - run: kubectl -n xpoc-server-ns rollout restart deployment/xpoc-server

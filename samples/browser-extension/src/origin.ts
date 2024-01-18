@@ -20,7 +20,7 @@ export interface OriginSourceData {
     contactTables: { [key: string]: { [key: string]: number } }
 }
 
-let originSourceData: OriginSourceData | undefined = getOriginSourceData()
+let originSourceData: OriginSourceData | undefined
 
 export interface OriginInfo {
     // The referenced page's platform
@@ -127,15 +127,21 @@ function getOriginSourceData(): OriginSourceData | undefined {
     // load the origin data source from storage
     let originDataSource: OriginSourceData | undefined
     chrome.storage.local.get(['originDataSource'], (result) => {
-        originDataSource = result?.originDataSource as OriginSourceData
-        if (originDataSource) {
-            console.log(`Origin data source loaded: ${originDataSource.source.name}`)
+        console.log(`getOriginSourceData result:`, result)
+        const storedOriginSourceData = result?.originDataSource as OriginSourceData
+        if (storedOriginSourceData) {
+            originSourceData = storedOriginSourceData
+            console.log(`Origin data source loaded: ${storedOriginSourceData.source.name}`)
         } else {
             console.log(`No origin data source found`)
         }
+        
     })
     return originDataSource
 }
+
+// load the origin data source from storage
+getOriginSourceData()
 
 export function getOriginSource(): OriginSource | undefined {
     if (originSourceData) {

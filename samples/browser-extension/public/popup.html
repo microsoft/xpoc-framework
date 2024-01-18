@@ -26,15 +26,24 @@
       <h1>XPOC Browser Extension</h1>
       <p>This is a sample browser extension for validating content protected by the Cross-Platform Origin of Content (XPOC) framework.</p>
       
-      <p>See the <a href="https://microsoft.github.io/xpoc-framework/">project page</a> for details.</p>
+      <p>See the <a href="https://microsoft.github.io/xpoc-framework/" target="_blank">project page</a> for details.</p>
     </div>
 
     <div id="options" class="tab-content">
-      <!-- TODO: duplicates options.html; can we share code? -->
       <h1>Options</h1>
-      <p><input type="checkbox" id="auto-verify-xpoc-uri-toggle">
+      <hr>
+      <div id="auto-verify-toggle-option">
+        <p>Check the following box to auto-validate XPOC URIs in a page, instead of manually validating them through the context menu.</p>
+        <input type="checkbox" id="auto-verify-xpoc-uri-toggle">
         <label for="auto-verify-xpoc-uri-toggle">Verify XPOC URI automatically</label>
-      </p>
+      </div>
+      <hr>
+      <div id="source-origin-data">
+        <p>The extension can make use of a 3rd party validation source; 
+          <a href="TODO" target="_blank">see details</a>. Upload an origin data source:</p>
+          <input type="file" id="origin-data-source-input" accept=".json">
+          <div id="origin-data-source-info"></div>
+      </div>
     </div>
   </div>
 

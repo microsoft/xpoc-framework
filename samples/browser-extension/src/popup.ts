@@ -22,16 +22,20 @@ document.addEventListener('DOMContentLoaded', function (): void {
       document
         .getElementById(tabContentId)
         ?.classList.add('active-content');
+
+      // refresh the origin source in the option tab
+      if (tabContentId === 'options') {
+        const originSource = getOriginSource()
+        console.log('originSource obtained in options tab', originSource)
+        if (originSource) {
+          displayOriginDataSourceInfo(originSource)
+        }
+      }
     });
   });
   showResults().then(() => {
     console.log('results shown')
   })
-  const originSource = getOriginSource()
-  console.log('originSource obtained in popup loadup', originSource)
-  if (originSource) {
-    displayOriginDataSourceInfo(originSource)
-  }
 });
 
 const autoVerifyXpocUris = document.getElementById('auto-verify-xpoc-uri-toggle') as HTMLInputElement

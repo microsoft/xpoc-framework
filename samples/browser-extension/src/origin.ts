@@ -70,7 +70,19 @@ export function getOriginInfo(url: string | undefined): OriginInfo | undefined {
             urlToTest = urlPath.replace(/\/$/, '')
             console.log(`getOriginInfo urlToTest: ${urlToTest}`)   
         }
-    } else {
+    } else if (url.includes('youtube.com/channel/')) {
+        // youtube channel workaround: if the url is a youtube channel, the xpoc library won't recognize
+        // it as a youtube account URL, so we check here
+        const getChannelPath = (url: string) => {
+            const match = url.match(/youtube\.com\/(channel\/[^\s\/?#]+)/)
+            return match ? match[1] : null
+        }
+        platform = 'YouTube'
+        const channelPath = getChannelPath(url)
+        urlToTest = channelPath ? channelPath : ''
+        console.log(`getOriginInfo urlToTest: ${urlToTest}`)   
+    }
+    else {
         console.log(`getOriginInfo url: ${url} is not a supported platform`)
         // check if the url is in the Website table
         platform = 'Website'

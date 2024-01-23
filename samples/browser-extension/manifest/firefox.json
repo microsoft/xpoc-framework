@@ -21,9 +21,6 @@
     "action": {
         "default_popup": "popup.html"
     },
-    "options_ui": {
-        "page": "options.html"
-    },
     "content_scripts": [
         {
             "matches": [

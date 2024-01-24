@@ -4,8 +4,7 @@
 import { getLocalStorage, setLocalStorage } from './storage.js';
 import { lookupXpocUri, type lookupXpocUriResult } from './xpoc-lib.js'
 import { contextMenuRequest, clickedText } from './context.js';
-
-
+import { getOriginInfo } from './origin.js'
 
 
 /*
@@ -27,13 +26,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         lookupXpocUri(sender.tab?.url as string, xpocUri).then((result) => {
             storeXpocResult(tabUrl as string, clickedText, result);
             sendResponse(result);
-        })
-    }
-    if (message.action === 'updateIcon') {
-        updateActionIcon(message.path).then(() => {
-            console.log(`Icon updated successfully: ${message.path}`)
-        }).catch((error) => {
-            console.error('Error updating icon:', error)
         })
     }
     return true
@@ -65,7 +57,7 @@ chrome.tabs.onActivated.addListener(activeInfo => {
     // You can retrieve more information about the tab using chrome.tabs.get
     chrome.tabs.get(activeInfo.tabId, function (tab) {
         console.log(`The active tab's URL is ${tab.url}`);
-        // check if we have a result for this url, if not console out `not found`
+        // check if we have a result XPOC for this url
         getLocalStorage('xpocResults').then((storageObj) => {
             const currentTabUrl = tab.url as string
             if (storageObj.xpocResults[currentTabUrl]) {
@@ -81,6 +73,12 @@ chrome.tabs.onActivated.addListener(activeInfo => {
                 }
             }
         })
+        // check if we have origin info for this url
+        const info = getOriginInfo(tab.url)
+        if (info) {
+            console.log(`Found origin info for  ${tab.url}`)
+            updateActionIcon('icons/valid128x128.png')
+        }
     })
 })
 

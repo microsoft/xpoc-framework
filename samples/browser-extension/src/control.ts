@@ -6,78 +6,77 @@ template.innerHTML = `
 <style>
 
     /* !important keeps the light-dom from overriding our settings */
-
     :host {
         all: initial;
         position: fixed;
         z-index: 10000; 
     }
 
+    * {
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
     .container {
         border: 1px solid black;
-        border-radius: 0.8em;
+        border-radius: 0.4em;
         background: #EEEEEE;
-        width: auto;
-        box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
-        display: flex;
+        box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
         align-items: center;
         font-family: Verdana, sans-serif;
         font-size: 12px;
-        padding: 0.8em;
-        margin: 1em;
         line-height: 1.25;
-        
+    }
+
+    .title {
+        // background: #5B9BD5;
+        color: white;
+        padding: 0.4em;
+        border-bottom: 1px solid #808080;
+        width: 100%;
+    }
+
+    .content {
+        display: flex;
+        align-items: center;
+        width: 100%;
     }
 
     .left {
-        /* width: 30%; */
-        box-sizing: border-box;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding-right: 0.8em;
-    }
-
-    .middle {
-        padding-left: 2em;
-        border-left: 1px solid rgba(0, 0, 0, 0.1);
-        min-width: 20em;
+        padding: 1em;
     }
 
     .right {
-        box-sizing: border-box;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding-right: 0.8em;
+        padding: 0 1em 0 1em;
+        margin: 0.5em 0 0.5em 0;
+        border-left: 1px solid rgba(0, 0, 0, 0.1);
+        min-width: 20em;
+        flex-grow: 1;
+        flex-shrink: 1;
     }
 
     img {
-        height: 5em;
-        /* opacity: 0.2; */
+        height: 4em;
     }
 
-    label {
+    .content label {
         color: black;
-        font-weight: 700;
-        margin-bottom: 0.4em;
+        font-weight: 600;
         display: block;
-        font-size: 13px;
     }
 
-    td {
-
+    .title label {
+        font-weight: 600;
+        color: white
     }
 
-    td.key {
+    td:first-child {
         font-weight: 500;
         font-size: 11px;
         color: #808080;
     }
 
-    td.value {
+    td:last-child {
         font-weight: 400;
         font-size: 11px;
         color: #101010;
@@ -85,71 +84,23 @@ template.innerHTML = `
     }
 
     table {
-        margin-left: 0.4em;
+        margin-bottom: 0.5em;
     }
-
-    #button {
-        display: none;
-        margin-left: 0.4em;
-        padding: 0.4em 0.8em;
-    }
-
 
 </style>
 
-
-
-<div class="container">
-
-    <div class="left">
-        <img id="icon"/>
+<div class="container" >
+    <div class="title">
+        <label id="title"></label>
     </div>
-
-    <div class="middle">
-        <label id="label"></label><br>
-        <label id="label-1">Origin information</label>
-        <table id="table-origin">
-            <tr>
-                <td id="key1" class="key"></td>
-                <td id="value1" class="value">---------</td>
-            </tr>
-            <tr>
-                <td id="key2" class="key"></td>
-                <td id="value2" class="value">---------</td>
-            </tr>
-        </table><br>
-        <label id="label-2">Account information</label>
-        <table id="table-account">
-            <tr>
-                <td id="key1" class="key"></td>
-                <td id="value1" class="value">---------</td>
-            </tr>
-            <tr>
-                <td id="key2" class="key"></td>
-                <td id="value2" class="value">---------</td>
-            </tr>
-            <tr>
-                <td id="key3" class="key"></td>
-                <td id="value3" class="value">---------</td>
-            </tr>
-            <tr>
-                <td id="key4" class="key"></td>
-                <td id="value4" class="value">---------</td>
-            </tr>
-            <tr>
-                <td id="key5" class="key"></td>
-                <td id="value5" class="value">---------</td>
-            </tr>
-        </table>
+    <div class="content">
+        <div class="left">
+            <img id="icon">
+        </div>
+        <div class="right"></div>
     </div>
-
-    <div class="right">
-        <input id="button" type="button" value="Trust" id="button"/>
-    </div>
-
 </div>
-
-</div>`;
+`
 
 
 interface ControlTableLine {
@@ -164,14 +115,9 @@ type ControlTable = [string, ...ControlTableLine[]];
 export class ContentPopup /* extends HTMLElement */ {
     container: HTMLElement;
     #shadowRoot: ShadowRoot;
-    #tableOrigin: HTMLTableElement
-    #tableAccount: HTMLTableElement
     #icon: HTMLImageElement;
     #label: HTMLLabelElement;
-    #label1: HTMLLabelElement;
-    #label2: HTMLLabelElement;
-    #button: HTMLInputElement;
-    #callback: (() => void) | undefined
+    #removeFocusTrap: (() => void) | undefined
 
     constructor() {
         this.container = document.createElement('DIV');
@@ -180,117 +126,18 @@ export class ContentPopup /* extends HTMLElement */ {
 
         this.container.style.display = 'none';
         document.body.appendChild(this.container);
-        this.#tableOrigin = this.#shadowRoot.querySelector('#table-origin') as HTMLTableElement;
-        this.#tableAccount = this.#shadowRoot.querySelector('#table-account') as HTMLTableElement;
         this.#icon = this.#shadowRoot.querySelector('#icon') as HTMLImageElement;
-        this.#label = this.#shadowRoot.querySelector('#label') as HTMLLabelElement;
-        this.#label1 = this.#shadowRoot.querySelector('#label-1') as HTMLLabelElement;
-        this.#label2 = this.#shadowRoot.querySelector('#label-2') as HTMLLabelElement;
-        this.#button = this.#shadowRoot.querySelector('#button') as HTMLInputElement;
-        this.hide();
-    }
-
-    show(element: HTMLElement, label: string | null, iconUrl: string | null | undefined, table1?: ControlTable, table2?: ControlTable, buttonLabel?: string | null | undefined, callback?: (() => void) | undefined) {
-        this.#label.textContent = label;
-        this.#label.style.display = 'block';
-        if (iconUrl != null) {
-            this.#icon.style.display = 'block';
-            this.#icon.src = iconUrl;
-        }
-        this.#label1.style.display = 'none';
-        this.#label2.style.display = 'none';
-        table1 && table1.forEach((line, index) => {
-            if (index === 0) {
-                this.#label1.textContent = line as string;
-                return;
-            }
-            this.#label1.style.display = 'block';
-            const tr = this.#tableOrigin.rows[index - 1];
-            tr.style.display = 'table-row';
-            const tableLine = line as ControlTableLine;
-            if (tableLine.value !== undefined || line.link !== undefined) {
-                tr.cells[0].textContent = tableLine.label;
-                if (tableLine.value != null) {
-                    tr.cells[1].textContent = tableLine.value;
-                } else if (line.link != null) {
-                    tr.cells[1].innerHTML = line.link as string;
-                }
-            }
-        });
-        table2 && table2.forEach((line, index) => {
-            if (index === 0) {
-                this.#label2.textContent = line as string;
-                return;
-            }
-            this.#label2.style.display = 'block';
-            const tr = this.#tableAccount.rows[index - 1];
-            tr.style.display = 'table-row';
-            const tableLine = line as ControlTableLine;
-            if (tableLine.value !== undefined || tableLine.link !== undefined) {
-                tr.cells[0].textContent = tableLine.label;
-                if (tableLine.value != null) {
-                    tr.cells[1].textContent = tableLine.value;
-                } else if (line.link != null) {
-                    tr.cells[1].innerHTML = tableLine.link as string;
-                }
-            }
-        });
-
-        if (buttonLabel != null) {
-            this.#button.style.display = 'block';
-            this.#button.value = buttonLabel;
-            this.#callback = callback;
-            this.#button.addEventListener('click', callback as () => void);
-        }
-        this.container.style.display = 'block';
-
-        // eslint-disable-next-line no-void
-        void this.container.offsetWidth;
-
-        // don't position until the icon has loaded or we will get the wrong width
-        this.#icon.onload = () => {
-            this.position(element);
-        };
-
-        if (iconUrl === undefined) {
-            this.position(element);
-        }
-
-        // eslint-disable-next-line no-unused-vars
-        const closeListener = (event: Event) => {
-            const isClickInsideElement = this.container.contains(event.target as Node);
-
-            if (!isClickInsideElement) {
-                this.hide();
-                document.removeEventListener('click', closeListener);
-            }
-        };
-
-        document.addEventListener('click', closeListener);
+        this.#label = this.#shadowRoot.querySelector('#title') as HTMLLabelElement;
     }
 
     hide() {
-        this.#label.textContent = '';
-        Array.from<HTMLTableRowElement>(this.#tableOrigin.rows).forEach((tr) => {
-            Array.from(tr.cells).forEach((td) => {
-                td.textContent = '';
-            });
-            tr.style.display = 'none';
-        });
-        Array.from<HTMLTableRowElement>(this.#tableAccount.rows).forEach((tr) => {
-            Array.from(tr.cells).forEach((td) => {
-                td.textContent = '';
-            });
-            tr.style.display = 'none';
-        });
-        this.#icon.style.display = 'none';
-        this.#button.style.display = 'none';
-        this.#callback && this.#button.removeEventListener('click', this.#callback);
-        this.#callback = undefined;
         this.container.style.display = 'none';
     }
 
     position(element: HTMLElement) {
+
+        element.nodeType === Node.TEXT_NODE && (element = element.parentElement as HTMLElement);
+
         const boundRect = element.getBoundingClientRect();
 
         // check if the fixed element will go off the right edge of the screen
@@ -305,7 +152,109 @@ export class ContentPopup /* extends HTMLElement */ {
                 ? `${window.innerHeight - this.container.offsetHeight - 10}px`
                 : (this.container.style.top = `${boundRect.bottom}px`);
     }
+
+    show(target: HTMLElement, title: string, titleColor: string, iconUrl: string, tables: Record<string, string>[]) {
+
+        this.#label.textContent = title;
+        this.#icon.src = iconUrl;
+        this.#icon.title = title;
+        const dce = document.createElement.bind(document);
+        const divRight = this.#shadowRoot.querySelector('.right') as HTMLDivElement;
+
+        divRight.innerHTML = '';
+
+        tables.forEach(tableSet => {
+            const labelTable = dce('label');
+            labelTable.textContent = tableSet.title;
+            (this.#label.parentElement as HTMLDivElement).style.background = titleColor;
+            divRight.appendChild(labelTable);
+            const table = dce('table');
+            // const tableId = tableSet.title.toLocaleLowerCase().replace(/ /g, '-');
+            // table.id = tableId
+            // labelTable.htmlFor = tableId;
+            Object.keys(tableSet)
+                .filter(key => key !== 'title')
+                .forEach(key => {
+                    const value = tableSet[key];
+                    const tr = dce('tr');
+                    const tdLabel = dce('td');
+                    tdLabel.classList.add('key');
+                    tdLabel.textContent = key;
+                    tr.appendChild(tdLabel);
+                    const tdValue = dce('td');
+                    value.startsWith('<a ') ? (tdValue.innerHTML = value) : (tdValue.textContent = value);
+                    tdValue.classList.add('value');
+                    tr.appendChild(tdValue);
+                    table.appendChild(tr);
+                });
+            divRight.appendChild(table);
+        });
+
+        // don't position until the icon has loaded or we will get the wrong width
+        this.#icon.onload = () => {
+            this.position(target);
+            this.container.style.display = 'block';
+            void this.container.offsetWidth;
+            this.#removeFocusTrap = trapFocus(this.#shadowRoot.querySelector('.container') as HTMLElement);
+        };
+
+
+        // eslint-disable-next-line no-unused-vars
+        const closeListener = (event: Event) => {
+            const isClickInsideElement = this.container.contains(event.target as Node);
+            if (event.type === 'wheel' || !isClickInsideElement) {
+                this.#removeFocusTrap && this.#removeFocusTrap()
+                this.#removeFocusTrap = undefined;
+                this.hide();
+                document.removeEventListener('click', closeListener);
+                document.removeEventListener('wheel', closeListener);
+            }
+        };
+
+        document.addEventListener('click', closeListener);
+        document.addEventListener('wheel', closeListener);
+
+    }
 }
 
-// eslint-disable-next-line no-unused-vars
+function trapFocus(element: HTMLElement): (() => void) | undefined {
+    const focusableElements = element.querySelectorAll<HTMLElement>(
+        'a[href], button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusableElements.length === 0) return;
+
+    focusableElements.forEach((element, i) => {
+        element.setAttribute('tabindex', (i + 1).toString());
+    });
+
+    const firstFocusableElement = focusableElements[0];
+    const lastFocusableElement = focusableElements[focusableElements.length - 1];
+
+    const handleFocus = (event: KeyboardEvent): void => {
+        if (event.key === 'Tab' || event.keyCode === 9) {
+            if (event.shiftKey) /* shift + tab */ {
+                if (document.activeElement === firstFocusableElement) {
+                    lastFocusableElement.focus();
+                    event.preventDefault();
+                }
+            } else /* tab */ {
+                if (document.activeElement === lastFocusableElement) {
+                    firstFocusableElement.focus();
+                    event.preventDefault();
+                }
+            }
+        }
+    };
+
+    // When the xpoc popup is opened, set the initial focus and event listeners
+    firstFocusableElement.focus();
+
+    element.addEventListener('keydown', handleFocus);
+
+    // Return a function to clean up the event listener when the popup is closed
+    return () => {
+        element.removeEventListener('keydown', handleFocus);
+    };
+}
+
 export const contentPopup = new ContentPopup()

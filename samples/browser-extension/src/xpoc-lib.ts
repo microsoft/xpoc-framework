@@ -94,9 +94,11 @@ export type lookupXpocUriResult =
     }
     | {
         type: 'notFound';
+        baseurl: string;
     }
     | {
         type: 'error';
+        baseurl: string;
         message: string;
     }
 
@@ -107,7 +109,7 @@ export async function lookupXpocUri(tabUrl: string, xpocUrl: string): Promise<lo
 
     if (manifest instanceof Error) {
         console.log('Error fetching manifest:', manifest.message);
-        return { type: 'error', message: `Error fetching manifest: ${manifest.message}` }
+        return { type: 'error', baseurl: xpocUrl, message: `Error fetching manifest: ${manifest.message}` }
     }
 
     console.log(Manifest.validate(manifest))
@@ -183,5 +185,5 @@ export async function lookupXpocUri(tabUrl: string, xpocUrl: string): Promise<lo
     }
 
     console.log('Content not found in manifest');
-    return { type: "notFound" };
+    return { type: "notFound", baseurl: manifest.baseurl };
 }

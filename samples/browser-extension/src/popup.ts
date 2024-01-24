@@ -49,7 +49,7 @@ autoVerifyXpocUris.addEventListener('change', () => {
  * representing an xpocUri, and the value is a lookupXpocUriResult.
  */
 async function getXpocResultsForCurrentTab(): Promise<{ [xpocUri: string]: lookupXpocUriResult }[]> {
-  const storageObj = await getLocalStorage('xpocResults') as { xpocResults: xpocResultSet }
+  const storageObj = await getLocalStorage('xpocResults') as { xpocResults: xpocResultSet } ?? { xpocResults: {} }
   const currentTabUrl = await getActiveTabUrl().catch(() => '')
   if (!currentTabUrl) {
     return []

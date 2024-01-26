@@ -20,16 +20,10 @@ contextMenuResult((result: unknown) => {
 /*
     Listen for messages from background.js
 */
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-
+chrome.runtime.onMessage.addListener((request, _sender, _sendResponse) => {
     if (request.action === 'autoScanUpdated') {
-        if (request.autoScan) {
-            scanner.start();
-        } else {
-            scanner.stop();
-        }
+        request.autoScan ? scanner.start() : scanner.stop();
     }
-
 });
 
 

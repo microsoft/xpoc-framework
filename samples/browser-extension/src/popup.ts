@@ -44,16 +44,21 @@ chrome.storage.local.get(['autoVerifyXpocUris'], (result) => {
   autoVerifyXpocUris.checked = !!result?.autoVerifyXpocUris
 })
 
-autoVerifyXpocUris.addEventListener('change', () => {
+autoVerifyXpocUris.addEventListener('change', async () => {
   console.log('autoVerifyXpocUris changed')
-  chrome.storage.local.set({ autoVerifyXpocUris: autoVerifyXpocUris.checked }, () => {
-    console.log('autoVerifyXpocUris is set to ' + autoVerifyXpocUris.checked)
+  const checked = autoVerifyXpocUris.checked
+  chrome.storage.local.set({ autoVerifyXpocUris: checked }, async () => {
+    const activeTab = await getActiveTab()
+    if (activeTab.id) {
+      chrome.tabs.sendMessage(activeTab.id, { action: "autoScanUpdated", autoScan: checked });
+    }
+    console.log('autoVerifyXpocUris is set to ' + checked)
   })
 })
 
 const originInfoInput = document.getElementById('origin-data-source-input') as HTMLInputElement
 
-originInfoInput.addEventListener('change', function(event) {
+originInfoInput.addEventListener('change', function (event) {
   const eventTarget = event.target as HTMLInputElement
   if (eventTarget.files && eventTarget.files.length > 0) {
     const file = eventTarget.files[0]
@@ -67,7 +72,7 @@ originInfoInput.addEventListener('change', function(event) {
         // set the origin source
         const source = setOriginDataSource(json)
         console.log(`source loaded: ${source.name}`)
-       
+
         displayOriginDataSourceInfo(source)
       }
       catch (e) {
@@ -82,9 +87,9 @@ originInfoInput.addEventListener('change', function(event) {
 function displayOriginDataSourceInfo(source: OriginSource) {
   console.log('displayOriginDataSourceInfo called, source:' + source.name)
   // display the source info
-    const sourceInfo = document.getElementById('origin-data-source-info') as HTMLDivElement
-    sourceInfo.style.display = 'block'
-    sourceInfo.innerHTML = `
+  const sourceInfo = document.getElementById('origin-data-source-info') as HTMLDivElement
+  sourceInfo.style.display = 'block'
+  sourceInfo.innerHTML = `
       <p>Origin Data Source: <a href="${source.website}" target="_blank">${source.name}</a></p>
       <p><a href="${source.website}" target="_blank"><img src="${source.logo}" alt="${source.name}" width="100"></a></p>
     `
@@ -110,7 +115,7 @@ async function getXpocResultsForCurrentTab(): Promise<{ [xpocUri: string]: looku
 }
 
 async function getResultsInfoForCurrentTab(): Promise<OriginInfo | undefined> {
-  return getOriginInfo((await getActiveTabUrl().catch(() => '')) as string)
+  return getOriginInfo(await getActiveTabUrl())
 }
 
 /**
@@ -118,14 +123,24 @@ async function getResultsInfoForCurrentTab(): Promise<OriginInfo | undefined> {
  * @returns a Promise that resolves to a string.
  */
 async function getActiveTabUrl(): Promise<string> {
+  return getActiveTab().then((tab) => {
+    return tab.url as string
+  }).catch(() => '')
+}
+
+/**
+ * Gets the currently active tab.
+ * @returns a Promise that resolves to a Tab.
+ */
+async function getActiveTab(): Promise<chrome.tabs.Tab> {
   return new Promise((resolve, reject) => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs: chrome.tabs.Tab[]) => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError.message);
-      } else if (tabs.length > 0 && tabs[0].url) {
-        resolve(tabs[0].url);
+      } else if (tabs.length > 0) {
+        resolve(tabs[0]);
       } else {
-        reject("No active tab or URL found.");
+        reject("No active tab found.");
       }
     });
   });
@@ -181,35 +196,35 @@ async function showResults() {
 
   const originResults = await getResultsInfoForCurrentTab()
   if (originResults) {
-        console.log("originResults available for popup", originResults)
-        // hide the 'no-origin' div
-        const noOrigin = document.getElementById('no-origin') as HTMLDivElement
-        noOrigin.style.display = 'none'
+    console.log("originResults available for popup", originResults)
+    // hide the 'no-origin' div
+    const noOrigin = document.getElementById('no-origin') as HTMLDivElement
+    noOrigin.style.display = 'none'
 
-        // show the origin info div
-        originInfo.style.display = 'block'
+    // show the origin info div
+    originInfo.style.display = 'block'
 
-        // clear the origin info div
-        originInfo.innerHTML = ''
+    // clear the origin info div
+    originInfo.innerHTML = ''
 
-        const resultDiv = document.createElement('div')
-        resultDiv.classList.add('result')
+    const resultDiv = document.createElement('div')
+    resultDiv.classList.add('result')
 
-        const source = getOriginSource()
-        if (source) {
-          console.log("originResults", originResults)
-          console.log("source", source)
-          const pageType = originResults.platform === 'Website' ? 'website' : `${originResults.platform} page`
-          resultDiv.innerHTML = `
+    const source = getOriginSource()
+    if (source) {
+      console.log("originResults", originResults)
+      console.log("source", source)
+      const pageType = originResults.platform === 'Website' ? 'website' : `${originResults.platform} page`
+      resultDiv.innerHTML = `
             <div class="source-result-info">
               <p>This is ${originResults.name}'s ${pageType}.<p>
               <p>Source: <a href="${originResults.refUrl}" target="_blank">${source.name}</a></p>
               <p><a href="${source.website}" target="_blank"><img src="${source.logo}" alt="${source.name}" width="100"></a></p>
             </div>
           `
-          originInfo.appendChild(resultDiv)
-        }
+      originInfo.appendChild(resultDiv)
+    }
   } else {
     console.log('no origin info found')
-  }  
+  }
 }

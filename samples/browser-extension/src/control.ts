@@ -223,14 +223,11 @@ function trapFocus(element: HTMLElement): (() => void) | undefined {
     );
     if (focusableElements.length === 0) return;
 
-    focusableElements.forEach((element, i) => {
-        element.setAttribute('tabindex', (i + 1).toString());
-    });
-
     const firstFocusableElement = focusableElements[0];
     const lastFocusableElement = focusableElements[focusableElements.length - 1];
 
     const handleFocus = (event: KeyboardEvent): void => {
+
         if (event.key === 'Tab' || event.keyCode === 9) {
             if (event.shiftKey) /* shift + tab */ {
                 if (document.activeElement === firstFocusableElement) {
@@ -247,12 +244,14 @@ function trapFocus(element: HTMLElement): (() => void) | undefined {
     };
 
     // When the xpoc popup is opened, set the initial focus and event listeners
+    const currentActiveElement = document.activeElement;
     firstFocusableElement.focus();
 
     element.addEventListener('keydown', handleFocus);
 
     // Return a function to clean up the event listener when the popup is closed
     return () => {
+        (currentActiveElement as HTMLElement).focus();
         element.removeEventListener('keydown', handleFocus);
     };
 }

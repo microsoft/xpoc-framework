@@ -18,15 +18,14 @@ chrome.runtime.onInstalled.addListener(function (details) {
 
 
 // create context menu item, only if what is clicked is a valid XPOC link
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
 
     if (message.action === 'lookupXpocUri') {
         const xpocUri = message.xpocUri;
         const tabUrl = (sender.tab as chrome.tabs.Tab).url as string
-        lookupXpocUri(sender.tab?.url as string, xpocUri).then((result) => {
-            storeXpocResult(tabUrl as string, clickedText, result);
-            sendResponse(result);
-        })
+        const result = await lookupXpocUri(sender.tab?.url as string, xpocUri)
+        await storeXpocResult(tabUrl as string, clickedText, result);
+        sendResponse(result);
     }
     return true
 });

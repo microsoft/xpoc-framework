@@ -3,17 +3,22 @@
 
 import { type lookupXpocUriResult } from "./xpoc-lib";
 
-async function createOffscreenDocument(path: string) : Promise<void> {
-    if (await chrome.offscreen.hasDocument()) { return; }
-    void await chrome.offscreen.createDocument({
-        url: path,
+/*
+  Create the offscreen document when the background script is loaded.  
+*/
+chrome.offscreen.hasDocument().then((hasDocument) => {
+    if (hasDocument) {
+        return;
+    }
+    chrome.offscreen.createDocument({
+        url: 'offscreen.html',
         reasons: [chrome.offscreen.Reason.DOM_PARSER],
         justification: 'Private DOM access to parse HTML',
-    });
-}
+    })
+})
+
 
 async function offscreenMessage<T, R>(message: T): Promise<R> {
-    await createOffscreenDocument('offscreen.html')
     const result: R = await chrome.runtime.sendMessage(message)
     return result
 }

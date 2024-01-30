@@ -3,68 +3,46 @@
 
 import { getLocalStorage, setLocalStorage } from './storage.js';
 import { lookupXpocUri, type lookupXpocUriResult } from './xpoc-lib.js'
+import { contextMenuRequest, clickedText } from './context.js';
 import { getOriginInfo } from './origin.js'
 
-// the text that was clicked by the user
-let clickedText = '';
 
-// create the context menu item
-let menuItemId = chrome.contextMenus.create({
-    id: 'verifyXpocUri',
-    title: 'Verify XPOC link',
-    contexts: ['all'],
-    documentUrlPatterns: ['<all_urls>'], // this ensures it will show on all pages
+/*
+    Runs when the extension is installed for the first time.
+*/
+chrome.runtime.onInstalled.addListener(function (details) {
+    if (details.reason === "install") {
+        chrome.storage.local.set({ autoVerifyXpocUris: true })
+    }
 });
 
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    // create context menu item, only if what is clicked is a valid XPOC link
-    if (message.action === 'showContextMenu') {
-        clickedText = message.data;
-        chrome.contextMenus.update(menuItemId, {
-            visible: clickedText != null,
-        });
-    }
+
+// create context menu item, only if what is clicked is a valid XPOC link
+chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
+
     if (message.action === 'lookupXpocUri') {
         const xpocUri = message.xpocUri;
         const tabUrl = (sender.tab as chrome.tabs.Tab).url as string
-        lookupXpocUri(sender.tab?.url as string, xpocUri).then((result) => {
-            storeXpocResult(tabUrl as string, clickedText, result);
-            sendResponse(result);
-        })
+        const result = await lookupXpocUri(sender.tab?.url as string, xpocUri)
+        await storeXpocResult(tabUrl as string, clickedText, result);
+        sendResponse(result);
     }
     return true
 });
 
-// listen for context menu clicks
-chrome.contextMenus.onClicked.addListener(
-    async (info, tab) => {
+
+contextMenuRequest(
+    async (info, clickedText, tab) => {
         if (info.menuItemId === 'verifyXpocUri') {
             const tabUrl = (tab as chrome.tabs.Tab).url as string
-            const tabId = (tab as chrome.tabs.Tab).id as number
-            const result = await lookupXpocUri(tabUrl, clickedText)
-            switch (result.type) {
-                case 'account':
-                    chrome.tabs.sendMessage(tabId, {
-                        action: 'displayXpocAccount',
-                        result: result,
-                    });
-                    await storeXpocResult(tabUrl as string, clickedText, result);
-                    break;
-                case 'content':
-                    chrome.tabs.sendMessage(tabId, {
-                        action: 'displayXpocContent',
-                        result: result,
-                    });
-                    await storeXpocResult(tabUrl as string, clickedText, result);
-                    break;
-                case 'notFound':
-                case 'error':
-                    chrome.tabs.sendMessage(tabId, {
-                        action: 'xpocNotFound',
-                    });
-                    break;
-
+            const xpocUrl = clickedText
+            const result = await lookupXpocUri(tabUrl, xpocUrl)
+            if (result.type === 'account' || result.type === 'content') {
+                await storeXpocResult(tabUrl as string, xpocUrl, result);
+            } else {
+                // TODO: clear the result from storage
             }
+            return result
         }
     }
 );
@@ -75,7 +53,8 @@ chrome.tabs.onActivated.addListener(activeInfo => {
     console.log(`Tab ${activeInfo.tabId} was activated`)
     // display the default icon first
     updateActionIcon('icons/unknown128x128.png')
-    chrome.tabs.get(activeInfo.tabId, function(tab) {
+    // You can retrieve more information about the tab using chrome.tabs.get
+    chrome.tabs.get(activeInfo.tabId, function (tab) {
         console.log(`The active tab's URL is ${tab.url}`);
         // check if we have a result XPOC for this url
         getLocalStorage('xpocResults').then((storageObj) => {
@@ -88,7 +67,7 @@ chrome.tabs.onActivated.addListener(activeInfo => {
                 const type = xpocResult[Object.keys(xpocResult)[0]].type
                 if (type === 'account' || type === 'content') {
                     updateActionIcon('icons/valid128x128.png')
-                } else if (type === 'notFound' || type === 'error' ) {
+                } else if (type === 'notFound' || type === 'error') {
                     updateActionIcon('icons/invalid128x128.png')
                 }
             }
@@ -101,6 +80,7 @@ chrome.tabs.onActivated.addListener(activeInfo => {
         }
     })
 })
+
 
 export type xpocResultSet = {
     [url: string]: {
@@ -133,7 +113,7 @@ async function storeXpocResult(url: string, xpocUri: string, result: lookupXpocU
         await updateActionIcon('icons/valid128x128.png')
     }
     // store the result
-    let xpocResultsSet = await getLocalStorage('xpocResults') as { xpocResults : xpocResultSet}
+    let xpocResultsSet = await getLocalStorage('xpocResults') as { xpocResults: xpocResultSet }
     xpocResultsSet.xpocResults[url] = xpocResultsSet.xpocResults[url] || {}
     xpocResultsSet.xpocResults[url][xpocUri] = result
     await setLocalStorage(xpocResultsSet)

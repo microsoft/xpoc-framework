@@ -3,10 +3,9 @@
 
 import fs from 'fs';
 import { Platforms } from './platform.js';
-import { Manifest as validateManifest} from './manifest.schema.js';
+import { Manifest as validateManifest } from './manifest.schema.js';
 import { ValidateFunction } from 'ajv';
 import { fetchObject } from './fetch.js';
-
 
 /**
  * A platform account.
@@ -48,7 +47,7 @@ export type AccountMatchValues = {
     account?: string;
     platform?: string;
     url?: string;
-}
+};
 
 /**
  * Values to match a content item in a manifest.
@@ -58,17 +57,24 @@ export type ContentMatchValues = {
     platform?: string;
     url?: string;
     puid?: string;
-}
+};
 
 /**
  * Returns true if the two resources referenced by two URLs are the same.
  */
-const areResourcesEqual = (url1: string | undefined, url2: string | undefined): boolean => {
+const areResourcesEqual = (
+    url1: string | undefined,
+    url2: string | undefined,
+): boolean => {
     if (!url1 || !url2) return false;
     // trim the URLs to remove any whitespace, the http(s):// prefix, and trailing slashes
-    const trimUrl = (url: string): string => url.trim().replace(/^(https?:\/\/)/, '').replace(/\/$/, '');
+    const trimUrl = (url: string): string =>
+        url
+            .trim()
+            .replace(/^(https?:\/\/)/, '')
+            .replace(/\/$/, '');
     return trimUrl(url1) === trimUrl(url2);
-}
+};
 
 /**
  * XPOC manifest class (without fs operations for browser export).
@@ -113,12 +119,15 @@ export class ManifestBase {
         const result: Account[] = [];
         if (amv) {
             if (amv.account) {
-                for (let account of this.manifest.accounts??[]) {
+                for (const account of this.manifest.accounts ?? []) {
                     let canonicalAccountName = amv.account.trim(); // fallback value for unsupported platforms
                     if (Platforms.isSupportedPlatform(account.platform)) {
-                        const platform = Platforms.getPlatform(account.platform);
+                        const platform = Platforms.getPlatform(
+                            account.platform,
+                        );
                         if (platform) {
-                            canonicalAccountName = platform.canonicalizeAccountName(amv.account);
+                            canonicalAccountName =
+                                platform.canonicalizeAccountName(amv.account);
                         }
                     }
                     if (account.account === canonicalAccountName) {
@@ -127,19 +136,27 @@ export class ManifestBase {
                 }
             }
             if (amv.platform) {
-                const canonicalPlatform = Platforms.getCanonicalPlatformName(amv.platform);
-                const matches = this.manifest.accounts?.filter(account => account.platform === canonicalPlatform);
-                result.push(...matches??[]);
+                const canonicalPlatform = Platforms.getCanonicalPlatformName(
+                    amv.platform,
+                );
+                const matches = this.manifest.accounts?.filter(
+                    (account) => account.platform === canonicalPlatform,
+                );
+                result.push(...(matches ?? []));
             }
             if (amv.url) {
                 let canonicalUrl = amv.url.trim(); // fallback value for unsupported platforms
-                for (let account of this.manifest.accounts??[]) {
+                for (const account of this.manifest.accounts ?? []) {
                     // get the canonical version of the URL for supported versions
                     if (Platforms.isSupportedPlatform(account.platform)) {
-                        const platform = Platforms.getPlatform(account.platform);
+                        const platform = Platforms.getPlatform(
+                            account.platform,
+                        );
                         if (platform) {
                             if (platform.isValidAccountUrl(amv.url)) {
-                                canonicalUrl = platform.canonicalizeAccountUrl(amv.url).url;
+                                canonicalUrl = platform.canonicalizeAccountUrl(
+                                    amv.url,
+                                ).url;
                             }
                         }
                     }
@@ -161,12 +178,15 @@ export class ManifestBase {
         const result: ContentItem[] = [];
         if (cmv) {
             if (cmv.account) {
-                for (let content of this.manifest.content??[]) {
+                for (const content of this.manifest.content ?? []) {
                     let canonicalAccountName = cmv.account.trim(); // fallback value for unsupported platforms
                     if (Platforms.isSupportedPlatform(content.platform)) {
-                        const platform = Platforms.getPlatform(content.platform);
+                        const platform = Platforms.getPlatform(
+                            content.platform,
+                        );
                         if (platform) {
-                            canonicalAccountName = platform.canonicalizeAccountName(cmv.account);
+                            canonicalAccountName =
+                                platform.canonicalizeAccountName(cmv.account);
                         }
                     }
                     if (content.account === canonicalAccountName) {
@@ -175,19 +195,27 @@ export class ManifestBase {
                 }
             }
             if (cmv.platform) {
-                const canonicalPlatform = Platforms.getCanonicalPlatformName(cmv.platform);
-                const matches = this.manifest.content?.filter(content => content.platform === canonicalPlatform);
-                result.push(...matches??[]);
+                const canonicalPlatform = Platforms.getCanonicalPlatformName(
+                    cmv.platform,
+                );
+                const matches = this.manifest.content?.filter(
+                    (content) => content.platform === canonicalPlatform,
+                );
+                result.push(...(matches ?? []));
             }
             if (cmv.url) {
                 let canonicalUrl = cmv.url.trim(); // fallback value for unsupported platforms
-                for (let content of this.manifest.content??[]) {
+                for (const content of this.manifest.content ?? []) {
                     // get the canonical version of the URL for supported versions
                     if (Platforms.isSupportedPlatform(content.platform)) {
-                        const platform = Platforms.getPlatform(content.platform);
+                        const platform = Platforms.getPlatform(
+                            content.platform,
+                        );
                         if (platform) {
                             if (platform.isValidContentUrl(cmv.url)) {
-                                canonicalUrl = platform.canonicalizeContentUrl(cmv.url).url;
+                                canonicalUrl = platform.canonicalizeContentUrl(
+                                    cmv.url,
+                                ).url;
                             }
                         }
                     }
@@ -199,18 +227,26 @@ export class ManifestBase {
             if (cmv.puid) {
                 // compare PUIDs as-is
                 const searchPuid = cmv.puid.trim();
-                const matches = this.manifest.content?.filter(content => content.puid === searchPuid);
-                result.push(...matches??[]);
+                const matches = this.manifest.content?.filter(
+                    (content) => content.puid === searchPuid,
+                );
+                result.push(...(matches ?? []));
             }
         }
         return result;
     }
 
-    static validate(manifest: XPOCManifest): { valid: boolean, errors?: string[] } {
+    static validate(manifest: XPOCManifest): {
+        valid: boolean;
+        errors?: string[];
+    } {
         const validateFunction = validateManifest as ValidateFunction;
-        const valid = validateFunction(manifest)
+        const valid = validateFunction(manifest);
         if (valid) return { valid: true };
-        const errors: string[] = validateFunction.errors?.map((err) => `${err.instancePath}: ${err.message}` ?? '') ?? [];
+        const errors: string[] =
+            validateFunction.errors?.map(
+                (err) => `${err.instancePath}: ${err.message}` ?? '',
+            ) ?? [];
         return { valid: false, errors };
     }
 
@@ -225,20 +261,25 @@ export class ManifestBase {
         const url = new URL(location);
         if (!url.pathname.endsWith('xpoc-manifest.json')) {
             url.pathname =
-                (url.pathname.endsWith('/') ? url.pathname : url.pathname + '/') +
-                'xpoc-manifest.json';
+                (url.pathname.endsWith('/')
+                    ? url.pathname
+                    : url.pathname + '/') + 'xpoc-manifest.json';
         }
         const urlString = url.toString();
 
         const manifest = await fetchObject<XPOCManifest>(urlString);
 
         if (manifest instanceof Error) {
-            console.error(`Error fetching XPOC manifest from ${urlString}: ${JSON.stringify(manifest)}`);
-            throw manifest
+            console.error(
+                `Error fetching XPOC manifest from ${urlString}: ${JSON.stringify(
+                    manifest,
+                )}`,
+            );
+            throw manifest;
         }
 
-        return new ManifestBase(manifest)
-    }
+        return new ManifestBase(manifest);
+    };
 }
 
 /**
@@ -264,4 +305,3 @@ export class Manifest extends ManifestBase {
         fs.writeFileSync(path, JSON.stringify(this.manifest, null, 4));
     }
 }
-

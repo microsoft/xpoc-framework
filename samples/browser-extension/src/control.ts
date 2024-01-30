@@ -100,34 +100,30 @@ template.innerHTML = `
         <div class="right"></div>
     </div>
 </div>
-`
-
-
-interface ControlTableLine {
-    label: string;
-    value?: string;
-    link?: string;
-}
-
-type ControlTable = [string, ...ControlTableLine[]];
-
+`;
 
 export class ContentPopup /* extends HTMLElement */ {
     container: HTMLElement;
     #shadowRoot: ShadowRoot;
     #icon: HTMLImageElement;
     #label: HTMLLabelElement;
-    #removeFocusTrap: (() => void) | undefined
+    #removeFocusTrap: (() => void) | undefined;
 
     constructor() {
         this.container = document.createElement('DIV');
         this.#shadowRoot = this.container.attachShadow({ mode: 'open' });
-        this.#shadowRoot.appendChild((template.cloneNode(true) as HTMLTemplateElement).content);
+        this.#shadowRoot.appendChild(
+            (template.cloneNode(true) as HTMLTemplateElement).content,
+        );
 
         this.container.style.display = 'none';
         document.body.appendChild(this.container);
-        this.#icon = this.#shadowRoot.querySelector('#icon') as HTMLImageElement;
-        this.#label = this.#shadowRoot.querySelector('#title') as HTMLLabelElement;
+        this.#icon = this.#shadowRoot.querySelector(
+            '#icon',
+        ) as HTMLImageElement;
+        this.#label = this.#shadowRoot.querySelector(
+            '#title',
+        ) as HTMLLabelElement;
     }
 
     hide() {
@@ -135,8 +131,8 @@ export class ContentPopup /* extends HTMLElement */ {
     }
 
     position(element: HTMLElement) {
-
-        element.nodeType === Node.TEXT_NODE && (element = element.parentElement as HTMLElement);
+        element.nodeType === Node.TEXT_NODE &&
+            (element = element.parentElement as HTMLElement);
 
         const boundRect = element.getBoundingClientRect();
 
@@ -153,28 +149,36 @@ export class ContentPopup /* extends HTMLElement */ {
                 : (this.container.style.top = `${boundRect.bottom}px`);
     }
 
-    show(target: HTMLElement, title: string, titleColor: string, iconUrl: string, tables: Record<string, string>[]) {
-
+    show(
+        target: HTMLElement,
+        title: string,
+        titleColor: string,
+        iconUrl: string,
+        tables: Record<string, string>[],
+    ) {
         this.#label.textContent = title;
         this.#icon.src = iconUrl;
         this.#icon.title = title;
         const dce = document.createElement.bind(document);
-        const divRight = this.#shadowRoot.querySelector('.right') as HTMLDivElement;
+        const divRight = this.#shadowRoot.querySelector(
+            '.right',
+        ) as HTMLDivElement;
 
         divRight.innerHTML = '';
 
-        tables.forEach(tableSet => {
+        tables.forEach((tableSet) => {
             const labelTable = dce('label');
             labelTable.textContent = tableSet.title;
-            (this.#label.parentElement as HTMLDivElement).style.background = titleColor;
+            (this.#label.parentElement as HTMLDivElement).style.background =
+                titleColor;
             divRight.appendChild(labelTable);
             const table = dce('table');
             // const tableId = tableSet.title.toLocaleLowerCase().replace(/ /g, '-');
             // table.id = tableId
             // labelTable.htmlFor = tableId;
             Object.keys(tableSet)
-                .filter(key => key !== 'title')
-                .forEach(key => {
+                .filter((key) => key !== 'title')
+                .forEach((key) => {
                     const value = tableSet[key];
                     const tr = dce('tr');
                     const tdLabel = dce('td');
@@ -182,7 +186,9 @@ export class ContentPopup /* extends HTMLElement */ {
                     tdLabel.textContent = key;
                     tr.appendChild(tdLabel);
                     const tdValue = dce('td');
-                    value.startsWith('<a ') ? (tdValue.innerHTML = value) : (tdValue.textContent = value);
+                    value.startsWith('<a ')
+                        ? (tdValue.innerHTML = value)
+                        : (tdValue.textContent = value);
                     tdValue.classList.add('value');
                     tr.appendChild(tdValue);
                     table.appendChild(tr);
@@ -195,15 +201,18 @@ export class ContentPopup /* extends HTMLElement */ {
             this.position(target);
             this.container.style.display = 'block';
             void this.container.offsetWidth;
-            this.#removeFocusTrap = trapFocus(this.#shadowRoot.querySelector('.container') as HTMLElement);
+            this.#removeFocusTrap = trapFocus(
+                this.#shadowRoot.querySelector('.container') as HTMLElement,
+            );
         };
-
 
         // eslint-disable-next-line no-unused-vars
         const closeListener = (event: Event) => {
-            const isClickInsideElement = this.container.contains(event.target as Node);
+            const isClickInsideElement = this.container.contains(
+                event.target as Node,
+            );
             if (event.type === 'wheel' || !isClickInsideElement) {
-                this.#removeFocusTrap && this.#removeFocusTrap()
+                this.#removeFocusTrap && this.#removeFocusTrap();
                 this.#removeFocusTrap = undefined;
                 this.hide();
                 document.removeEventListener('click', closeListener);
@@ -213,28 +222,29 @@ export class ContentPopup /* extends HTMLElement */ {
 
         document.addEventListener('click', closeListener);
         document.addEventListener('wheel', closeListener);
-
     }
 }
 
 function trapFocus(element: HTMLElement): (() => void) | undefined {
     const focusableElements = element.querySelectorAll<HTMLElement>(
-        'a[href], button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        'a[href], button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
     if (focusableElements.length === 0) return;
 
     const firstFocusableElement = focusableElements[0];
-    const lastFocusableElement = focusableElements[focusableElements.length - 1];
+    const lastFocusableElement =
+        focusableElements[focusableElements.length - 1];
 
     const handleFocus = (event: KeyboardEvent): void => {
-
         if (event.key === 'Tab' || event.keyCode === 9) {
-            if (event.shiftKey) /* shift + tab */ {
-                if (document.activeElement === firstFocusableElement) {
+            if (event.shiftKey) {
+                /* shift + tab */ if (
+                    document.activeElement === firstFocusableElement
+                ) {
                     lastFocusableElement.focus();
                     event.preventDefault();
                 }
-            } else /* tab */ {
+            } /* tab */ else {
                 if (document.activeElement === lastFocusableElement) {
                     firstFocusableElement.focus();
                     event.preventDefault();
@@ -256,4 +266,4 @@ function trapFocus(element: HTMLElement): (() => void) | undefined {
     };
 }
 
-export const contentPopup = new ContentPopup()
+export const contentPopup = new ContentPopup();

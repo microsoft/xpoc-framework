@@ -7,9 +7,10 @@ They are written in markdown so they render nicely in GitHub's UI. Test these pa
 All valid resources are linked in the [manifest](./xpoc-manifest.json) in this folder.
 
 Pages:
-* [Valid account](./valid-account.md)
-* [Valid content](./valid-content-1234.md)
-* [Non-existent manifest](./non-existent-manifest.md) 
-* [Non-parseable manifest](./non-parseable-manifest.md)
-* [Unlisted account](./unlisted-account.md)
-* [Unlisted content](./unlisted-content.md)
+
+-   [Valid account](./valid-account.md)
+-   [Valid content](./valid-content-1234.md)
+-   [Non-existent manifest](./non-existent-manifest.md)
+-   [Non-parsable manifest](./non-parseable-manifest.md)
+-   [Unlisted account](./unlisted-account.md)
+-   [Unlisted content](./unlisted-content.md)

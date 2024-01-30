@@ -2,9 +2,28 @@
 // Licensed under the MIT license.
 
 import {
-    CanonicalizedAccountData, CanonicalizedContentData, Platform, Platforms, PlatformAccountData, PlatformContentData,
+    CanonicalizedAccountData,
+    CanonicalizedContentData,
+    Platform,
+    Platforms,
+    PlatformAccountData,
+    PlatformContentData,
     // platforms
-    Facebook, GitHub, GoogleScholar, Instagram, LINE, LinkedIn, Medium, Rumble, Snapchat, Telegram, Threads, TikTok, Vimeo, XTwitter, YouTube
+    Facebook,
+    GitHub,
+    GoogleScholar,
+    Instagram,
+    LINE,
+    LinkedIn,
+    Medium,
+    Rumble,
+    Snapchat,
+    Telegram,
+    Threads,
+    TikTok,
+    Vimeo,
+    XTwitter,
+    YouTube,
 } from '../src/platform';
 
 // the XPOC URI that appears on all our sample accounts and content (that support data fetches)
@@ -33,7 +52,7 @@ const platformTestDataArray: PlatformTestData[] = [
             'christianpaquinmsr',
             '@christianpaquinmsr',
             ' christianpaquinmsr ',
-            ' @christianpaquinmsr '
+            ' @christianpaquinmsr ',
         ],
         validAccountUrls: [
             'https://www.youtube.com/@christianpaquinmsr',
@@ -41,7 +60,7 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://www.youtube.com/@christianpaquinmsr/about',
             'https://youtube.com/@christianpaquinmsr',
             'https://m.youtube.com/@christianpaquinmsr',
-            'https://youtu.be/@christianpaquinmsr'
+            'https://youtu.be/@christianpaquinmsr',
         ],
         validContentUrls: [
             'https://www.youtube.com/watch?v=hDd3t7y1asU',
@@ -51,24 +70,24 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://www.youtube.com/watch?t=90s&v=hDd3t7y1asU&feature=youtu.be',
             'https://youtube.com/watch?v=hDd3t7y1asU',
             'https://m.youtube.com/watch?v=hDd3t7y1asU',
-            'https://youtu.be/watch?v=hDd3t7y1asU'
+            'https://youtu.be/watch?v=hDd3t7y1asU',
         ],
         invalidAccountUrls: [
             'https://www.youtube.com/',
             'https://www.youtube.com/watch?v=hDd3t7y1asU',
-            'https://www.notyoutube.com/@christianpaquinmsr'
+            'https://www.notyoutube.com/@christianpaquinmsr',
         ],
         invalidContentUrls: [
             'https://www.youtube.com',
             'https://www.youtube.com/@christianpaquinmsr',
-            'https://www.notyoutube.com/watch?v=hDd3t7y1asU'
+            'https://www.notyoutube.com/watch?v=hDd3t7y1asU',
         ],
         canonicalAccountData: new Array(6).fill(
             // canonicalized version of validAccountUrls (representing all the same account)
             {
                 url: 'https://www.youtube.com/@christianpaquinmsr',
-                account: 'christianpaquinmsr'
-            }
+                account: 'christianpaquinmsr',
+            },
         ),
         canonicalContentData: new Array(8).fill(
             // canonicalized version of validContentUrls (representing all the same content)
@@ -76,60 +95,55 @@ const platformTestDataArray: PlatformTestData[] = [
                 url: 'https://www.youtube.com/watch?v=hDd3t7y1asU',
                 account: '',
                 puid: 'hDd3t7y1asU',
-                type: 'video'
-            }
+                type: 'video',
+            },
         ),
         sampleAccountData: {
             xpocUri: expectedXpocUri,
-            platform: "YouTube",
-            url: "https://www.youtube.com/@christianpaquinmsr",
-            account: "christianpaquinmsr",
+            platform: 'YouTube',
+            url: 'https://www.youtube.com/@christianpaquinmsr',
+            account: 'christianpaquinmsr',
         },
         sampleContentData: {
             xpocUri: expectedXpocUri,
-            platform: "YouTube",
-            url: "https://www.youtube.com/watch?v=hDd3t7y1asU",
-            account: "christianpaquinmsr",
-            timestamp: "2023-07-10T17:10:28Z",
-            puid: "hDd3t7y1asU"
-        }
+            platform: 'YouTube',
+            url: 'https://www.youtube.com/watch?v=hDd3t7y1asU',
+            account: 'christianpaquinmsr',
+            timestamp: '2023-07-10T17:10:28Z',
+            puid: 'hDd3t7y1asU',
+        },
     },
 
     // X/Twitter test data
     {
         platform: new XTwitter(),
-        accountNames: [
-            'chpaquin',
-            '@chpaquin',
-            ' chpaquin ',
-            ' @chpaquin '
-        ],
+        accountNames: ['chpaquin', '@chpaquin', ' chpaquin ', ' @chpaquin '],
         validAccountUrls: [
             'https://twitter.com/chpaquin',
             'https://twitter.com/@chpaquin',
-            'https://x.com/chpaquin'
+            'https://x.com/chpaquin',
         ],
         validContentUrls: [
             'https://twitter.com/chpaquin/status/1694698274618319246',
             'https://x.com/chpaquin/status/1694698274618319246',
-            'https://twitter.com/@chpaquin/status/1694698274618319246'
+            'https://twitter.com/@chpaquin/status/1694698274618319246',
         ],
         invalidAccountUrls: [
             'https://twitter.com',
             'https://twitter.com/chpaquin/status/1694698274618319246',
-            'https://nottwitter.com/chpaquin/status/1694698274618319246'
+            'https://nottwitter.com/chpaquin/status/1694698274618319246',
         ],
         invalidContentUrls: [
             'https://twitter.com',
             'https://twitter.com/chpaquin',
-            'https://nottwitter.com/chpaquin/status/1694698274618319246'
+            'https://nottwitter.com/chpaquin/status/1694698274618319246',
         ],
         canonicalAccountData: new Array(3).fill(
             // canonicalized version of validAccountUrls (representing all the same account)
             {
                 url: 'https://twitter.com/chpaquin',
-                account: 'chpaquin'
-            }
+                account: 'chpaquin',
+            },
         ),
         canonicalContentData: new Array(3).fill(
             // canonicalized version of validContentUrls (representing all the same content)
@@ -137,50 +151,47 @@ const platformTestDataArray: PlatformTestData[] = [
                 url: 'https://twitter.com/chpaquin/status/1694698274618319246',
                 account: 'chpaquin',
                 puid: '1694698274618319246',
-                type: 'post'
-            }
+                type: 'post',
+            },
         ),
         sampleAccountData: undefined,
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
 
     // Facebook test data
     {
         platform: new Facebook(),
-        accountNames: [
-            'Microsoft',
-            ' Microsoft '
-        ],
+        accountNames: ['Microsoft', ' Microsoft '],
         validAccountUrls: [
             'https://www.facebook.com/Microsoft',
             'https://www.facebook.com/Microsoft/',
             'https://www.facebook.com/Microsoft/about',
             'https://m.facebook.com/Microsoft',
             'https://facebook.com/Microsoft',
-            'https://fb.com/Microsoft'
+            'https://fb.com/Microsoft',
         ],
         validContentUrls: [
             'https://www.facebook.com/Microsoft/photos/650054900501286',
             'https://www.facebook.com/photo?fbid=650054900501286',
             'https://www.facebook.com/Microsoft/videos/165720489879335',
-            'https://www.facebook.com/Microsoft/photos/a.195193573720/10159789051448721/'
+            'https://www.facebook.com/Microsoft/photos/a.195193573720/10159789051448721/',
         ],
         invalidAccountUrls: [
             'https://www.facebook.com',
             'https://www.facebook.com/Microsoft/photo/650054900501286',
-            'https://www.notfacebook.com/Microsoft'
+            'https://www.notfacebook.com/Microsoft',
         ],
         invalidContentUrls: [
             'https://www.facebook.com',
             'https://www.facebook.com/Microsoft',
-            'https://www.notfacebook.com/Microsoft/photo/650054900501286'
+            'https://www.notfacebook.com/Microsoft/photo/650054900501286',
         ],
         canonicalAccountData: new Array(6).fill(
             // canonicalized version of validAccountUrls (representing all the same account)
             {
                 url: 'https://www.facebook.com/Microsoft',
-                account: 'Microsoft'
-            }
+                account: 'Microsoft',
+            },
         ),
         canonicalContentData: [
             // canonicalized version of validContentUrls
@@ -188,100 +199,88 @@ const platformTestDataArray: PlatformTestData[] = [
                 url: 'https://www.facebook.com/Microsoft/photos/650054900501286',
                 account: 'Microsoft',
                 puid: '',
-                type: 'photo'
+                type: 'photo',
             },
             {
                 url: 'https://www.facebook.com/photo?fbid=650054900501286',
                 account: '',
                 puid: '650054900501286',
-                type: 'photo'
+                type: 'photo',
             },
             {
                 url: 'https://www.facebook.com/Microsoft/videos/165720489879335',
                 account: 'Microsoft',
                 puid: '',
-                type: 'video'
+                type: 'video',
             },
             {
                 url: 'https://www.facebook.com/Microsoft/photos/a.195193573720/10159789051448721/',
                 account: 'Microsoft',
                 puid: '',
-                type: 'photo'
-            }
+                type: 'photo',
+            },
         ],
         sampleAccountData: undefined,
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
 
     // Instagram test data
     {
         platform: new Instagram(),
-        accountNames: [
-            'microsoft',
-            ' microsoft '
-        ],
+        accountNames: ['microsoft', ' microsoft '],
         validAccountUrls: [
             'https://www.instagram.com/microsoft',
             'https://www.instagram.com/microsoft/',
             'https://m.instagram.com/microsoft',
-            'https://instagram.com/microsoft/'
+            'https://instagram.com/microsoft/',
         ],
         validContentUrls: [
             'https://www.instagram.com/p/Cw25Z6KJvMa',
             'https://www.instagram.com/p/Cw25Z6KJvMa/',
             'https://www.instagram.com/p/Cw25Z6KJvMa/?img_index=1',
             'https://www.instagram.com/reel/CwQiom2IBrP',
-            'https://www.instagram.com/reel/CwQiom2IBrP/'
+            'https://www.instagram.com/reel/CwQiom2IBrP/',
         ],
         invalidAccountUrls: [
             'https://www.instagram.com',
             'https://www.instagram.com/p/Cw25Z6KJvMa/',
-            'https://www.notinstagram.com/microsoft'
+            'https://www.notinstagram.com/microsoft',
         ],
         invalidContentUrls: [
             'https://www.instagram.com',
             'https://www.instagram.com/microsoft/',
-            'https://www.notinstagram.com/p/Cw25Z6KJvMa/'
+            'https://www.notinstagram.com/p/Cw25Z6KJvMa/',
         ],
         canonicalAccountData: new Array(4).fill(
             // canonicalized version of validAccountUrls (representing all the same account)
             {
                 url: 'https://www.instagram.com/microsoft/',
-                account: 'microsoft'
-            }
+                account: 'microsoft',
+            },
         ),
         canonicalContentData: [
             // canonicalized version of validContentUrls (first 3 are the same, last 2 are the same)
-            ...new Array(3).fill(
-                {
-                    url: 'https://www.instagram.com/p/Cw25Z6KJvMa/',
-                    account: '',
-                    puid: 'Cw25Z6KJvMa',
-                    type: 'post'
-                }
-            ),
-            ...new Array(2).fill(
-                {
-                    url: 'https://www.instagram.com/reel/CwQiom2IBrP/',
-                    account: '',
-                    puid: 'CwQiom2IBrP',
-                    type: 'reel'
-                }
-            )
+            ...new Array(3).fill({
+                url: 'https://www.instagram.com/p/Cw25Z6KJvMa/',
+                account: '',
+                puid: 'Cw25Z6KJvMa',
+                type: 'post',
+            }),
+            ...new Array(2).fill({
+                url: 'https://www.instagram.com/reel/CwQiom2IBrP/',
+                account: '',
+                puid: 'CwQiom2IBrP',
+                type: 'reel',
+            }),
         ],
         sampleAccountData: undefined,
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
 
     // Medium test data
     {
         platform: new Medium(),
-        accountNames: [
-            'chpaquin',
-            '@chpaquin',
-            ' chpaquin ',
-            ' @chpaquin '
-        ],
+        accountNames: ['chpaquin', '@chpaquin', ' chpaquin ', ' @chpaquin '],
         validAccountUrls: [
             // default form
             'https://medium.com/@chpaquin',
@@ -295,7 +294,7 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://christianpaquin.medium.com/',
             'https://christianpaquin.medium.com/about',
             'https://christianpaquin.medium.com/about/',
-            'https://christianpaquin.medium.com?utm_source=bing&utm_content=textlink'
+            'https://christianpaquin.medium.com?utm_source=bing&utm_content=textlink',
         ],
         validContentUrls: [
             // default form
@@ -316,57 +315,47 @@ const platformTestDataArray: PlatformTestData[] = [
         invalidAccountUrls: [
             'https://medium.com',
             'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
-            'https://notmedium.com/@chpaquin'
+            'https://notmedium.com/@chpaquin',
         ],
         invalidContentUrls: [
             'https://medium.com',
             'https://medium.com/@chpaquin',
-            'https://notmedium.com/@chpaquin/xpoc-test-4fecf28be9a8'
+            'https://notmedium.com/@chpaquin/xpoc-test-4fecf28be9a8',
         ],
         canonicalAccountData: [
             // canonicalized version of validAccountUrls (first 6 are the same, last 5 are the same)
-            ...new Array(6).fill(
-                {
-                    url: 'https://medium.com/@chpaquin',
-                    account: 'chpaquin'
-                }
-            ),
-            ...new Array(5).fill(
-                {
-                    url: 'https://christianpaquin.medium.com',
-                    account: 'christianpaquin'
-                }
-            )
+            ...new Array(6).fill({
+                url: 'https://medium.com/@chpaquin',
+                account: 'chpaquin',
+            }),
+            ...new Array(5).fill({
+                url: 'https://christianpaquin.medium.com',
+                account: 'christianpaquin',
+            }),
         ],
         canonicalContentData: [
             // canonicalized version of validContentUrls (first 4, next 3, and last 3 are the same)
-            ...new Array(4).fill(
-                {
-                    url: 'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
-                    account: 'chpaquin',
-                    puid: '4fecf28be9a8',
-                    type: 'post'
-                }
-            ),
-            ...new Array(3).fill(
-                {
-                    url: 'https://christianpaquin.medium.com/hello-world-d4011bf78829',
-                    account: 'christianpaquin',
-                    puid: 'd4011bf78829',
-                    type: 'post'
-                }
-            ),
-            ...new Array(4).fill(
-                {
-                    url: 'https://medium.com/p/4fecf28be9a8',
-                    account: '',
-                    puid: '4fecf28be9a8',
-                    type: 'post'
-                }
-            )
+            ...new Array(4).fill({
+                url: 'https://medium.com/@chpaquin/xpoc-test-4fecf28be9a8',
+                account: 'chpaquin',
+                puid: '4fecf28be9a8',
+                type: 'post',
+            }),
+            ...new Array(3).fill({
+                url: 'https://christianpaquin.medium.com/hello-world-d4011bf78829',
+                account: 'christianpaquin',
+                puid: 'd4011bf78829',
+                type: 'post',
+            }),
+            ...new Array(4).fill({
+                url: 'https://medium.com/p/4fecf28be9a8',
+                account: '',
+                puid: '4fecf28be9a8',
+                type: 'post',
+            }),
         ],
         sampleAccountData: undefined,
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
 
     // TikTok test data
@@ -376,7 +365,7 @@ const platformTestDataArray: PlatformTestData[] = [
             'microsoft',
             '@microsoft',
             ' microsoft ',
-            ' @microsoft '
+            ' @microsoft ',
         ],
         validAccountUrls: [
             'https://www.tiktok.com/@microsoft',
@@ -388,50 +377,48 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://www.tiktok.com/@microsoft/video/7281710200761978155',
             'https://www.tiktok.com/@microsoft/video/7281710200761978155/',
             'https://tiktok.com/@microsoft/video/7281710200761978155',
-            'https://www.tiktok.com/@microsoft/video/7281710200761978155?lang=en'
+            'https://www.tiktok.com/@microsoft/video/7281710200761978155?lang=en',
         ],
         invalidAccountUrls: [
             'https://tiktok.com',
             'https://www.tiktok.com/@microsoft/video/7281710200761978155',
-            'https://www.nottiktok.com/@microsoft'
+            'https://www.nottiktok.com/@microsoft',
         ],
         invalidContentUrls: [
             'https://tiktok.com',
             'https://www.tiktok.com/@microsoft',
-            'https://www.nottiktok.com/@microsoft/video/7281710200761978155'
+            'https://www.nottiktok.com/@microsoft/video/7281710200761978155',
         ],
         canonicalAccountData: [
             ...new Array(3).fill(
                 // canonicalized version of validAccountUrls (first 3 are the same)
                 {
                     url: 'https://www.tiktok.com/@microsoft',
-                    account: 'microsoft'
+                    account: 'microsoft',
                 },
             ),
             {
                 url: 'https://www.tiktok.com/@a_valid_account.name1234',
-                account: 'a_valid_account.name1234'
-            }],
+                account: 'a_valid_account.name1234',
+            },
+        ],
         canonicalContentData: new Array(4).fill(
             // canonicalized version of validContentUrls (representing all the same content)
             {
                 url: 'https://www.tiktok.com/@microsoft/video/7281710200761978155',
                 account: 'microsoft',
                 puid: '7281710200761978155',
-                type: 'video'
-            }
+                type: 'video',
+            },
         ),
         sampleAccountData: undefined,
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
 
     // LinkedIn test data
     {
         platform: new LinkedIn(),
-        accountNames: [
-            'microsoft',
-            ' microsoft '
-        ],
+        accountNames: ['microsoft', ' microsoft '],
         validAccountUrls: [
             'https://www.linkedin.com/in/paquinchristian/',
             'https://www.linkedin.com/in/paquinchristian',
@@ -444,7 +431,7 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://www.linkedin.com/school/universite-de-montreal/',
             'https://www.linkedin.com/school/universite-de-montreal',
             'https://ca.linkedin.com/school/universite-de-montreal',
-            'https://www.linkedin.com/school/universite-de-montreal/about/'
+            'https://www.linkedin.com/school/universite-de-montreal/about/',
         ],
         validContentUrls: [
             'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880/',
@@ -457,55 +444,45 @@ const platformTestDataArray: PlatformTestData[] = [
         invalidAccountUrls: [
             'https://www.linkedin.com',
             'https://www.linkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx',
-            'https://www.notlinkedin.com/company/microsoft/'
+            'https://www.notlinkedin.com/company/microsoft/',
         ],
         invalidContentUrls: [
             'https://www.linkedin.com',
             'https://www.linkedin.com/company/microsoft/',
-            'https://www.notlinkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx'
+            'https://www.notlinkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx',
         ],
         canonicalAccountData: [
             // canonicalized version of validAccountUrls (1st, 2nd, 3rd group of 4 are the same)
-            ...new Array(4).fill(
-                {
-                    url: 'https://www.linkedin.com/in/paquinchristian/',
-                    account: 'paquinchristian'
-                },
-            ),
-            ...new Array(4).fill(
-                {
-                    url: 'https://www.linkedin.com/company/microsoft/',
-                    account: 'microsoft'
-                },
-            ),
-            ...new Array(4).fill(
-                {
-                    url: 'https://www.linkedin.com/school/universite-de-montreal/',
-                    account: 'universite-de-montreal'
-                },
-            )
+            ...new Array(4).fill({
+                url: 'https://www.linkedin.com/in/paquinchristian/',
+                account: 'paquinchristian',
+            }),
+            ...new Array(4).fill({
+                url: 'https://www.linkedin.com/company/microsoft/',
+                account: 'microsoft',
+            }),
+            ...new Array(4).fill({
+                url: 'https://www.linkedin.com/school/universite-de-montreal/',
+                account: 'universite-de-montreal',
+            }),
         ],
         // canonicalized version of validContentUrls (1st, 2nd group of 3 are the same)
         canonicalContentData: [
-            ...new Array(3).fill(
-                {
-                    url: 'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880/',
-                    account: '',
-                    puid: '',
-                    type: 'event'
-                }
-            ),
-            ...new Array(3).fill(
-                {
-                    url: 'https://www.linkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx/',
-                    account: '',
-                    puid: '',
-                    type: 'post'
-                }
-            )
+            ...new Array(3).fill({
+                url: 'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880/',
+                account: '',
+                puid: '',
+                type: 'event',
+            }),
+            ...new Array(3).fill({
+                url: 'https://www.linkedin.com/posts/microsoft_over-150-unique-sessions-fuel-the-inaugural-activity-6846553561166442496-sRwx/',
+                account: '',
+                puid: '',
+                type: 'post',
+            }),
         ],
         sampleAccountData: undefined,
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
 
     // Threads test data
@@ -515,36 +492,36 @@ const platformTestDataArray: PlatformTestData[] = [
             'microsoft',
             '@microsoft',
             ' microsoft ',
-            ' @microsoft '
+            ' @microsoft ',
         ],
         validAccountUrls: [
             'https://www.threads.net/@microsoft',
             'https://www.threads.net/@microsoft/',
             'https://www.threads.net/microsoft',
-            'https://threads.net/@microsoft'
+            'https://threads.net/@microsoft',
         ],
         validContentUrls: [
             'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-',
             'https://threads.net/@microsoft/post/Cx3OmEtRKw-',
             'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-/',
-            'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-/?utm_source=share&utm_medium=member_desktop'
+            'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-/?utm_source=share&utm_medium=member_desktop',
         ],
         invalidAccountUrls: [
             'https://www.threads.net',
             'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-',
-            'https://www.notthreads.net/@microsoft'
+            'https://www.notthreads.net/@microsoft',
         ],
         invalidContentUrls: [
             'https://www.threads.net',
             'https://www.threads.net/@microsoft',
-            'https://www.notthreads.net/@microsoft/post/Cx3OmEtRKw-'
+            'https://www.notthreads.net/@microsoft/post/Cx3OmEtRKw-',
         ],
         canonicalAccountData: new Array(4).fill(
             // canonicalized version of validAccountUrls (representing all the same account)
             {
                 url: 'https://www.threads.net/@microsoft',
-                account: 'microsoft'
-            }
+                account: 'microsoft',
+            },
         ),
         canonicalContentData: new Array(4).fill(
             // canonicalized version of validContentUrls (representing all the same content)
@@ -552,24 +529,21 @@ const platformTestDataArray: PlatformTestData[] = [
                 url: 'https://www.threads.net/@microsoft/post/Cx3OmEtRKw-',
                 account: 'microsoft',
                 puid: 'Cx3OmEtRKw-',
-                type: 'post'
-            }
+                type: 'post',
+            },
         ),
         sampleAccountData: undefined,
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
 
     // Google Scholar test data
     {
         platform: new GoogleScholar(),
-        accountNames: [
-            'IBaguvsAAAAJ',
-            ' IBaguvsAAAAJ '
-        ],
+        accountNames: ['IBaguvsAAAAJ', ' IBaguvsAAAAJ '],
         validAccountUrls: [
             'https://scholar.google.com/citations?user=IBaguvsAAAAJ',
             'https://scholar.google.com/citations?user=IBaguvsAAAAJ&hl=en',
-            'https://scholar.google.com/citations?hl=en&user=IBaguvsAAAAJ'
+            'https://scholar.google.com/citations?hl=en&user=IBaguvsAAAAJ',
         ],
         validContentUrls: [
             // n/a
@@ -585,14 +559,14 @@ const platformTestDataArray: PlatformTestData[] = [
             // canonicalized version of validAccountUrls (representing all the same account)
             {
                 url: 'https://scholar.google.com/citations?user=IBaguvsAAAAJ',
-                account: 'IBaguvsAAAAJ'
-            }
+                account: 'IBaguvsAAAAJ',
+            },
         ),
         canonicalContentData: [
             // n/a
         ],
         sampleAccountData: undefined,
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
 
     // Rumble test data
@@ -614,23 +588,24 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://rumble.com/c/abcd1234/',
             'https://rumble.com/c/abcd1234',
             'https://rumble.com/abcd1234/',
-            'https://rumble.com/abcd1234'
+            'https://rumble.com/abcd1234',
         ],
         validContentUrls: [
             'https://rumble.com/v3lvq1f-crossette.html',
             'https://rumble.com/v3lvq1f-crossette',
             'https://www.rumble.com/v3lvq1f-crossette.html',
             'https://rumble.com/v3lvq1f-crossette.html/',
-            'https://rumble.com/v3lvq1f-crossette/'
+            'https://rumble.com/v3lvq1f-crossette/',
         ],
         invalidAccountUrls: [
             'https://rumble.com',
             'https://rumble.com/c-49080740', // 8 digits instead of 7
             'https://rumble.com/c/c-49080740', // 8 digits instead of 7
             'https://rumble.com/a/c-4908074',
-            'https://notrumble.com/c/c-4908074/'
+            'https://notrumble.com/c/c-4908074/',
         ],
-        invalidContentUrls: [ // TODO: add query params
+        invalidContentUrls: [
+            // TODO: add query params
             'https://rumble.com',
             'https://rumble.com/c/c-4908074/',
             'https://rumble.com/c/v3lvq1f-crossette.html',
@@ -638,57 +613,48 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://notrumble.com/v3lvq1f-crossette.html',
         ],
         canonicalAccountData: [
-            ...new Array(6).fill(
-                {
-                    url: 'https://rumble.com/c/c-4908074',
-                    account: 'c-4908074'
-                }
-            ),
-            ...new Array(4).fill(
-                {
-                    url: 'https://rumble.com/c/abcd1234',
-                    account: 'abcd1234'
-                }
-            )
+            ...new Array(6).fill({
+                url: 'https://rumble.com/c/c-4908074',
+                account: 'c-4908074',
+            }),
+            ...new Array(4).fill({
+                url: 'https://rumble.com/c/abcd1234',
+                account: 'abcd1234',
+            }),
         ],
         canonicalContentData: [
-            ...new Array(5).fill(
-                {
-                    url: 'https://rumble.com/v3lvq1f-crossette.html',
-                    account: '',
-                    puid: 'v3lvq1f-crossette',
-                    type: 'video'
-                }
-            )
+            ...new Array(5).fill({
+                url: 'https://rumble.com/v3lvq1f-crossette.html',
+                account: '',
+                puid: 'v3lvq1f-crossette',
+                type: 'video',
+            }),
         ],
         sampleAccountData: {
             xpocUri: expectedXpocUri,
-            platform: "Rumble",
-            url: "https://rumble.com/c/c-4908074",
-            account: "c-4908074",
+            platform: 'Rumble',
+            url: 'https://rumble.com/c/c-4908074',
+            account: 'c-4908074',
         },
         sampleContentData: {
             xpocUri: expectedXpocUri,
-            platform: "Rumble",
-            url: "https://rumble.com/v3lvq1f-crossette.html",
-            account: "c-4908074",
-            timestamp: "2023-09-29T00:00:00Z",
-            puid: "v3lvq1f-crossette"
-        }
+            platform: 'Rumble',
+            url: 'https://rumble.com/v3lvq1f-crossette.html',
+            account: 'c-4908074',
+            timestamp: '2023-09-29T00:00:00Z',
+            puid: 'v3lvq1f-crossette',
+        },
     },
 
     // GitHub test data
     {
         platform: new GitHub(),
-        accountNames: [
-            'christianpaquin',
-            ' christianpaquin '
-        ],
+        accountNames: ['christianpaquin', ' christianpaquin '],
         validAccountUrls: [
             'https://github.com/christianpaquin',
             'https://github.com/christianpaquin/',
             'https://www.github.com/christianpaquin',
-            'https://github.com/christianpaquin?utm_source=bing&utm_content=textlink'
+            'https://github.com/christianpaquin?utm_source=bing&utm_content=textlink',
         ],
         validContentUrls: [
             // n/a
@@ -704,30 +670,26 @@ const platformTestDataArray: PlatformTestData[] = [
             // canonicalized version of validAccountUrls (representing all the same account)
             {
                 url: 'https://github.com/christianpaquin',
-                account: 'christianpaquin'
-            }
+                account: 'christianpaquin',
+            },
         ),
         canonicalContentData: [
             // n/a
         ],
         sampleAccountData: {
             xpocUri: expectedXpocUri,
-            platform: "GitHub",
-            url: "https://github.com/christianpaquin",
-            account: "christianpaquin",
+            platform: 'GitHub',
+            url: 'https://github.com/christianpaquin',
+            account: 'christianpaquin',
         },
 
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
 
     // Telegram test data
     {
         platform: new Telegram(),
-        accountNames: [
-            'xpoctest',
-            '@xpoctest',
-            ' xpoctest '
-        ],
+        accountNames: ['xpoctest', '@xpoctest', ' xpoctest '],
         validAccountUrls: [
             // accounts
             'https://t.me/xpoctest',
@@ -740,7 +702,7 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://telegram.dog/xpoctest',
             // channels
             'https://www.t.me/testxpocchannel',
-            'https://web.telegram.org/k/#@testxpocchannel'
+            'https://web.telegram.org/k/#@testxpocchannel',
         ],
         validContentUrls: [
             // n/a
@@ -749,38 +711,38 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://t.me',
             'https://web.telegram.org',
             'https://nott.me/xpoctest',
-            'https://nottelegram.org/xpoctest'
+            'https://nottelegram.org/xpoctest',
         ],
         invalidContentUrls: [
             // n/a
         ],
         canonicalAccountData: [
-            ...new Array(8).fill( // canonicalized version of validAccountUrls (representing all the same account)
-            {
-                url: 'https://t.me/xpoctest',
-                account: 'xpoctest'
-            }),
-            ...new Array(2).fill( // canonicalized version of validAccountUrls (representing all the same account)
-            {
-                url: 'https://t.me/testxpocchannel',
-                account: 'testxpocchannel'
-            })
+            ...new Array(8).fill(
+                // canonicalized version of validAccountUrls (representing all the same account)
+                {
+                    url: 'https://t.me/xpoctest',
+                    account: 'xpoctest',
+                },
+            ),
+            ...new Array(2).fill(
+                // canonicalized version of validAccountUrls (representing all the same account)
+                {
+                    url: 'https://t.me/testxpocchannel',
+                    account: 'testxpocchannel',
+                },
+            ),
         ],
         canonicalContentData: [
             // n/a
         ],
         sampleAccountData: undefined,
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
 
     // LINE test data
     {
         platform: new LINE(),
-        accountNames: [
-            'xpoctest',
-            '@xpoctest',
-            ' xpoctest '
-        ],
+        accountNames: ['xpoctest', '@xpoctest', ' xpoctest '],
         validAccountUrls: [],
         validContentUrls: [],
         invalidAccountUrls: [],
@@ -788,16 +750,13 @@ const platformTestDataArray: PlatformTestData[] = [
         canonicalAccountData: [],
         canonicalContentData: [],
         sampleAccountData: undefined,
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
 
     // Snapchat test data
     {
         platform: new Snapchat(),
-        accountNames: [
-            'xpoctest',
-            ' xpoctest '
-        ],
+        accountNames: ['xpoctest', ' xpoctest '],
         validAccountUrls: [],
         validContentUrls: [],
         invalidAccountUrls: [],
@@ -805,16 +764,13 @@ const platformTestDataArray: PlatformTestData[] = [
         canonicalAccountData: [],
         canonicalContentData: [],
         sampleAccountData: undefined,
-        sampleContentData: undefined
+        sampleContentData: undefined,
     },
-    
+
     // Vimeo test data
     {
         platform: new Vimeo(),
-        accountNames: [
-            'xpoctester',
-            ' xpoctester '
-        ],
+        accountNames: ['xpoctester', ' xpoctester '],
         validAccountUrls: [
             'https://vimeo.com/xpoctester',
             'https://vimeo.com/xpoctester/',
@@ -828,57 +784,45 @@ const platformTestDataArray: PlatformTestData[] = [
             'https://www.vimeo.com/879818126',
             'https://vimeo.com/879818126?utm_source=affiliate&utm_channel=affiliate',
         ],
-        invalidAccountUrls: [
-            'https://vimeo.com',
-            'https://notvimeo.com',
-        ],
-        invalidContentUrls: [
-            'https://vimeo.com',
-            'https://notvimeo.com',
-        ],
+        invalidAccountUrls: ['https://vimeo.com', 'https://notvimeo.com'],
+        invalidContentUrls: ['https://vimeo.com', 'https://notvimeo.com'],
         canonicalAccountData: [
-            ...new Array(5).fill(
-                {
-                    url: 'https://vimeo.com/xpoctester',
-                    account: 'xpoctester'
-                }
-            ),
-            ...new Array(4).fill(
-                {
-                    url: 'https://vimeo.com/879818126',
-                    account: '879818126'
-                }
-            )
+            ...new Array(5).fill({
+                url: 'https://vimeo.com/xpoctester',
+                account: 'xpoctester',
+            }),
+            ...new Array(4).fill({
+                url: 'https://vimeo.com/879818126',
+                account: '879818126',
+            }),
         ],
         canonicalContentData: [
-            ...new Array(5).fill(
-                {
-                    url: 'https://vimeo.com/879818126',
-                    account: '',
-                    puid: '879818126',
-                    type: 'video'
-                }
-            )
+            ...new Array(5).fill({
+                url: 'https://vimeo.com/879818126',
+                account: '',
+                puid: '879818126',
+                type: 'video',
+            }),
         ],
         sampleAccountData: {
             xpocUri: expectedXpocUri,
-            platform: "Vimeo",
-            url: "https://vimeo.com/xpoctester",
-            account: "xpoctester",
+            platform: 'Vimeo',
+            url: 'https://vimeo.com/xpoctester',
+            account: 'xpoctester',
         },
         sampleContentData: {
             xpocUri: expectedXpocUri,
-            platform: "Vimeo",
-            url: "https://vimeo.com/879818126",
-            account: "xpoctester",
-            timestamp: "2023-10-31T14:49:45Z",
-            puid: "879818126"
-        }
+            platform: 'Vimeo',
+            url: 'https://vimeo.com/879818126',
+            account: 'xpoctester',
+            timestamp: '2023-10-31T14:49:45Z',
+            puid: '879818126',
+        },
     },
-
 ];
 
-const hasValue = (s: string | undefined): boolean => s !== undefined && s !== '';
+const hasValue = (s: string | undefined): boolean =>
+    s !== undefined && s !== '';
 
 // run tests for each platform
 for (const platformTestData of platformTestDataArray) {
@@ -886,11 +830,12 @@ for (const platformTestData of platformTestDataArray) {
     const platformName = platform.DisplayName;
 
     describe(`${platformName} platform test`, () => {
-
         test(`${platformName} account name canonicalization`, () => {
             for (const account of platformTestData.accountNames) {
                 const expected = platformTestData.accountNames[0];
-                expect(platform.canonicalizeAccountName(account)).toBe(expected);
+                expect(platform.canonicalizeAccountName(account)).toBe(
+                    expected,
+                );
             }
         });
 
@@ -918,22 +863,44 @@ for (const platformTestData of platformTestDataArray) {
             for (let i = 0; i < platformTestData.validAccountUrls.length; i++) {
                 const url = platformTestData.validAccountUrls[i];
                 const canonicalData = platform.canonicalizeAccountUrl(url);
-                const expectedCanonicalData = platformTestData.canonicalAccountData[i];
-                if (hasValue(expectedCanonicalData.url)) expect(canonicalData.url).toBe(expectedCanonicalData.url);
-                if (hasValue(expectedCanonicalData.account)) expect(canonicalData.account).toBe(expectedCanonicalData.account);
+                const expectedCanonicalData =
+                    platformTestData.canonicalAccountData[i];
+                if (hasValue(expectedCanonicalData.url))
+                    expect(canonicalData.url).toBe(expectedCanonicalData.url);
+                if (hasValue(expectedCanonicalData.account))
+                    expect(canonicalData.account).toBe(
+                        expectedCanonicalData.account,
+                    );
             }
         });
 
         if (platformTestData.validContentUrls.length > 0) {
             test(`${platformName} content URL canonicalization`, () => {
-                for (let i = 0; i < platformTestData.validContentUrls.length; i++) {
+                for (
+                    let i = 0;
+                    i < platformTestData.validContentUrls.length;
+                    i++
+                ) {
                     const url = platformTestData.validContentUrls[i];
                     const canonicalData = platform.canonicalizeContentUrl(url);
-                    const expectedCanonicalData = platformTestData.canonicalContentData[i];
-                    if (hasValue(expectedCanonicalData.url)) expect(canonicalData.url).toBe(expectedCanonicalData.url);
-                    if (hasValue(expectedCanonicalData.account)) expect(canonicalData.account).toBe(expectedCanonicalData.account);
-                    if (hasValue(expectedCanonicalData.puid)) expect(canonicalData.puid).toBe(expectedCanonicalData.puid);
-                    if (hasValue(expectedCanonicalData.type)) expect(canonicalData.type).toBe(expectedCanonicalData.type);
+                    const expectedCanonicalData =
+                        platformTestData.canonicalContentData[i];
+                    if (hasValue(expectedCanonicalData.url))
+                        expect(canonicalData.url).toBe(
+                            expectedCanonicalData.url,
+                        );
+                    if (hasValue(expectedCanonicalData.account))
+                        expect(canonicalData.account).toBe(
+                            expectedCanonicalData.account,
+                        );
+                    if (hasValue(expectedCanonicalData.puid))
+                        expect(canonicalData.puid).toBe(
+                            expectedCanonicalData.puid,
+                        );
+                    if (hasValue(expectedCanonicalData.type))
+                        expect(canonicalData.type).toBe(
+                            expectedCanonicalData.type,
+                        );
                 }
             });
         }
@@ -942,13 +909,17 @@ for (const platformTestData of platformTestDataArray) {
             test(`${platformName} account fetch test`, async () => {
                 const sampleAccount = platformTestData.sampleAccountData;
                 if (sampleAccount) {
-                    const accountData = await platform.getAccountData(sampleAccount.url);
+                    const accountData = await platform.getAccountData(
+                        sampleAccount.url,
+                    );
                     expect(accountData.xpocUri).toBe(sampleAccount.xpocUri);
                     expect(accountData.account).toBe(sampleAccount.account);
                     expect(accountData.platform).toBe(sampleAccount.platform);
                     expect(accountData.url).toBe(sampleAccount.url);
                 } else {
-                    throw new Error(`No sample account data for ${platformName}`);
+                    throw new Error(
+                        `No sample account data for ${platformName}`,
+                    );
                 }
             });
         }
@@ -957,18 +928,24 @@ for (const platformTestData of platformTestDataArray) {
             test(`${platformName} content fetch test`, async () => {
                 const sampleContent = platformTestData.sampleContentData;
                 if (sampleContent) {
-                    const contentData = await platform.getContentData(sampleContent.url);
+                    const contentData = await platform.getContentData(
+                        sampleContent.url,
+                    );
                     expect(contentData.xpocUri).toBe(sampleContent.xpocUri);
                     // we only compare the date part of the timestamp in the tests; some platforms
                     // inconsistently return the time part of the timestamp
-                    const dateLength = "YYYY-MM-DD".length;
-                    expect(contentData.timestamp.substring(0, dateLength)).toBe(sampleContent.timestamp.substring(0, dateLength));
+                    const dateLength = 'YYYY-MM-DD'.length;
+                    expect(contentData.timestamp.substring(0, dateLength)).toBe(
+                        sampleContent.timestamp.substring(0, dateLength),
+                    );
                     expect(contentData.url).toBe(sampleContent.url);
                     expect(contentData.platform).toBe(sampleContent.platform);
                     expect(contentData.puid).toBe(sampleContent.puid);
                     expect(contentData.account).toBe(sampleContent.account);
                 } else {
-                    throw new Error(`No sample content data for ${platformName}`);
+                    throw new Error(
+                        `No sample content data for ${platformName}`,
+                    );
                 }
             });
         }
@@ -1004,79 +981,119 @@ describe('platform operations', () => {
         expect(Platforms.getCanonicalPlatformName(' youTube ')).toBe('YouTube');
         expect(Platforms.getCanonicalPlatformName(' x ')).toBe('X');
         expect(Platforms.getCanonicalPlatformName(' twitter ')).toBe('X'); // X alias
-        expect(Platforms.getCanonicalPlatformName(' facebook ')).toBe('Facebook');
-        expect(Platforms.getCanonicalPlatformName(' instagram ')).toBe('Instagram');
+        expect(Platforms.getCanonicalPlatformName(' facebook ')).toBe(
+            'Facebook',
+        );
+        expect(Platforms.getCanonicalPlatformName(' instagram ')).toBe(
+            'Instagram',
+        );
         expect(Platforms.getCanonicalPlatformName(' medium ')).toBe('Medium');
         expect(Platforms.getCanonicalPlatformName(' tiktok ')).toBe('TikTok');
-        expect(Platforms.getCanonicalPlatformName(' linkedin ')).toBe('LinkedIn');
+        expect(Platforms.getCanonicalPlatformName(' linkedin ')).toBe(
+            'LinkedIn',
+        );
         expect(Platforms.getCanonicalPlatformName(' threads ')).toBe('Threads');
-        expect(Platforms.getCanonicalPlatformName(' google scholar ')).toBe('Google Scholar');
-        expect(Platforms.getCanonicalPlatformName(' googlescholar ')).toBe('Google Scholar'); // no space
+        expect(Platforms.getCanonicalPlatformName(' google scholar ')).toBe(
+            'Google Scholar',
+        );
+        expect(Platforms.getCanonicalPlatformName(' googlescholar ')).toBe(
+            'Google Scholar',
+        ); // no space
         expect(Platforms.getCanonicalPlatformName(' rumble ')).toBe('Rumble');
         expect(Platforms.getCanonicalPlatformName(' github ')).toBe('GitHub');
-        expect(Platforms.getCanonicalPlatformName(' telegram ')).toBe('Telegram');
+        expect(Platforms.getCanonicalPlatformName(' telegram ')).toBe(
+            'Telegram',
+        );
         expect(Platforms.getCanonicalPlatformName(' line ')).toBe('LINE');
-        expect(Platforms.getCanonicalPlatformName(' snapchat ')).toBe('Snapchat');
+        expect(Platforms.getCanonicalPlatformName(' snapchat ')).toBe(
+            'Snapchat',
+        );
         expect(Platforms.getCanonicalPlatformName(' vimeo ')).toBe('Vimeo');
         // unsupported platform
-        expect(Platforms.getCanonicalPlatformName(' NotAPlatform ')).toBe('NotAPlatform');
+        expect(Platforms.getCanonicalPlatformName(' NotAPlatform ')).toBe(
+            'NotAPlatform',
+        );
     });
 
     test('platform account URL validation', () => {
         // YouTube test
         let url = 'https://www.youtube.com/@accountname';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("YouTube");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'YouTube',
+        );
         // X/Twitter test
         url = 'https://twitter.com/accountname';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("X");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe('X');
         // Facebook test
         url = 'https://www.facebook.com/accountname';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Facebook");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'Facebook',
+        );
         // Instagram test
         url = 'https://www.instagram.com/accountname/';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Instagram");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'Instagram',
+        );
         // Medium test
         url = 'https://medium.com/@accountname';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Medium");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'Medium',
+        );
         // TikTok
         url = 'https://www.tiktok.com/@accountname';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("TikTok");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'TikTok',
+        );
         // LinkedIn
         url = 'https://www.linkedin.com/in/accountname/';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("LinkedIn");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'LinkedIn',
+        );
         // Threads
         url = 'https://www.threads.net/@accountname';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Threads");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'Threads',
+        );
         // Google Scholar
         url = 'https://scholar.google.com/citations?user=userid';
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Google Scholar");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'Google Scholar',
+        );
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
         // Rumble
         url = 'https://rumble.com/c/accountname';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Rumble");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'Rumble',
+        );
         // GitHub
         url = 'https://github.com/accountname';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("GitHub");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'GitHub',
+        );
         // Telegram
         url = 'https://t.me/accountname';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Telegram");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'Telegram',
+        );
         // LINE: n/a
         // Snapchat: n/a
         // Vimeo
         url = 'https://vimeo.com/accountname';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe("Vimeo");
+        expect(Platforms.getPlatformFromAccountUrl(url)?.DisplayName).toBe(
+            'Vimeo',
+        );
         // unsupported platform
         url = 'https://www.notaplatform.com/accountname';
         expect(Platforms.isSupportedAccountUrl(url)).toBe(false);
@@ -1087,35 +1104,49 @@ describe('platform operations', () => {
         // YouTube test
         let url = 'https://www.youtube.com/watch?v=abcdef12345';
         expect(Platforms.isSupportedContentUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("YouTube");
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe(
+            'YouTube',
+        );
         // X/Twitter test
         url = 'https://twitter.com/accountname/status/1234567890123456789';
         expect(Platforms.isSupportedContentUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("X");
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe('X');
         // Facebook test
         url = 'https://www.facebook.com/accountname/posts/123456789012345';
         expect(Platforms.isSupportedContentUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Facebook");
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe(
+            'Facebook',
+        );
         // Instagram test
         url = 'https://www.instagram.com/p/ABCDEF12345/';
         expect(Platforms.isSupportedContentUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Instagram");
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe(
+            'Instagram',
+        );
         // Medium test
         url = 'https://medium.com/@accountname/title-abcdef123456';
         expect(Platforms.isSupportedContentUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Medium");
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe(
+            'Medium',
+        );
         // TikTok
         url = 'https://www.tiktok.com/@accountname/video/1234567890123456789';
         expect(Platforms.isSupportedContentUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("TikTok");
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe(
+            'TikTok',
+        );
         // LinkedIn
         url = 'https://www.linkedin.com/posts/title';
         expect(Platforms.isSupportedContentUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("LinkedIn");
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe(
+            'LinkedIn',
+        );
         // Threads
         url = 'https://www.threads.net/@accountname/post/ABCD1234';
         expect(Platforms.isSupportedContentUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Threads");
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe(
+            'Threads',
+        );
         // Google Scholar (no supported content)
         url = 'https://scholar.google.com/citations?user=userid';
         expect(Platforms.isSupportedContentUrl(url)).toBe(false);
@@ -1123,9 +1154,11 @@ describe('platform operations', () => {
         // Rumble
         url = 'https://rumble.com/abcefgh-content.html';
         expect(Platforms.isSupportedContentUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Rumble");
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe(
+            'Rumble',
+        );
         // GitHub (no supported content)
-        url = 'https://github.com/accountname'
+        url = 'https://github.com/accountname';
         expect(Platforms.isSupportedContentUrl(url)).toBe(false);
         expect(Platforms.getPlatformFromContentUrl(url)).toBe(undefined);
         // Telegram (no supported content)
@@ -1137,7 +1170,9 @@ describe('platform operations', () => {
         // Vimeo
         url = 'https://vimeo.com/123456789';
         expect(Platforms.isSupportedContentUrl(url)).toBe(true);
-        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe("Vimeo");
+        expect(Platforms.getPlatformFromContentUrl(url)?.DisplayName).toBe(
+            'Vimeo',
+        );
         // unsupported platform
         url = 'https://www.notaplatform.com/abc123';
         expect(Platforms.isSupportedContentUrl(url)).toBe(false);
@@ -1151,7 +1186,9 @@ describe('platform operations', () => {
         let accountData = await Platforms.getAccountFromUrl(url);
         expect(accountData.platform).toBe('YouTube');
         expect(accountData.account).toBe('christianpaquinmsr');
-        expect(accountData.url).toBe('https://www.youtube.com/@christianpaquinmsr');
+        expect(accountData.url).toBe(
+            'https://www.youtube.com/@christianpaquinmsr',
+        );
 
         // X/Twitter test (no public access, expect a not supported exception)
         url = 'https://twitter.com/chpaquin';
@@ -1213,7 +1250,7 @@ describe('platform operations', () => {
         url = 'https://t.me/xpoctest';
         expect(Platforms.canFetchAccountFromUrl(url)).toBe(false);
         await expect(Platforms.getAccountFromUrl(url)).rejects.toThrow();
-        
+
         // LINE: n/a
 
         // Snapchat: n/a
@@ -1239,10 +1276,14 @@ describe('platform operations', () => {
         let contentData = await Platforms.getContentFromUrl(url);
         expect(contentData.platform).toBe('YouTube');
         expect(contentData.puid).toBe('hDd3t7y1asU');
-        expect(contentData.url).toBe('https://www.youtube.com/watch?v=hDd3t7y1asU');
+        expect(contentData.url).toBe(
+            'https://www.youtube.com/watch?v=hDd3t7y1asU',
+        );
         expect(contentData.account).toBe('christianpaquinmsr');
         // YouTube inconsistently return the time part of the timestamp, we only check the date here
-        expect(contentData.timestamp.substring(0, "YYYY-MM-DD".length)).toBe('2023-07-10');
+        expect(contentData.timestamp.substring(0, 'YYYY-MM-DD'.length)).toBe(
+            '2023-07-10',
+        );
 
         // X/Twitter test (no public access, expect a not supported exception)
         url = 'https://twitter.com/chpaquin/status/1694698274618319246';
@@ -1250,7 +1291,8 @@ describe('platform operations', () => {
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 
         // Facebook test (no public access, expect a not supported exception)
-        url = 'https://www.facebook.com/Microsoft/photos/a.10150199519298721/10150199519298721/';
+        url =
+            'https://www.facebook.com/Microsoft/photos/a.10150199519298721/10150199519298721/';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 
@@ -1265,12 +1307,14 @@ describe('platform operations', () => {
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 
         // TikTok test (no public access, expect a not supported exception)
-        url = 'https://www.tiktok.com/@christian.paquin/video/7282144635848346923';
+        url =
+            'https://www.tiktok.com/@christian.paquin/video/7282144635848346923';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 
         // LinkedIn test (no public access, expect a not supported exception)
-        url = 'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880/';
+        url =
+            'https://www.linkedin.com/events/thefutureofwork-reinventingprod7038508574142074880/';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 
@@ -1284,13 +1328,15 @@ describe('platform operations', () => {
         expect(Platforms.canFetchContentFromUrl(url)).toBe(false);
         await expect(Platforms.getContentFromUrl(url)).rejects.toThrow();
 
-        // Rumble test 
+        // Rumble test
         url = 'https://rumble.com/v3lvq1f-crossette.html';
         expect(Platforms.canFetchContentFromUrl(url)).toBe(true);
         contentData = await Platforms.getContentFromUrl(url);
         expect(contentData.platform).toBe('Rumble');
         expect(contentData.puid).toBe('v3lvq1f-crossette');
-        expect(contentData.url).toBe('https://rumble.com/v3lvq1f-crossette.html');
+        expect(contentData.url).toBe(
+            'https://rumble.com/v3lvq1f-crossette.html',
+        );
         expect(contentData.account).toBe('c-4908074');
 
         // GitHub test (no content URL, expect a not supported exception)

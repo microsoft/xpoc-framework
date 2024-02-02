@@ -10,6 +10,10 @@ export const INVALID_URL: string = chrome.runtime.getURL('icons/invalid.svg');
 export const WARNING_URL: string = chrome.runtime.getURL('icons/warning.svg');
 const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
 
+/* 
+    The `Icon` class is a TypeScript class that represents an icon element with various 
+    properties and methods for creating and manipulating the icon. 
+*/
 export class Icon {
     img: Node;
 
@@ -22,7 +26,15 @@ export class Icon {
         this.setIcon();
     }
 
-    static createIcon(status: string): HTMLImageElement {
+    /**
+     * Creates an icon element based on the provided status.
+     * @param status - The status of the icon.
+     * @returns The created HTMLImageElement representing the icon.
+     * @throws Error if the status is unknown.
+     */
+    static createIcon(
+        status: 'notFound' | 'error' | 'account' | 'content' | 'warning',
+    ): HTMLImageElement {
         let path: string;
         switch (status) {
             case 'notFound':
@@ -47,12 +59,19 @@ export class Icon {
         return img;
     }
 
+    /**
+     * Sets the icon for the node.
+     *
+     * @param replaceLink - Indicates whether to replace the link in the text content.
+     * @returns void
+     */
     public setIcon(replaceLink: boolean = false): void {
         const node = this.node;
         const img = this.img;
         const textNode = node as Text;
         const text = textNode.textContent ?? '';
-        // const xpocUriIndex = text.indexOf(this.xpocUri)
+
+        // remove the link from the text content, if requested
         if (replaceLink) {
             node.textContent = text.replace(PATTERN, '');
         }
@@ -69,11 +88,15 @@ export class Icon {
                 textNode.textContent += ' ';
             }
             // inserts the image after the text node
-            // this works even if there is no next sibling
+            // (this works even if there is no next sibling)
             node.parentNode?.insertBefore(img, node.nextSibling);
         }
     }
 
+    /**
+     * Sets the click event handler for the icon.
+     * @param value - The callback function to be executed when the icon is clicked.
+     */
     set onClick(value: () => void) {
         this.img.addEventListener('click', () => {
             setTimeout(value);

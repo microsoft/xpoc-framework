@@ -37,6 +37,11 @@ export interface OriginInfo {
     source: string;
 }
 
+/**
+ * Retrieves the origin information for a given URL.
+ * @param url The URL for which to retrieve the origin information.
+ * @returns The origin information for the URL, or undefined if the URL is not supported or no origin data source is set.
+ */
 export function getOriginInfo(url: string | undefined): OriginInfo | undefined {
     console.log(`getOriginInfo called url: ${url}`);
     if (!originSourceData) {
@@ -124,7 +129,13 @@ export function getOriginInfo(url: string | undefined): OriginInfo | undefined {
     }
 }
 
-// sets the origin data source, returns the OriginSourceData or throws an error
+/**
+ * Sets the origin data source, returns the OriginSourceData or throws an error
+ *
+ * @param data - The data to set as the origin data source.
+ * @returns The source of the data.
+ * @throws Throws an error if the data source is invalid.
+ */
 export function setOriginDataSource(data: OriginSourceData): OriginSource {
     console.log(`setOriginDataSource called`);
 
@@ -144,6 +155,10 @@ export function setOriginDataSource(data: OriginSourceData): OriginSource {
     return data.source;
 }
 
+/**
+ * Retrieves the origin source data from storage.
+ * @returns The origin source data, or undefined if not found.
+ */
 function getOriginSourceData(): OriginSourceData | undefined {
     // load the origin data source from storage
     let originDataSource: OriginSourceData | undefined;
@@ -166,6 +181,10 @@ function getOriginSourceData(): OriginSourceData | undefined {
 // load the origin data source from storage
 getOriginSourceData();
 
+/**
+ * Retrieves the origin source.
+ * @returns The origin source if available, otherwise undefined.
+ */
 export function getOriginSource(): OriginSource | undefined {
     if (originSourceData) {
         return originSourceData.source;

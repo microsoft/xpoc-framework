@@ -8,7 +8,20 @@ import { type lookupXpocUriResult } from './xpoc-lib';
 import { contextMenuResult, contextTarget } from './context';
 
 const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
+const skipHiddenNodes = false;
+const SUCCESS_COLOR = '#5B9BD5';
+const ERROR_COLOR = '#E43A19';
 
+/*
+    Instantiate the DomScanner and popup control
+*/
+const scanner = new DomScanner(nodeTest, addCallback, removeCallback);
+const contentPopup = new ContentPopup();
+
+/* 
+    Called after background.js has processed the context menu click
+    Context menu clicks are captured and handled in the background.js
+*/
 contextMenuResult((result: unknown) => {
     addIcon(contextTarget as Node);
     showXpocPopup(contextTarget as Node, result as lookupXpocUriResult);
@@ -22,8 +35,6 @@ chrome.runtime.onMessage.addListener((request) => {
         request.autoScan ? scanner.start() : scanner.stop();
     }
 });
-
-const contentPopup = new ContentPopup();
 
 /**
  * Call background to lookup the xpocUri
@@ -42,25 +53,35 @@ const lookupXpocUri = async (xpocUri: string): Promise<lookupXpocUriResult> => {
     });
 };
 
-// returns a base URL from a XPOC URI
+/**
+ * Converts an xpoc URI to a base URL.
+ * @param xpocUri - The xpoc URI to convert.
+ * @returns The base URL.
+ */
 const getBaseURL = (xpocUri: string): string =>
     xpocUri
         .replace(/^xpoc:\/\//, 'https://')
         .replace(/!$/, '')
         .replace(/\/$/, '');
 
-// keep a cache of nodes we've already processed
-const cache = new WeakMap<Node, string>();
-const skipHiddenNodes = false;
+/**
+ * The function `autoScanPage` checks if a certain flag is set in the local storage and starts a
+ * scanner if the flag is true.
+ */
+(function autoScanPage() {
+    chrome.storage.local.get(['autoVerifyXpocUris'], (result) => {
+        const autoValidateXpocUris = !!result?.autoVerifyXpocUris;
+        if (autoValidateXpocUris) {
+            scanner.start();
+        }
+    });
+})();
 
-// auto-validate XPOC URIs (if enabled)
-chrome.storage.local.get(['autoVerifyXpocUris'], (result) => {
-    const autoValidateXpocUris = !!result?.autoVerifyXpocUris;
-    if (autoValidateXpocUris) {
-        scanner.start();
-    }
-});
-
+/**
+ * Adds an icon to the specified node.
+ *
+ * @param node - The node to add the icon to.
+ */
 const addIcon = (node: Node) => {
     console.log(`add: ${node.textContent}`);
 
@@ -75,7 +96,7 @@ const addIcon = (node: Node) => {
 
         const match = PATTERN.exec((node as Text).textContent ?? '');
         const xpocUri = match?.[0] as string;
-        cache.set(node, xpocUri);
+        // cache.set(node, xpocUri);
 
         lookupXpocUri(xpocUri).then((result) => {
             const icon = new Icon(node, xpocUri, result);
@@ -88,9 +109,12 @@ const addIcon = (node: Node) => {
     }
 };
 
-const SUCCESS_COLOR = '#5B9BD5';
-const ERROR_COLOR = '#E43A19';
-
+/**
+ * Displays the XPOC popup based on the provided xpocResult.
+ *
+ * @param {Node} targetNode - The target node where the popup will be displayed.
+ * @param {lookupXpocUriResult} xpocResult - The result of the XPOC lookup.
+ */
 function showXpocPopup(targetNode: Node, xpocResult: lookupXpocUriResult) {
     if (xpocResult.type === 'notFound') {
         contentPopup.show(
@@ -199,8 +223,6 @@ function removeCallback(node: Node): void {
         // addIcon(parent.node[0] as Node);
     }
 }
-
-const scanner = new DomScanner(nodeTest, addCallback, removeCallback);
 
 /**
  * Determines if an element is visually rendered in the document.

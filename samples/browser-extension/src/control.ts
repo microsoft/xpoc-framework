@@ -102,6 +102,9 @@ template.innerHTML = `
 </div>
 `;
 
+/**
+ * Represents a content popup element.
+ */
 export class ContentPopup /* extends HTMLElement */ {
     container: HTMLElement;
     #shadowRoot: ShadowRoot;
@@ -225,6 +228,11 @@ export class ContentPopup /* extends HTMLElement */ {
     }
 }
 
+/**
+ * Sets up focus trapping within the specified element.
+ * @param element - The HTML element to trap focus within.
+ * @returns A function that can be called to clean up the focus trapping.
+ */
 function trapFocus(element: HTMLElement): (() => void) | undefined {
     const focusableElements = element.querySelectorAll<HTMLElement>(
         'a[href], button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',

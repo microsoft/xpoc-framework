@@ -78,6 +78,15 @@ const commonPlugins = [
                     return comment.value.startsWith('!');
                 },
             },
+            compress: {
+                drop_console: true,
+                pure_funcs: [
+                    'console.info',
+                    'console.debug',
+                    'console.warn',
+                    'console.log',
+                ],
+            },
         }),
     typescript({
         tsconfig: 'tsconfig.json',

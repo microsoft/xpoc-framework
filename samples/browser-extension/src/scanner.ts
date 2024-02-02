@@ -19,8 +19,8 @@ class DomScanner {
         this.#observer = new MutationObserver((mutationsList) => {
             mutationsList.forEach((mutation) => {
                 /*
-                 *  only the top-level node(s) will be in this list
-                 *  so we need to scan the node and its children
+                    only the top-level node(s) will be in this list
+                    so we need to scan the node and its children
                  */
                 mutation.addedNodes.forEach((n) => this.scanDomText(n));
                 mutation.removedNodes.forEach((n) => this.scanDomText(n));

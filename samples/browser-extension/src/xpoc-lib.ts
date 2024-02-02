@@ -13,6 +13,12 @@ const DOWNLOAD_TIMEOUT = Number.parseInt(
     process.env.DOWNLOAD_TIMEOUT ?? ('5000' as string),
 );
 
+/**
+ * Retrieves the base URL from a given URL by removing any query parameters and trailing slashes.
+ * If the URL is from YouTube and contains a 'v' query parameter, it will be included in the base URL.
+ * @param url - The input URL.
+ * @returns The base URL.
+ */
 function getBaseURL(url: string) {
     const urlObj = new URL(url);
     const searchParams = urlObj.searchParams;
@@ -31,6 +37,11 @@ function getBaseURL(url: string) {
     return baseURL;
 }
 
+/**
+ * Downloads the XPOC manifest for the given XPOC URI.
+ * @param xpocUri The XPOC URI.
+ * @returns A promise that resolves to the downloaded XPOC manifest or an Error object if the URI is invalid.
+ */
 async function downloadManifest(
     xpocUri: string,
 ): Promise<XPOCManifest | Error> {
@@ -54,6 +65,13 @@ async function downloadManifest(
     return manifest;
 }
 
+/**
+ * Fetches data from the specified URL with a timeout.
+ * @param url - The URL to fetch data from.
+ * @param options - The options for the fetch request.
+ * @param timeout - The timeout duration in milliseconds.
+ * @returns A promise that resolves to the fetched data or an error.
+ */
 async function fetchWithTimeout<T>(
     url: string,
     options: RequestInit = {},
@@ -126,6 +144,12 @@ export type lookupXpocUriResult =
           message: string;
       };
 
+/**
+ * Looks up the XPoc URI for a given tab URL and XPoc URL.
+ * @param tabUrl The URL of the tab.
+ * @param xpocUrl The URL of the XPoc.
+ * @returns A promise that resolves to the lookup result.
+ */
 export async function lookupXpocUri(
     tabUrl: string,
     xpocUrl: string,

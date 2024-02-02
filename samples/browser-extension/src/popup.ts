@@ -175,6 +175,10 @@ async function getActiveTab(): Promise<chrome.tabs.Tab> {
     });
 }
 
+/**
+ * Displays the results in the popup based on XPOC and origin information.
+ * @returns {Promise<void>} A promise that resolves when the results are displayed.
+ */
 async function showResults() {
     // check for XPOC result
     const originInfo = document.getElementById('origin-info') as HTMLDivElement;

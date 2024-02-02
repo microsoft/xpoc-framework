@@ -9,6 +9,12 @@
 
 export let clickedText = '';
 
+/**
+ * Registers a context menu item and handles the click event.
+ *
+ * @param handler - The function to be called when the context menu item is clicked.
+ * @returns void
+ */
 export function contextMenuRequest(
     handler: (
         info: chrome.contextMenus.OnClickData,
@@ -73,6 +79,12 @@ const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
 */
 export let contextTarget: Node | undefined = undefined;
 
+/**
+ * Registers a context menu result handler.
+ * Determines if a specific word we right-clicked on is a valid XPOC URI and sends a message to background.js to show the XPOC option in the context menu.
+ * The handler function will be called with the result of the context menu action.
+ * @param handler - The handler function to be called with the result of the context menu action.
+ */
 export function contextMenuResult(handler: (result: unknown) => void): void {
     /*
         Determines if specific word we right-clicked on is a valid XPOC URI

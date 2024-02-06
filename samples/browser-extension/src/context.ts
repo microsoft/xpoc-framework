@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-
 /* 
 
     Background script
@@ -10,20 +9,31 @@
 
 export let clickedText = '';
 
-export function contextMenuRequest(handler: (info: chrome.contextMenus.OnClickData, clickedText: string, tab?: chrome.tabs.Tab) => Promise<unknown>) {
-
+/**
+ * Registers a context menu item and handles the click event.
+ *
+ * @param handler - The function to be called when the context menu item is clicked.
+ * @returns void
+ */
+export function contextMenuRequest(
+    handler: (
+        info: chrome.contextMenus.OnClickData,
+        clickedText: string,
+        tab?: chrome.tabs.Tab,
+    ) => Promise<unknown>,
+) {
     // // the text that was clicked by the user
     // let clickedText = '';
 
     // create the context menu item
-    let menuItemId = chrome.contextMenus.create({
+    const menuItemId = chrome.contextMenus.create({
         id: 'verifyXpocUri',
         title: 'Verify XPOC link',
         contexts: ['all'],
         documentUrlPatterns: ['<all_urls>'], // this ensures it will show on all pages
     });
 
-    chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    chrome.runtime.onMessage.addListener(function (message) {
         /*
             When the user right clicks on text and it matches the regex for a valid XPOC link,
             the content script will send a message to the background script with the text that was clicked.
@@ -36,20 +46,20 @@ export function contextMenuRequest(handler: (info: chrome.contextMenus.OnClickDa
             });
         }
 
-        return true
+        return true;
     });
 
-    chrome.contextMenus.onClicked.addListener((info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab) => {
-        return handler(info, clickedText, tab)
-            .then((result) => {
-                const tabId = (tab as chrome.tabs.Tab).id as number
+    chrome.contextMenus.onClicked.addListener(
+        (info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab) => {
+            return handler(info, clickedText, tab).then((result) => {
+                const tabId = (tab as chrome.tabs.Tab).id as number;
                 chrome.tabs.sendMessage(tabId, {
                     action: 'contextMenuResult',
                     data: result,
                 });
-            })
-    })
-
+            });
+        },
+    );
 }
 
 /* 
@@ -60,9 +70,7 @@ export function contextMenuRequest(handler: (info: chrome.contextMenus.OnClickDa
 
 */
 
-
 const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
-
 
 /*
     When we right-click on a node, we save a reference to it
@@ -71,8 +79,13 @@ const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
 */
 export let contextTarget: Node | undefined = undefined;
 
+/**
+ * Registers a context menu result handler.
+ * Determines if a specific word we right-clicked on is a valid XPOC URI and sends a message to background.js to show the XPOC option in the context menu.
+ * The handler function will be called with the result of the context menu action.
+ * @param handler - The handler function to be called with the result of the context menu action.
+ */
 export function contextMenuResult(handler: (result: unknown) => void): void {
-
     /*
         Determines if specific word we right-clicked on is a valid XPOC URI
         We want to check if the text we clicked on is a valid XPOC URI before we show the XPOC context menu.
@@ -96,10 +109,11 @@ export function contextMenuResult(handler: (result: unknown) => void): void {
                 const clickedText = getSubstringAtClick(
                     target.textContent,
                     PATTERN,
-                    event,
                 );
                 if (clickedText) {
-                    contextTarget = Array.from(target.childNodes).find((node) => node.nodeType === Node.TEXT_NODE);
+                    contextTarget = Array.from(target.childNodes).find(
+                        (node) => node.nodeType === Node.TEXT_NODE,
+                    );
                 }
                 chrome.runtime.sendMessage({
                     action: 'showContextMenu',
@@ -110,19 +124,15 @@ export function contextMenuResult(handler: (result: unknown) => void): void {
         true,
     );
 
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-
+    chrome.runtime.onMessage.addListener((request) => {
         /*
             If we right-click on a valid XPOC URI, we'll send a message to background.js validate the XPOC URI
             The response from background.js will be sent here
         */
         if (request.action === 'contextMenuResult') {
-            handler(request.data)
+            handler(request.data);
         }
-
-
     });
-
 }
 
 /*
@@ -131,24 +141,27 @@ export function contextMenuResult(handler: (result: unknown) => void): void {
     We're trying to only have the context menu show up if we click on an actual XPOC URI,
     and not just on a larger string that contains a XPOC URI
 */
-function getSubstringAtClick(textContent: string, regex: RegExp, event: MouseEvent) {
+function getSubstringAtClick(textContent: string, regex: RegExp) {
     const selection = window.getSelection() as Selection;
     if (!selection.rangeCount) return undefined;
 
     const range = selection.getRangeAt(0);
     const clickIndex = range.startOffset;
 
-    let match = textContent.match(regex);
+    const match = textContent.match(regex);
 
     if (!match) return undefined;
 
     const startIndex = match.index as number;
     const endIndex = startIndex + match[0].length;
 
-    // TODO: 
+    // TODO:
     // Firefox returns 0 for range.startOffset when you right-click on text
     // it seems to be using the previous left-click position, which may be somewhere else on the page entirely
-    if (clickIndex === 0 || (clickIndex >= startIndex && clickIndex <= endIndex)) {
+    if (
+        clickIndex === 0 ||
+        (clickIndex >= startIndex && clickIndex <= endIndex)
+    ) {
         return match[0];
     }
 

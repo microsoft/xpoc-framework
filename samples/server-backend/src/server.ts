@@ -1,19 +1,24 @@
 import express from 'express';
 import cors from 'cors';
 import { Manifest, Platforms } from 'xpoc-ts-lib';
-import "dotenv/config";
+import 'dotenv/config';
 
 const app = express();
-const PORT = parseInt(process.env.PORT ?? '4000')
+const PORT = parseInt(process.env.PORT ?? '4000');
 
 app.use(express.static('public'));
 app.use(cors());
 
 // fetches the XPOC manifest from the specified location
 app.get('/fetchManifest', async (req, res) => {
-    const manifest = await Manifest.download(req.query.location as string).catch((err) => err);
+    const manifest = await Manifest.download(
+        req.query.location as string,
+    ).catch((err) => err);
     if (manifest instanceof Error) {
-        console.error(`Error fetching XPOC manifest from ${req.query.location}: ` + manifest);
+        console.error(
+            `Error fetching XPOC manifest from ${req.query.location}: ` +
+                manifest,
+        );
         res.status(500).send('Error fetching XPOC manifest');
     } else {
         res.json(manifest.manifest);
@@ -41,7 +46,11 @@ app.get('/fetchPlatformAccount', async (req, res) => {
     try {
         // fetch the account data from the platform
         const account = await Platforms.getAccountFromUrl(url);
-        console.log(`fetchPlatformAccount: retrieved account data: ${JSON.stringify(account)}`);
+        console.log(
+            `fetchPlatformAccount: retrieved account data: ${JSON.stringify(
+                account,
+            )}`,
+        );
         res.json(account);
     } catch (error) {
         console.error(`Error fetching account data from ${url}: ` + error);
@@ -70,7 +79,11 @@ app.get('/fetchPlatformContent', async (req, res) => {
     try {
         // fetch the content data from the platform
         const content = await Platforms.getAccountFromUrl(url);
-        console.log(`fetchPlatformContent: retrieved content data: ${JSON.stringify(content)}`);
+        console.log(
+            `fetchPlatformContent: retrieved content data: ${JSON.stringify(
+                content,
+            )}`,
+        );
         res.json(content);
     } catch (error) {
         console.error(`Error fetching content data from ${url}: ` + error);
@@ -98,19 +111,19 @@ const canFetchPlatformResource = (url: string) => {
     if (Platforms.canFetchAccountFromUrl(url)) {
         return {
             canFetch: true,
-            type: 'account'
+            type: 'account',
         };
     } else if (Platforms.canFetchContentFromUrl(url)) {
         return {
             canFetch: true,
-            type: 'content'
+            type: 'content',
         };
     } else {
         return {
-            canFetch: false
+            canFetch: false,
         };
     }
-}
+};
 
 app.get('/canFetchPlatformResource', async (req, res) => {
     const url = req.query.url as string;
@@ -129,67 +142,93 @@ app.get('/verifyXpocResource', async (req, res) => {
         const result = canFetchPlatformResource(url);
         if (!result.canFetch) {
             console.error(`Can't fetch resource from url, need a XPOC URI`);
-            res.status(500).send(`Can't fetch resource from url, need a XPOC URI`);
+            res.status(500).send(
+                `Can't fetch resource from url, need a XPOC URI`,
+            );
             return;
         }
 
         // try fetching the resource URL to find a xpoc URI
         if (result.type === 'account') {
             const data = await Platforms.getAccountFromUrl(url);
-            console.log(`verifyXpocResource: retrieved account data: ${JSON.stringify(data)}`);
+            console.log(
+                `verifyXpocResource: retrieved account data: ${JSON.stringify(
+                    data,
+                )}`,
+            );
             xpocUri = data.xpocUri;
         } else if (result.type === 'content') {
             const data = await Platforms.getContentFromUrl(url);
-            console.log(`verifyXpocResource: retrieved content data: ${JSON.stringify(data)}`);
+            console.log(
+                `verifyXpocResource: retrieved content data: ${JSON.stringify(
+                    data,
+                )}`,
+            );
             xpocUri = data.xpocUri;
         }
 
         if (!xpocUri) {
-            console.error(`Can't a XPOC URI in the data retrieved from resource URL`);
-            res.status(500).send(`Can't a XPOC URI in the data retrieved from resource URL; please provide a XPOC URI`);
+            console.error(
+                `Can't a XPOC URI in the data retrieved from resource URL`,
+            );
+            res.status(500).send(
+                `Can't a XPOC URI in the data retrieved from resource URL; please provide a XPOC URI`,
+            );
             return;
         }
     }
 
+    // fetch the XPOC manifest from the XPOC URI
+    const manifest = await Manifest.download(xpocUri);
 
-        // fetch the XPOC manifest from the XPOC URI
-        const manifest = await Manifest.download(xpocUri);
+    if (manifest instanceof Error) {
+        console.error(
+            `Error fetching XPOC manifest from ${xpocUri}: ` + manifest,
+        );
+        res.status(500).send('Error fetching XPOC manifest');
+        return;
+    }
 
-        if(manifest instanceof Error) {
-            console.error(`Error fetching XPOC manifest from ${xpocUri}: ` + manifest);
-            res.status(500).send('Error fetching XPOC manifest');
-            return;
-        }
+    console.log(
+        `verifyXpocResource: retrieved manifest: ${JSON.stringify(
+            manifest.manifest,
+        )}`,
+    );
 
-        console.log(`verifyXpocResource: retrieved manifest: ${JSON.stringify(manifest.manifest)}`);
+    // check if the url matches an account in the manifest
+    const matchingAccounts = manifest.matchAccount({ url: url });
+    if (matchingAccounts && matchingAccounts.length > 0) {
+        console.log(
+            `verifyXpocResource: found matching account: ${JSON.stringify(
+                matchingAccounts,
+            )}`,
+        );
+        res.json({
+            manifest: manifest.manifest,
+            accounts: matchingAccounts,
+        });
+        return;
+    }
 
-        // check if the url matches an account in the manifest
-        const matchingAccounts = manifest.matchAccount({ url: url });
-        if (matchingAccounts && matchingAccounts.length > 0) {
-            console.log(`verifyXpocResource: found matching account: ${JSON.stringify(matchingAccounts)}`);
-            res.json({
-                manifest: manifest.manifest,
-                accounts: matchingAccounts
-            }
-            );
-            return;
-        }
+    // check if the url matches a content item in the manifest
+    const matchingContent = manifest.matchContent({ url: url });
+    if (matchingContent && matchingContent.length > 0) {
+        console.log(
+            `verifyXpocResource: found matching content: ${JSON.stringify(
+                matchingContent,
+            )}`,
+        );
+        res.json({
+            manifest: manifest.manifest,
+            content: matchingContent,
+        });
+        return;
+    }
 
-        // check if the url matches a content item in the manifest
-        const matchingContent = manifest.matchContent({ url: url });
-        if (matchingContent && matchingContent.length > 0) {
-            console.log(`verifyXpocResource: found matching content: ${JSON.stringify(matchingContent)}`);
-            res.json({
-                manifest: manifest.manifest,
-                content: matchingContent
-            }
-            );
-            return;
-        }
-
-        // if we get here, the url was not found in the manifest
-        res.status(400).send({ error: 'Resource URL not found in the XPOC manifest.' });
-
+    // if we get here, the url was not found in the manifest
+    res.status(400).send({
+        error: 'Resource URL not found in the XPOC manifest.',
+    });
 });
 
 app.listen(PORT, () => {

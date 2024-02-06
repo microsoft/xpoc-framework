@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "cross-env NODE_ENV=production rollup -c",
+    "build": "cross-env NODE_ENV=development rollup -c",
     "build:clean": "npm run clean && npm run build",
     "build:debug": "cross-env NODE_ENV=development rollup -c",
     "build:watch": "cross-env NODE_ENV=development rollup -c -w",

@@ -7,12 +7,14 @@ function showError(errMsg: string): void {
     errMsgElem.style.display = 'block';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function clearError(): void {
     const errMsgElem = document.getElementById('errorMsg') as HTMLElement;
     errMsgElem.textContent = '';
     errMsgElem.style.display = 'none';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function isoToLocalTime(isoTime: string): string {
     if (!isoTime) {
         return '';
@@ -23,6 +25,7 @@ function isoToLocalTime(isoTime: string): string {
 const prefix = '/fetchManifest?location=';
 
 // fetch the xpoc manifest from the given base URL or XPOC URI
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function fetchXpocManifest(location: string): Promise<string | null> {
     let response;
     try {

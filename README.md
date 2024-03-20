@@ -2,7 +2,7 @@
 
 _This is a pre-release preview of the framework, currently at version 0.3 (see the [changes](./doc/changes.md) history). The specification and sample implementations might change as we continue its development and receive feedback._
 
-This project introduces the Cross-Platform Origin of Content (XPOC) framework, along with a sample implementation.
+This project introduces the Cross-Platform Origin of Content (XPOC) framework, along with a sample implementation. See the [project web page](https://microsoft.github.io/xpoc-framework/).
 
 The aim of the XPOC framework is to allow a person or organization (content owner) to create a authoritative list of:  
 

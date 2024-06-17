@@ -7,7 +7,8 @@ import DomScanner from './scanner';
 import { type lookupXpocUriResult } from './xpoc-lib';
 import { contextMenuResult, contextTarget } from './context';
 
-const PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
+const XPOC_PATTERN = /xpoc:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
+const TRUSTTXT_PATTERN = /trust:\/\/([a-zA-Z0-9.-]+)(\/[^!\s<]*)?!?/;
 const skipHiddenNodes = false;
 const SUCCESS_COLOR = '#5B9BD5';
 const ERROR_COLOR = '#E43A19';
@@ -54,6 +55,23 @@ const lookupXpocUri = async (xpocUri: string): Promise<lookupXpocUriResult> => {
 };
 
 /**
+ * Call background to lookup the trustUri
+ *
+ * @param {string} trustUri
+ * @returns Promise<lookupXpocUriResult>
+ */
+const lookupTrustUri = async (trustUri: string): Promise<lookupXpocUriResult> => {
+    return await new Promise((resolve): void => {
+        chrome.runtime.sendMessage(
+            { action: 'lookupTrustUri', trustUri },
+            (result) => {
+                resolve(result);
+            },
+        );
+    });
+};
+
+/**
  * Converts an xpoc URI to a base URL.
  * @param xpocUri - The xpoc URI to convert.
  * @returns The base URL.
@@ -61,6 +79,7 @@ const lookupXpocUri = async (xpocUri: string): Promise<lookupXpocUriResult> => {
 const getBaseURL = (xpocUri: string): string =>
     xpocUri
         .replace(/^xpoc:\/\//, 'https://')
+        .replace(/^trust:\/\//, 'https://')
         .replace(/!$/, '')
         .replace(/\/$/, '');
 
@@ -94,12 +113,29 @@ const addIcon = (node: Node) => {
             return;
         }
 
-        const match = PATTERN.exec((node as Text).textContent ?? '');
+        // Check if the node contains an XPOC URI
+        console.log(`checking node for xpoc: ${node.textContent}`) // FIXME: delete
+        const match = XPOC_PATTERN.exec((node as Text).textContent ?? '');
         const xpocUri = match?.[0] as string;
         // cache.set(node, xpocUri);
 
         lookupXpocUri(xpocUri).then((result) => {
             const icon = new Icon(node, xpocUri, result);
+            icon.onClick = () => {
+                const xpocResult = result as lookupXpocUriResult;
+                showXpocPopup(icon.img as HTMLElement, xpocResult);
+            };
+            console.log(`result: ${JSON.stringify(result)}`);
+        });
+
+        // Check if the node contains a Trust.txt URI
+        console.log(`checking node for trust.txt: ${node.textContent}`) // FIXME: delete
+        const trustMatch = TRUSTTXT_PATTERN.exec((node as Text).textContent ?? '');
+        const trustUri = trustMatch?.[0] as string;
+        // cache.set(node, trustUri);
+
+        lookupTrustUri(trustUri).then((result) => {
+            const icon = new Icon(node, trustUri, result);
             icon.onClick = () => {
                 const xpocResult = result as lookupXpocUriResult;
                 showXpocPopup(icon.img as HTMLElement, xpocResult);
@@ -175,24 +211,39 @@ function showXpocPopup(targetNode: Node, xpocResult: lookupXpocUriResult) {
     }
 
     if (xpocResult.type === 'account') {
-        contentPopup.show(
-            targetNode as HTMLElement,
-            'XPOC Information',
-            SUCCESS_COLOR,
-            chrome.runtime.getURL('icons/xpoc_logo.svg'),
-            [
-                {
-                    title: 'Origin',
-                    Name: xpocResult.name,
-                    Website: `<a href='https://${xpocResult.baseurl}' target='_blank'>${xpocResult.baseurl}</a>`,
-                },
-                {
-                    title: 'Account',
-                    URL: `<a href='${xpocResult.account.url}' target='_blank'>${xpocResult.account.url}</a>`,
-                    Account: xpocResult.account.account,
-                },
-            ],
-        );
+        if (xpocResult.version === 'trust.txt1.4') {
+            contentPopup.show(
+                targetNode as HTMLElement,
+                'Trust.txt Information',
+                SUCCESS_COLOR,
+                chrome.runtime.getURL('icons/xpoc_logo.svg'),
+                [
+                    {
+                        title: 'Trust.txt match',
+                        Message: `${xpocResult.account.platform} account ${xpocResult.account.account} found in trust.txt file at ${xpocResult.baseurl}`
+                    }
+                ],
+            );
+        } else {
+            contentPopup.show(
+                targetNode as HTMLElement,
+                'XPOC Information',
+                SUCCESS_COLOR,
+                chrome.runtime.getURL('icons/xpoc_logo.svg'),
+                [
+                    {
+                        title: 'Origin',
+                        Name: xpocResult.name,
+                        Website: `<a href='https://${xpocResult.baseurl}' target='_blank'>${xpocResult.baseurl}</a>`,
+                    },
+                    {
+                        title: 'Account',
+                        URL: `<a href='${xpocResult.account.url}' target='_blank'>${xpocResult.account.url}</a>`,
+                        Account: xpocResult.account.account,
+                    },
+                ],
+            );
+        }
     }
 }
 
@@ -204,7 +255,7 @@ function nodeTest(node: Node): boolean {
     ) {
         return false;
     }
-    return PATTERN.test(node.textContent);
+    return XPOC_PATTERN.test(node.textContent);
 }
 
 function addCallback(node: Node): void {

@@ -255,7 +255,7 @@ function nodeTest(node: Node): boolean {
     ) {
         return false;
     }
-    return XPOC_PATTERN.test(node.textContent);
+    return XPOC_PATTERN.test(node.textContent) || TRUSTTXT_PATTERN.test(node.textContent);
 }
 
 function addCallback(node: Node): void {

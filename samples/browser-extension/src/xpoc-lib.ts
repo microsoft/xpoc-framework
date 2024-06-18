@@ -60,7 +60,7 @@ async function downloadManifest(
         // append the XPOC manifest path
         '/xpoc-manifest.json';
 
-    const manifest = await fetchWithTimeout<XPOCManifest>(manifestUrl);
+    const manifest = await fetchObject<XPOCManifest>(manifestUrl);
 
     return manifest;
 }
@@ -72,11 +72,11 @@ async function downloadManifest(
  * @param timeout - The timeout duration in milliseconds.
  * @returns A promise that resolves to the fetched data or an error.
  */
-async function fetchWithTimeout<T>(
+async function fetchWithTimeout(
     url: string,
     options: RequestInit = {},
     timeout = DOWNLOAD_TIMEOUT,
-): Promise<T | Error> {
+): Promise<Response | Error> {
     // add controller to options so we can abort the fetch on timeout
     const controller = new AbortController();
     const signal = controller.signal;
@@ -114,10 +114,42 @@ async function fetchWithTimeout<T>(
         return new Error(`HTTP error: ${response.status}`);
     }
 
-    return await response.json().catch((error) => {
-        return new Error(`Error parsing manifest: ${error}`);
-    });
+    return response
 }
+
+async function fetchObject<T> (
+        url: string,
+        options: RequestInit = {},
+        timeout = DOWNLOAD_TIMEOUT,
+    ): Promise<T | Error> {
+        const responseOrError = await fetchWithTimeout(url, options, timeout);
+        if (responseOrError instanceof Error) {
+            return responseOrError;
+        }
+        const response = responseOrError as Response;
+
+        return await response.json().catch((error: Error) => {
+            return new Error(`JSON parse error: ${error}`);
+        });
+    }
+    
+
+
+async function fetchText (
+        url: string,
+        options: RequestInit = {},
+        timeout = DOWNLOAD_TIMEOUT,
+    ): Promise<string | Error> {
+        const responseOrError = await fetchWithTimeout(url, options, timeout);
+        if (responseOrError instanceof Error) {
+            return responseOrError;
+        }
+        const response = responseOrError as Response;
+
+        return await response.text().catch((error: Error) => {
+            return new Error(`text parse error: ${error}`);
+        });
+    }
 
 export type lookupXpocUriResult =
     | {
@@ -288,7 +320,7 @@ async function downloadTrustTxt(
         // append the trust.txt path
         '/trust.txt';
 
-    const trustTxtContent = await fetchWithTimeout<string>(trustUrl);
+    const trustTxtContent = await fetchText(trustUrl);
     if (trustTxtContent instanceof Error) {
         return trustTxtContent;
     }

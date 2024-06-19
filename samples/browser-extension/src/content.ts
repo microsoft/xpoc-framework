@@ -212,15 +212,15 @@ function showXpocPopup(targetNode: Node, xpocResult: lookupXpocUriResult) {
 
     if (xpocResult.type === 'account') {
         if (xpocResult.version === 'trust.txt1.4') {
+            const platformMessage = xpocResult.account.platform ? `${xpocResult.account.platform} account ${xpocResult.account.account}` : `Account ${xpocResult.account.account}`;
             contentPopup.show(
                 targetNode as HTMLElement,
-                'Trust.txt Information',
+                'Trust.txt match',
                 SUCCESS_COLOR,
                 chrome.runtime.getURL('icons/xpoc_logo.svg'),
                 [
                     {
-                        title: 'Trust.txt match',
-                        Message: `${xpocResult.account.platform} account ${xpocResult.account.account} found in trust.txt file at ${xpocResult.baseurl}`
+                        Message: `${platformMessage} found in trust.txt file at ${xpocResult.baseurl}`
                     }
                 ],
             );

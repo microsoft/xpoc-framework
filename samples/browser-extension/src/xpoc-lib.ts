@@ -37,6 +37,20 @@ export function getBaseURL(url: string) {
     return baseURL;
 }
 
+function getUrlFromUri(uri: string, scheme = 'xpoc' || 'trust'): string {
+    const file = scheme === 'xpoc' ? '/xpoc-manifest.json' : '/trust.txt';
+    return uri
+        // replace the xpoc:// prefix with https://
+        .replace(/^xpoc:\/\//, 'https://')
+        // replace the trust:// prefix with https://
+        .replace(/^trust:\/\//, 'https://')
+        // remove trailing !
+        .replace(/!$/, '')
+        // remove trailing slash, if present
+        .replace(/\/$/, '') +
+    // append the file path
+    file;
+}
 /**
  * Downloads the XPOC manifest for the given XPOC URI.
  * @param xpocUri The XPOC URI.
@@ -49,17 +63,7 @@ async function downloadManifest(
         return new Error(`Invalid XPOC URI: ${xpocUri}`);
     }
 
-    const manifestUrl =
-        xpocUri
-            // replace the xpoc:// prefix with https://
-            .replace(/^xpoc:\/\//, 'https://')
-            // remove trailing !
-            .replace(/!$/, '')
-            // remove trailing slash, if present
-            .replace(/\/$/, '') +
-        // append the XPOC manifest path
-        '/xpoc-manifest.json';
-
+    const manifestUrl = getUrlFromUri(xpocUri, 'xpoc');
     const manifest = await fetchObject<XPOCManifest>(manifestUrl);
 
     return manifest;
@@ -309,17 +313,7 @@ async function downloadTrustTxt(
         return new Error(`Invalid trust URI: ${trustUri}`);
     }
 
-    const trustUrl =
-        trustUri
-            // replace the trust:// prefix with https://
-            .replace(/^trust:\/\//, 'https://')
-            // remove trailing !
-            .replace(/!$/, '')
-            // remove trailing slash, if present
-            .replace(/\/$/, '') +
-        // append the trust.txt path
-        '/trust.txt';
-
+    const trustUrl = getUrlFromUri(trustUri, 'trust');
     const trustTxtContent = await fetchText(trustUrl);
     if (trustTxtContent instanceof Error) {
         return trustTxtContent;
@@ -446,14 +440,20 @@ export async function lookupTrustUri(
 
     if (matchingAccountUrl) {
         console.log('Content found in trust.txt file', matchingAccountUrl);
-        const platform = Platforms.getPlatformFromAccountUrl(matchingAccountUrl)?.DisplayName || 'Unknown';
+        const platform = Platforms.getPlatformFromAccountUrl(matchingAccountUrl)?.DisplayName || '';
+        let account = matchingAccountUrl;
+        if (platform) {
+            account = Platforms.getPlatform(platform).canonicalizeAccountUrl(matchingAccountUrl).account;
+        }
+        const url = getUrlFromUri(trustUrl, 'trust');
+        const domain = new URL(url).hostname;
         return {
             type: 'account',
-            name: trustUrl, // TODO: change?
-            baseurl: trustUrl, // TODO: change?
+            name: domain,
+            baseurl: domain,
             version: 'trust.txt1.4',
             account: {
-                account: matchingAccountUrl,
+                account: account,
                 platform: platform
 
             }

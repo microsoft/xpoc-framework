@@ -9,6 +9,12 @@ type lookupXpocUriMessage = {
     tabUrl: string;
 };
 
+type lookupTrustUriMessage = {
+    type: 'lookupTrustUri';
+    url: string;
+    tabUrl: string;
+};
+
 /*
   Create the offscreen document when the background script is loaded.  
   When background.js is a service worker (Chrome w/ Manifest V3), the offscreen document 
@@ -50,6 +56,23 @@ export async function lookupXpocUri(
     return await offscreenMessage<lookupXpocUriMessage, lookupXpocUriResult>({
         type: 'lookupXpocUri',
         url: xpocUrl,
+        tabUrl: tabUrl,
+    });
+}
+
+/**
+ * Looks up the trust.txt URI for a given tab URL and trust.txt URL.
+ * @param tabUrl The URL of the tab.
+ * @param trustUrl The URL of the trust.txt.
+ * @returns A promise that resolves to the result of the lookup.
+ */
+export async function lookupTrustUri(
+    tabUrl: string,
+    trustUrl: string,
+): Promise<lookupXpocUriResult> {
+    return await offscreenMessage<lookupTrustUriMessage, lookupXpocUriResult>({
+        type: 'lookupTrustUri',
+        url: trustUrl,
         tabUrl: tabUrl,
     });
 }

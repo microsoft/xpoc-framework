@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { getLocalStorage, setLocalStorage } from './storage.js';
-import { lookupXpocUri, type lookupXpocUriResult } from './xpoc-lib.js';
+import { lookupXpocUri, lookupTrustUri, type lookupXpocUriResult } from './xpoc-lib.js';
 import { contextMenuRequest, clickedText } from './context.js';
 import { getOriginInfo } from './origin.js';
 
@@ -29,9 +29,18 @@ chrome.runtime.onInstalled.addListener(function (details) {
 */
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.action === 'lookupXpocUri') {
+        console.log('Background: message = lookupXpocUri');
         const xpocUri = message.xpocUri;
         const tabUrl = (sender.tab as chrome.tabs.Tab).url as string;
         lookupXpocUri(sender.tab?.url as string, xpocUri).then((result) => {
+            storeXpocResult(tabUrl as string, clickedText, result);
+            sendResponse(result);
+        });
+    } else if (message.action === 'lookupTrustUri') {
+        console.log('Background: message = lookupTrustUri');
+        const trustUri = message.trustUri;
+        const tabUrl = (sender.tab as chrome.tabs.Tab).url as string;
+        lookupTrustUri(sender.tab?.url as string, trustUri).then((result) => {
             storeXpocResult(tabUrl as string, clickedText, result);
             sendResponse(result);
         });
@@ -47,7 +56,7 @@ contextMenuRequest(async (info, clickedText, tab) => {
     if (info.menuItemId === 'verifyXpocUri') {
         const tabUrl = (tab as chrome.tabs.Tab).url as string;
         const xpocUrl = clickedText;
-        const result = await lookupXpocUri(tabUrl, xpocUrl);
+        const result = await lookupXpocUri(tabUrl, xpocUrl); // TODO: FIXME: add Trust.txt lookup too
         if (result.type === 'account' || result.type === 'content') {
             await storeXpocResult(tabUrl as string, xpocUrl, result);
         } else {

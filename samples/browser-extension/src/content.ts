@@ -114,10 +114,8 @@ const addIcon = (node: Node) => {
         }
 
         // Check if the node contains an XPOC URI
-        console.log(`checking node for xpoc: ${node.textContent}`) // FIXME: delete
         const match = XPOC_PATTERN.exec((node as Text).textContent ?? '');
         const xpocUri = match?.[0] as string;
-        // cache.set(node, xpocUri);
 
         lookupXpocUri(xpocUri).then((result) => {
             const icon = new Icon(node, xpocUri, result);
@@ -129,10 +127,8 @@ const addIcon = (node: Node) => {
         });
 
         // Check if the node contains a Trust.txt URI
-        console.log(`checking node for trust.txt: ${node.textContent}`) // FIXME: delete
         const trustMatch = TRUSTTXT_PATTERN.exec((node as Text).textContent ?? '');
         const trustUri = trustMatch?.[0] as string;
-        // cache.set(node, trustUri);
 
         lookupTrustUri(trustUri).then((result) => {
             const icon = new Icon(node, trustUri, result);
@@ -211,7 +207,7 @@ function showXpocPopup(targetNode: Node, xpocResult: lookupXpocUriResult) {
     }
 
     if (xpocResult.type === 'account') {
-        if (xpocResult.version === 'trust.txt1.4') {
+        if (xpocResult.version === 'trust.txt-draft00') {
             const platformMessage = xpocResult.account.platform ? `${xpocResult.account.platform} account ${xpocResult.account.account}` : `Account ${xpocResult.account.account}`;
             contentPopup.show(
                 targetNode as HTMLElement,

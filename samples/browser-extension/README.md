@@ -56,6 +56,6 @@ The browser extension can be augmented by loading a 3rd party data source to con
 
   ### Using trust.txt files
 
-  The [`trust.txt` specification](https://journallist.net/reference-document-for-trust-txt-specifications) defines a machine-readable text file hosted on a publisher’s domain, which provides information about the publisher’s affiliations, owned media properties, and connections with industry organizations. The `trust.txt` file offers similar functionality as a XPOC manifest. The browser extension can also detect the presence of a trust URI (for example, `trust://example.com!`) file on a visited page, and check if the page is listed in the corresponding `trust.txt` file on the origin domain.
+  The [`trust.txt` specification](https://datatracker.ietf.org/doc/draft-org-trust-relationship-protocol/) defines a machine-readable text file hosted on a publisher’s domain, which provides information about the publisher’s affiliations, owned media properties, and connections with industry organizations. The `trust.txt` file offers similar functionality as a XPOC manifest. The browser extension can also detect the presence of a trust URI (for example, `trust://example.com!`) file on a visited page, and check if the page is listed in the corresponding `trust.txt` file on the origin domain.
 
   

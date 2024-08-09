@@ -451,7 +451,7 @@ export async function lookupTrustUri(
             type: 'account',
             name: domain,
             baseurl: domain,
-            version: 'trust.txt1.4',
+            version: 'trust.txt-draft00',
             account: {
                 account: account,
                 platform: platform

@@ -16,7 +16,9 @@ export async function query(
      * The User-Agent header is required to avoid getting endless redirects from some sites.
      */
     const headers = {
-        'User-Agent': `XPOC/0.3.0 (+https://github.com/microsoft/xpoc-framework)`,
+        'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36`,
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Content-Type': 'text/html;',
     };
 
     const htmlOrError = await fetch(url, { headers })

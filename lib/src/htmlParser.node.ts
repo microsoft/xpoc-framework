@@ -46,8 +46,10 @@ export async function query(
             results.push(queryResult.html() ?? undefined);
         }
     }
-    console.info('--------------------------------------------------------------------');
-    console.info(html);
-    console.info('--------------------------------------------------------------------');
+    setTimeout(() => {
+        console.info('--------------------------------------------------------------------');
+        console.info(html);
+        console.info('--------------------------------------------------------------------');
+    }, 1000);
     return results;
 }

@@ -30,6 +30,7 @@ export async function query(
     // Remove all <script> and <img> elements
     $('script', 'img').remove();
     const results: (string | undefined)[] = [];
+    console.debug(`Querying ${url}`);
     for (const query of queries) {
         const queryResult = $(query.nodeQuery);
         console.debug(`Querying ${queryResult.toString().replace(/>/g, '\n')}`);

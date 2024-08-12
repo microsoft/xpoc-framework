@@ -30,6 +30,7 @@ export async function query(
     const results: (string | undefined)[] = [];
     for (const query of queries) {
         const queryResult = $(query.nodeQuery);
+        console.debug(`Querying ${queryResult.toString().replace(/>/g, '\n')}`);
         if (query.attribute) {
             results.push(queryResult.attr(query.attribute) ?? undefined);
         } else {

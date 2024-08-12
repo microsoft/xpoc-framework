@@ -338,6 +338,7 @@ export class YouTube extends Platform {
                     attribute: 'content',
                 },
                 { nodeQuery: 'meta[name="description"]', attribute: 'content' },
+                { nodeQuery: 'meta' },
             ])) as string[];
             const channelUrl = results[0];
             const account =

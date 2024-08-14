@@ -924,14 +924,12 @@ for (const platformTestData of platformTestDataArray) {
             });
         }
 
-        if (platform.CanFetchContentData) {
+        if (platform.CanFetchContentData
+            // Disabling YouTube retrieval test; they fail on CI but work locally (presumably due to IP restrictions)
+            && platform.DisplayName !== 'YouTube') {
             test(`${platformName} content fetch test`, async () => {
                 const sampleContent = platformTestData.sampleContentData;
                 if (sampleContent) {
-                    if (sampleContent.platform === 'YouTube') {
-                        // Disabling YouTube retrieval test; they fail on CI but work locally (presumably due to IP restrictions)
-                        return;
-                    }
                     const contentData = await platform.getContentData(
                         sampleContent.url,
                     );

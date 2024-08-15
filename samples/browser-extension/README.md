@@ -4,17 +4,16 @@ This project contains a Edge/Chrome/Firefox Browser Extension demonstrating how 
 
 ## Setup
 
-1. Install dependencies
+1. Build/download the extension
+
+Either download the pre-built [Edge/Chrome](https://github.com/microsoft/xpoc-framework/releases/download/v0.3.1/chrome-browser-extension.zip) or [Firefox](https://github.com/microsoft/xpoc-framework/releases/download/v0.3.1/firefox-browser-extension.zip) extension or build it locally using npm:
+
 ```
 npm install
-```
-
-2. Build the extension
-```
 npm run build
 ```
 
-3. Install the extension in a browser:  
+2. Install the extension in a browser:  
 
 <div style="padding-left: 2em">
 Follow the side-loading instruction for your browser to load the extension:

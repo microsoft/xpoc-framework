@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { lookupXpocUri } from './xpoc-lib.js';
+import { lookupXpocUri, lookupTrustUri } from './xpoc-lib.js';
 
 console.log('offscreen.js loaded');
 
@@ -25,6 +25,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     if (request?.type === 'lookupXpocUri') {
         lookupXpocUri(request.tabUrl, request.url).then((result) => {
+            sendResponse(result);
+        });
+    } else if (request?.type === 'lookupTrustUri') {
+        lookupTrustUri(request.tabUrl, request.url).then((result) => {
             sendResponse(result);
         });
     }

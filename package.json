@@ -3,7 +3,9 @@
   "version": "0.3.0",
   "type": "module",
   "description": "Cross-Platform Origin of Content (XPOC) framework",
-  "main": "lib/dist/index.js",
+  "main": "lib/browser/xpoc.iife.min.js",
+  "module": "lib/dist/index.js",
+  "browser": "lib/browser/xpoc.esm.min.js",
   "types": "lib/dist/index.d.ts",
   "scripts": {
     "lint": "eslint **/*.{ts,js,md} --fix",

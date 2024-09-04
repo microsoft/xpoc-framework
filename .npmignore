@@ -1,7 +1,12 @@
-samples
-.vscode
-.github
-doc
 .eslintrc.js
+.github
 .gitignore
 .prettierrc.js
+.vscode
+CODE_OF_CONDUCT.md 
+doc
+node_modules  
+package-lock.json
+samples
+SECURITY.md  
+SUPPORT.md

@@ -4,6 +4,7 @@
   "type": "module",
   "description": "Cross-Platform Origin of Content (XPOC) framework",
   "main": "lib/dist/index.js",
+  "types": "lib/dist/index.d.ts",
   "scripts": {
     "lint": "eslint **/*.{ts,js,md} --fix",
     "prettier": "prettier --write './**/*.{ts,js,md}'",

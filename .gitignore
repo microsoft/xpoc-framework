@@ -6,3 +6,4 @@ js/
 dist/
 browser/
 .vscode
+lib/src/manifest.schema.js

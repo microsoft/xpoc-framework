@@ -3,6 +3,7 @@
   "version": "0.3.0",
   "type": "module",
   "description": "Cross-Platform Origin of Content (XPOC) framework",
+  "main": "lib/dist/index.js",
   "scripts": {
     "lint": "eslint **/*.{ts,js,md} --fix",
     "prettier": "prettier --write './**/*.{ts,js,md}'",
@@ -10,7 +11,8 @@
     "build:browser-extension": "cd samples/browser-extension && npm install && npm run build:clean",
     "build:client-side-html": "cd samples/client-side-html && npm install && npm run build",
     "build:server-backend": "cd samples/server-backend && npm install && npm run build",
-    "build:all": "npm run build:lib && npm run build:browser-extension && npm run build:client-side-html && npm run build:server-backend"
+    "build:all": "npm run build:lib && npm run build:browser-extension && npm run build:client-side-html && npm run build:server-backend",
+    "prepare": "npm run build:lib"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.5.0",

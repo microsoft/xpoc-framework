@@ -1,7 +1,7 @@
-.eslintrc.js
+.eslintrc.json
 .github
 .gitignore
-.prettierrc.js
+.prettierrc
 .vscode
 CODE_OF_CONDUCT.md 
 doc
@@ -10,3 +10,10 @@ package-lock.json
 samples
 SECURITY.md  
 SUPPORT.md
+lib/*.md
+lib/src
+lib/test
+lib/testdata
+lib/rollup.config.js
+lib/tsconfig.json
+lib/dist/*.map

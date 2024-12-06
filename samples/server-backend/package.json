@@ -15,7 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
     "xpoc-ts-lib": "file:../../lib"
   },
   "devDependencies": {

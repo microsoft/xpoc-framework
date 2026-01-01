@@ -4,7 +4,7 @@
   "description": "Client-side HTML XPOC Sample",
   "main": "server.js",
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.22.1"
   },
   "scripts": {
     "build": "shx cp ../../lib/browser/xpoc.iife.min.js public/",
